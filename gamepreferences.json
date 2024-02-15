@@ -1,0 +1,18 @@
+{
+	"100": {
+		"name": "Animation speed",
+		"needReload": false,
+		"default": 1,
+		"values": [
+			{
+				"name": "Slow"
+			},
+			{
+				"name": "Normal"
+			},
+			{
+				"name": "Fast"
+			}
+		]
+	}
+}

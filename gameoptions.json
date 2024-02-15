@@ -1,0 +1,56 @@
+{
+	"100": {
+		"name": "\u2694 DUEL mode \u2694",
+		"values": [
+			{
+				"name": "Off"
+			},
+			{
+				"name": "On",
+				"description": "Players play the game twice, swapping factions",
+				"tmdisplay": "\u2694 DUEL mode ON \u2694"
+			}
+		],
+		"displaycondition": [
+			{
+				"type": "maxplayers",
+				"value": 2
+			}
+		],
+		"notdisplayedmessage": "Duel mode option is only available for a two players game"
+	},
+	"101": {
+		"name": "Factions",
+		"values": [
+			{
+				"name": "Faction is randomly chosen"
+			},
+			{
+				"name": "Table administrator will play Allies",
+				"description": "Admin will play the Soviet Union"
+			},
+			{
+				"name": "Table administrator will play Axis",
+				"description": "Admin will play Germany and the Pact"
+			}
+		],
+		"displaycondition": [
+			{
+				"type": "maxplayers",
+				"value": 2
+			}
+		]
+	},
+	"102": {
+		"name": "First game",
+		"values": [
+			{
+				"name": "Off"
+			},
+			{
+				"name": "On",
+				"description": "Players with cards labeled \"First Game\" in hand"
+			}
+		]
+	}
+}
