@@ -41,7 +41,7 @@ define(["dojo", "dojo/_base/declare"], function (dojo, declare)
 				105: {
 					faction: 'pact', type: 'ground',
 					[INITIAL_SIDE]: [_('Hardliners Take Control'), _('Deploy 2 Pact infantry in the same Pact Supply Flag space.')],
-					[SECOND_SIDE]: [_('The Allies gain 1 VP. Move a German infantry; then take another action.'), _('Deploy a Pact infantry in a Pact Supply Flag space.')]
+					[SECOND_SIDE]: [_('Germany Arms Fascist Loyalists'), _('Deploy a Pact infantry in a Pact Supply Flag space.')]
 				},
 //
 // Allies

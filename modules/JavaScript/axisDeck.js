@@ -59,79 +59,79 @@ define(["dojo", "dojo/_base/declare"], function (dojo, declare)
 //
 				15: {
 					faction: 'germany', type: 'command',
-					[MID]: [_(''), _('')]
+					[MID]: [_('Panzergrenadiers'), _('')]
 				},
 				16: {
-					faction: 'germany', type: 'command',
-					[MID]: [_(''), _('')]
+					faction: 'germany', type: 'ground',
+					[MID]: [_('Motorized Corps'), _('')]
 				},
 				17: {
-					faction: 'germany', type: 'command',
-					[MID]: [_(''), _('')]
+					faction: 'germany', type: 'tank',
+					[MID]: [_('Leichter Panzerspähwagen'), _('')]
 				},
 				18: {
 					faction: 'germany', type: 'command',
-					[MID]: [_(''), _('')]
+					[MID]: [_('Directive 21'), _('')]
 				},
 				19: {
-					faction: 'germany', type: 'command',
-					[MID]: [_(''), _('')]
+					faction: 'germany', type: 'ground',
+					[MID]: [_('Engineers'), _('')]
 				},
 				20: {
-					faction: 'germany', type: 'command',
-					[MID]: [_(''), _('')]
+					faction: 'germany', type: 'sea',
+					[MID]: [_('Marine Infantry'), _('')]
 				},
 				21: {
-					faction: 'germany', type: 'command',
-					[MID]: [_(''), _('')]
+					faction: 'germany', type: 'air',
+					[MID]: [_('Messerschmitts'), _('')]
 				},
 				22: {
 					faction: 'germany', type: 'command',
-					[MID]: [_(''), _('')]
+					[MID]: [_('Sonderkraftfahrzeug'), _('')]
 				},
 				23: {
-					faction: 'germany', type: 'command',
-					[MID]: [_(''), _('')]
+					faction: 'germany', type: 'ground',
+					[MID]: [_('Flamethrowers'), _('')]
 				},
 				24: {
 					faction: 'germany', type: 'command',
-					[MID]: [_(''), _('')]
+					[MID]: [_('Nebelwerfer Rocket Launcher'), _('')]
 				},
 				25: {
-					faction: 'germany', type: 'command',
-					[MID]: [_(''), _('')]
+					faction: 'pact', type: 'command',
+					[MID]: [_('Gyorshadtest “Rapid Corps”'), _('')]
 				},
 				26: {
-					faction: 'germany', type: 'command',
-					[MID]: [_(''), _('')]
+					faction: 'pact', type: 'ground',
+					[MID]: [_('The Continuation War'), _('')]
 				},
 				27: {
-					faction: 'germany', type: 'command',
-					[MID]: [_(''), _('')]
+					faction: 'pact', type: 'command',
+					[MID]: [_('Corpo di Spedizione Italiano in Russia'), _('')]
 				},
 				28: {
-					faction: 'germany', type: 'command',
-					[MID]: [_(''), _('')]
+					faction: 'pact', type: 'ground',
+					[MID]: [_('Finnish Ski Troops'), _('')]
 				},
 				29: {
-					faction: 'germany', type: 'command',
-					[MID]: [_(''), _('')]
+					faction: 'pact', type: 'air',
+					[MID]: [_('Corpo Aereo Spedizione in Russia'), _('')]
 				},
 				30: {
-					faction: 'germany', type: 'command',
-					[MID]: [_(''), _('')]
+					faction: 'pact', type: 'command',
+					[MID]: [_('Romanian 3rd Army'), _('')]
 				},
 				31: {
-					faction: 'germany', type: 'command',
-					[MID]: [_(''), _('')]
+					faction: 'pact', type: 'ground',
+					[MID]: [_('Romanian 4th Army'), _('')]
 				},
 				32: {
-					faction: 'germany', type: 'command',
-					[MID]: [_(''), _('')]
+					faction: 'pact', type: 'ground',
+					[MID]: [_('Hungarian 2nd Army'), _('')]
 				},
 				33: {
-					faction: 'germany', type: 'command',
-					[MID]: [_(''), _('')]
+					faction: 'pact', type: 'ground',
+					[MID]: [_('Armata Italiana in Russia'), _('')]
 				}
 //
 // Late game (49-71)

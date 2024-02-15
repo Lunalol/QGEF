@@ -51,64 +51,64 @@ define(["dojo", "dojo/_base/declare"], function (dojo, declare)
 // Mid game (34-48)
 //
 				34: {
-					faction: 'sovietUnion', type: 'command',
-					[MID]: [_(''), _('')]
+					faction: 'sovietUnion', type: 'ground',
+					[MID]: [_('Trans-Siberian Railway'), _('')]
 				},
 				35: {
-					faction: 'sovietUnion', type: 'command',
-					[MID]: [_(''), _('')]
+					faction: 'sovietUnion', type: 'ground',
+					[MID]: [_('People’s Militia Army'), _('')]
 				},
 				36: {
-					faction: 'sovietUnion', type: 'command',
-					[MID]: [_(''), _('')]
+					faction: 'sovietUnion', type: 'sea',
+					[MID]: [_('Red Banner Baltic Fleet'), _('')]
 				},
 				37: {
 					faction: 'sovietUnion', type: 'command',
-					[MID]: [_(''), _('')]
+					[MID]: [_('Scorched Earth'), _('')]
 				},
 				38: {
 					faction: 'sovietUnion', type: 'command',
-					[MID]: [_(''), _('')]
+					[MID]: [_('General Winter'), _('')]
 				},
 				39: {
 					faction: 'sovietUnion', type: 'command',
-					[MID]: [_(''), _('')]
+					[MID]: [_('Operation Countenance'), _('')]
 				},
 				40: {
-					faction: 'sovietUnion', type: 'command',
-					[MID]: [_(''), _('')]
+					faction: 'sovietUnion', type: 'ground',
+					[MID]: [_('Militsiya'), _('')]
 				},
 				41: {
-					faction: 'sovietUnion', type: 'command',
-					[MID]: [_(''), _('')]
+					faction: 'sovietUnion', type: 'ground',
+					[MID]: [_('Tank Desant'), _('')]
 				},
 				42: {
-					faction: 'sovietUnion', type: 'command',
-					[MID]: [_(''), _('')]
+					faction: 'sovietUnion', type: 'ground',
+					[MID]: [_('The Stronghold of Sevastopol'), _('')]
 				},
 				43: {
-					faction: 'sovietUnion', type: 'command',
-					[MID]: [_(''), _('')]
+					faction: 'sovietUnion', type: 'ground',
+					[MID]: [_('Soviet Cavalry Corps'), _('')]
 				},
 				44: {
-					faction: 'sovietUnion', type: 'command',
-					[MID]: [_(''), _('')]
+					faction: 'sovietUnion', type: 'ground',
+					[MID]: [_('Snipers'), _('')]
 				},
 				45: {
-					faction: 'sovietUnion', type: 'command',
-					[MID]: [_(''), _('')]
+					faction: 'sovietUnion', type: 'tank',
+					[MID]: [_('T-34 Medium Tank'), _('')]
 				},
 				46: {
-					faction: 'sovietUnion', type: 'command',
-					[MID]: [_(''), _('')]
+					faction: 'sovietUnion', type: 'ground',
+					[MID]: [_('Brothers and Sisters!'), _('')]
 				},
 				47: {
 					faction: 'sovietUnion', type: 'command',
-					[MID]: [_(''), _('')]
+					[MID]: [_('General Mud'), _('')]
 				},
 				48: {
 					faction: 'sovietUnion', type: 'command',
-					[MID]: [_(''), _('')]
+					[MID]: [_('5 Year Plan'), _('')]
 				}
 //
 // Late game (72-100)
