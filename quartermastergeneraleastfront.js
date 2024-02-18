@@ -86,13 +86,30 @@ define(["dojo", "dojo/_base/declare", "ebg/core/gamegui", "ebg/counter",
 			console.log('Entering state: ' + stateName, state.args);
 //
 			if (!(state.args)) return;
+//
 			if ('move' in state.args) for (let piece in state.args.move) dojo.addClass(`QGEFpiece-${piece}`, 'QGEFselectable');
+			if ('attack' in state.args) {
+				for (let piece in state.args.attack)
+				{
+					const node = $(`QGEFpiece-${piece}`);
+					dojo.addClass(node, 'QGEFselectable');
+					for (let location of state.args.attack[piece]) this.board.arrow(+node.dataset.location, location);
+				}
+			}
+
+//
+			if ('FACTION' in state.args)
+			{
+				if (state.args.FACTION === 'axis') $('QGEFflex').appendChild($('QGEFhand-allies'));
+				if (state.args.FACTION === 'allies') $('QGEFflex').appendChild($('QGEFhand-axis'));
+			}
 //
 			switch (stateName)
 			{
 //
 				case 'firstActionStep':
 				case 'secondActionStep':
+//
 //
 					dojo.query('.QGEFhandHolder .QGEFselected').removeClass('QGEFselected');
 					dojo.query('.QGEFcontingencyHolder .QGEFselected').removeClass('QGEFselected');
@@ -112,10 +129,11 @@ define(["dojo", "dojo/_base/declare", "ebg/core/gamegui", "ebg/counter",
 							break;
 						case 'forcedMarch':
 							this.gamedatas.gamestate.descriptionmyturn = _('Discard 1 card to move 1 piece');
-							this.gamedatas.gamestate.possibleactions = ['move'];
+							this.gamedatas.gamestate.possibleactions = ['forcedMarch'];
 							break;
 						case 'desperateAttack':
 							this.gamedatas.gamestate.descriptionmyturn = _('Discard 2 cards and then attack a land space');
+							this.gamedatas.gamestate.possibleactions = ['desperateAttack'];
 							break;
 					}
 					this.updatePageTitle();
@@ -300,14 +318,15 @@ define(["dojo", "dojo/_base/declare", "ebg/core/gamegui", "ebg/counter",
 				dojo.style('QGEFproductionInitiative', 'display', (cards + contingency === 0) ? '' : 'none');
 			}
 		},
-		QGEFmovement: function (location)
+		QGEFmovement: function (location, movement = true)
 		{
 			this.board.clearCanvas();
 //
 			const pieces = dojo.query('.QGEFpiece.QGEFselected', 'QGEFboard');
 			for (let piece of pieces) this.board.arrow(+piece.dataset.location, location, '#00FF0080');
 //
-			if (pieces.length > 0 && this.isCurrentPlayerActive()) this.action('move', {location: location, pieces: JSON.stringify(pieces.reduce((L, node) => [...L, +node.dataset.id], []))});
+			if (pieces.length > 0 && this.isCurrentPlayerActive())
+				this.action('move', {location: location, pieces: JSON.stringify(pieces.reduce((L, node) => [...L, +node.dataset.id], [])), movement: movement});
 		},
 		QGEFdeploy: function (location)
 		{

@@ -23,7 +23,8 @@ trait gameStateArguments
 	function argAction()
 	{
 		$FACTION = Factions::getActive();
-		$action = Factions::getStatus($FACTION, 'action');
+		$actions = Factions::getStatus($FACTION, 'action');
+		$action = array_pop($actions);
 //
 		switch ($action['name'])
 		{
@@ -62,7 +63,7 @@ trait gameStateArguments
 //
 			case 'desperateAttack':
 //
-				$this->possible = [];
+				$this->possible = Pieces::getPossibleAttacks($FACTION, Pieces::getAll($FACTION));
 				return ['FACTION' => $FACTION, 'action' => $action, 'attack' => $this->possible];
 //
 		}

@@ -33,6 +33,7 @@ html {
 	display: none;
 }
 /* </editor-fold> */
+/**/
 /* <editor-fold defaultstate="collapsed" desc="Board"> */
 #QGEFplayArea {
 }
@@ -60,6 +61,17 @@ html {
 	visibility: hidden;
 }
 /* </editor-fold> */
+/* <editor-fold defaultstate="collapsed" desc="Zoom Slider & Buttons"> */
+.QGEFzoom {
+	transform-origin: top;
+	transform: scale(2);
+	z-index: 1;
+}
+.QGEFzoomIcon {
+	background-color: #ffffffc0;
+	border-radius: 50%;
+}
+/* </editor-fold> */
 /* <editor-fold defaultstate="collapsed" desc="Regions"> */
 .QGEFregion:hover {
 	fill: #ffffff20;
@@ -77,17 +89,7 @@ html {
 	fill: #ffffffE0;
 }
 /* </editor-fold> */
-/* <editor-fold defaultstate="collapsed" desc="Zoom Slider & Buttons"> */
-.QGEFzoom {
-	transform-origin: top;
-	transform: scale(2);
-	z-index: 1;
-}
-.QGEFzoomIcon {
-	background-color: #ffffffc0;
-	border-radius: 50%;
-}
-/* </editor-fold> */
+/**/
 /* <editor-fold defaultstate="collapsed" desc="Logs"> */
 .QGEF-phase {
 	font-family: CutrightWF;
@@ -118,6 +120,7 @@ html {
 	background-image: url('img/allies.jpg');
 }
 /* </editor-fold> */
+/**/
 /* <editor-fold defaultstate="collapsed" desc="Cards"> */
 .QGEFcontingencyHolder {
 	display: flex;
@@ -135,8 +138,8 @@ html {
 }
 .QGEFcardContainer {
 	margin: 5px;
-	transform-origin: center top;
 	transition: transform 0.25s;
+	transform-origin: center bottom;
 }
 .QGEFcard {
 	width: 144px;
@@ -244,6 +247,7 @@ html {
 	line-height: 12px;
 }
 /* </editor-fold> */
+/**/
 /* <editor-fold defaultstate="collapsed" desc="VP Track"> */
 .QGEFvpTrack {
 	position: absolute;
@@ -310,6 +314,7 @@ html {
 	color: white;
 }
 /* </editor-fold> */
+/**/
 /* <editor-fold defaultstate="collapsed" desc="Pieces"> */
 .QGEFpiece {
 	background-image: url('img/pieces.png');
@@ -425,6 +430,7 @@ html {
 	transition: transform .5s;
 }
 /* </editor-fold> */
+/* <editor-fold defaultstate="collapsed" desc="Pieces on Action Bar"> */
 .QGEFpieceContainer {
 	height: 50px;
 	margin-left: 5px;
@@ -446,3 +452,5 @@ html {
 	transform: scale(120%);
 	transition: transform .5s;
 }
+/* </editor-fold> */
+

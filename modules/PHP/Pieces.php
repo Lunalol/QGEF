@@ -184,4 +184,26 @@ class Pieces extends APP_GameClass
 #
 		return $possibles;
 	}
+	function getPossibleAttacks(string $FACTION, array $pieces): array
+	{
+		$ennemies = self::getEnnemyControled($FACTION);
+#
+		$possibles = [];
+		foreach ($pieces as $piece)
+		{
+			if ($piece['type'] == self::INFANTERY || $piece['type'] == self::TANK)
+			{
+				$locations = [];
+				foreach (Board::ADJACENCY[$piece['location']] as $next_location)
+				{
+					# Infantry and tanks may only move to land spaces
+					if (Board::REGIONS[$next_location]['type'] === LAND && in_array($next_location, $ennemies)) $locations[] = $next_location;
+				}
+#
+				if ($locations) $possibles[$piece['id']] = $locations;
+			}
+		}
+#
+		return $possibles;
+	}
 }

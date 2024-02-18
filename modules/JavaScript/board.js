@@ -185,8 +185,10 @@ define(["dojo", "dojo/_base/declare"], function (dojo, declare)
 			{
 				dojo.stopEvent(event);
 //
+				if (this.bgagame.gamedatas.gamestate.possibleactions.includes('forcedMarch')) return this.bgagame.QGEFmovement(+node.dataset.location, false);
 				if (this.bgagame.gamedatas.gamestate.possibleactions.includes('move')) return this.bgagame.QGEFmovement(+node.dataset.location);
 				if (this.bgagame.gamedatas.gamestate.possibleactions.includes('deploy')) return this.bgagame.QGEFdeploy(+node.dataset.location);
+				if (this.bgagame.gamedatas.gamestate.possibleactions.includes('attack')) return this.bgagame.QGEFattack(+node.dataset.location);
 			}
 		},
 		clearCanvas()

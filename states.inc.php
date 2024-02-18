@@ -91,7 +91,7 @@ $machinestates = [
 		'descriptionmyturn' => clienttranslate('${you} are doing an action'),
 		'type' => 'activeplayer',
 		'args' => 'argAction',
-		'possibleactions' => ['deploy', 'cancel'],
+		'possibleactions' => ['deploy', 'move', 'attack', 'cancel'],
 		'transitions' => ['continue' => 125, 'cancel' => 121, 'action' => 121, 'next' => 130]
 	],
 	130 => [
@@ -116,7 +116,7 @@ $machinestates = [
 		'descriptionmyturn' => clienttranslate('${you} are doing an action'),
 		'type' => 'activeplayer',
 		'args' => 'argAction',
-		'possibleactions' => ['deploy', 'cancel'],
+		'possibleactions' => ['deploy', 'move', 'attack', 'cancel'],
 		'transitions' => ['continue' => 135, 'cancel' => 131, 'action' => 131, 'next' => 140]
 	],
 	140 => [

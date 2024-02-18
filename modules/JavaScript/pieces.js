@@ -51,8 +51,22 @@ define(["dojo", "dojo/_base/declare"], function (dojo, declare)
 			{
 				dojo.stopEvent(event);
 //
-				if (event.detail === 1) dojo.toggleClass(node, 'QGEFselected');
-				else dojo.query(`.QGEFpiece.QGEFselectable[data-type='${node.dataset.type}'][data-location='${node.dataset.location}']`).toggleClass('QGEFselected', dojo.hasClass(node, 'QGEFselected'));
+				if (this.bgagame.gamedatas.gamestate.possibleactions.includes('forcedMarch'))
+				{
+					if (!dojo.hasClass(node, 'QGEFselected')) dojo.query(`.QGEFpiece.QGEFselectable`, 'QGEFboard').removeClass('QGEFselected');
+					dojo.toggleClass(node, 'QGEFselected');
+				}
+				if (this.bgagame.gamedatas.gamestate.possibleactions.includes('desperateAttack'))
+				{
+					dojo.query(`.QGEFpiece.QGEFselectable`, 'QGEFboard').removeClass('QGEFselected');
+					dojo.query(`.QGEFpiece.QGEFselectable[data-faction='${node.dataset.faction}'][data-location='${node.dataset.location}']`, 'QGEFboard').toggleClass('QGEFselected');
+				}
+				else
+				{
+					if (event.detail === 1) dojo.toggleClass(node, 'QGEFselected');
+					else
+						dojo.query(`.QGEFpiece.QGEFselectable[data-type='${node.dataset.type}'][data-location='${node.dataset.location}']`, 'QGEFboard').toggleClass('QGEFselected', dojo.hasClass(node, 'QGEFselected'));
+				}
 //
 				if ('move' in this.bgagame.gamedatas.gamestate.args)
 				{
@@ -72,6 +86,27 @@ define(["dojo", "dojo/_base/declare"], function (dojo, declare)
 						}
 						node.setAttribute('class', possible ? 'QGEFregion QGEFselectable' : 'QGEFregion');
 						if (possible) for (let piece of pieces) this.bgagame.board.arrow(+piece.dataset.location, +node.dataset.location, '#00FF0080');
+					});
+				}
+//
+				if ('attack' in this.bgagame.gamedatas.gamestate.args)
+				{
+					this.bgagame.board.clearCanvas();
+//
+					const pieces = dojo.query('.QGEFpiece.QGEFselected', 'QGEFboard');
+					dojo.query('.QGEFregion', 'QGEFboard').forEach((node) => {
+//
+						let possible = pieces.length > 0;
+						for (let piece of pieces)
+						{
+							if (!this.bgagame.gamedatas.gamestate.args.attack[piece.dataset.id].includes(+node.dataset.location))
+							{
+								possible = false;
+								break;
+							}
+						}
+						node.setAttribute('class', possible ? 'QGEFregion QGEFselectable' : 'QGEFregion');
+						if (possible) for (let piece of pieces) this.bgagame.board.arrow(+piece.dataset.location, +node.dataset.location, '#FF000080');
 					});
 				}
 			}

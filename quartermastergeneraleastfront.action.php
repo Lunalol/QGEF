@@ -32,12 +32,6 @@ class action_quartermastergeneraleastfront extends APP_GameAction
 		$this->game->acCancel();
 		self::ajaxResponse("");
 	}
-	public function move()
-	{
-		self::setAjaxMode();
-		$this->game->acMove(self::getArg("location", AT_int, true), self::getArg("pieces", AT_json, true));
-		self::ajaxResponse("");
-	}
 	public function conscription()
 	{
 		self::setAjaxMode();
@@ -60,6 +54,12 @@ class action_quartermastergeneraleastfront extends APP_GameAction
 	{
 		self::setAjaxMode();
 		$this->game->acProductionInitiative();
+		self::ajaxResponse("");
+	}
+	public function move()
+	{
+		self::setAjaxMode();
+		$this->game->acMove(self::getArg("location", AT_int, true), self::getArg("pieces", AT_json, true), self::getArg("movement", AT_bool, false));
 		self::ajaxResponse("");
 	}
 	public function deploy()
