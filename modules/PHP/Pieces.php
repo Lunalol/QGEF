@@ -103,8 +103,8 @@ class Pieces extends APP_GameClass
 			switch ($piece['type'])
 			{
 #
-				case 'infantery':
-				case 'tank':
+				case self::INFANTERY:
+				case self::TANK:
 #
 					foreach (Board::ADJACENCY[$piece['location']] as $next_location)
 					{
@@ -120,7 +120,7 @@ class Pieces extends APP_GameClass
 					}
 					break;
 #
-				case 'airplane':
+				case self::AIRPLANE:
 #
 					foreach (Board::ADJACENCY[$piece['location']] as $next_location)
 					{
@@ -162,7 +162,7 @@ class Pieces extends APP_GameClass
 					}
 					break;
 #
-				case 'fleet':
+				case self::FLEET:
 #
 					foreach (Board::ADJACENCY[$piece['location']] as $next_location)
 					{

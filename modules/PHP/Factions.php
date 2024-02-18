@@ -29,7 +29,7 @@ class Factions extends APP_GameClass
 //
 	static function create(string $FACTION, int $player_id): int
 	{
-		self::DbQuery("INSERT INTO factions (faction, player_id) VALUES ('$FACTION', $player_id)");
+		self::DbQuery("INSERT INTO factions (faction, player_id,status) VALUES ('$FACTION', $player_id, '{}')");
 		return self::DbGetLastId();
 	}
 	static function getAllDatas(): array
@@ -82,6 +82,6 @@ class Factions extends APP_GameClass
 	}
 	function getControl(string $FACTION): array
 	{
-		return self::getObjectListFromDB("SELECT location FROM control WHERE player = '$FACTION'", true);
+		return self::getObjectListFromDB("SELECT location FROM control WHERE player IN ('both', '$FACTION')", true);
 	}
 }

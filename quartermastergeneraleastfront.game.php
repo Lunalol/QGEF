@@ -143,6 +143,7 @@ class QuartermasterGeneralEastFront extends Table
 		$result = [
 //
 			'REGIONS' => $this->REGIONS,
+			'ADJACENCY' => Board::ADJACENCY,
 			'PIECES' => Pieces::PIECES,
 //
 			'players' => self::getCollectionFromDb("SELECT player_id id, player_score score FROM player"),

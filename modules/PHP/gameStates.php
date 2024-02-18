@@ -27,9 +27,9 @@ trait gameStates
 // ➤ Place your starting pieces on the board (see next page).
 // ➤ Set the rest of your pieces to the side — these are your available pieces.
 //
-		foreach (Pieces::STARTING as $player => $FACTIONs) foreach ($FACTIONs as $FACTION => $TYPEs) foreach ($TYPEs as $TYPE => $locations) foreach ($locations as $location)
+		foreach (Pieces::STARTING as $FACTION => $FACTIONs) foreach ($FACTIONs as $faction => $TYPEs) foreach ($TYPEs as $type => $locations) foreach ($locations as $location)
 //* -------------------------------------------------------------------------------------------------------- */
-						self::notifyAllPlayers('placePiece', '', ['piece' => Pieces::get(Pieces::create($player, $FACTION, $TYPE, $location))]);
+						self::notifyAllPlayers('placePiece', '', ['piece' => Pieces::get(Pieces::create($FACTION, $faction, $type, $location))]);
 //* -------------------------------------------------------------------------------------------------------- */
 //
 // ➤ Shuffle your Mid War cards and draw 7 cards.

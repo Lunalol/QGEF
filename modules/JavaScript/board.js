@@ -186,12 +186,52 @@ define(["dojo", "dojo/_base/declare"], function (dojo, declare)
 				dojo.stopEvent(event);
 //
 				if (this.bgagame.gamedatas.gamestate.possibleactions.includes('move')) return this.bgagame.QGEFmovement(+node.dataset.location);
+				if (this.bgagame.gamedatas.gamestate.possibleactions.includes('deploy')) return this.bgagame.QGEFdeploy(+node.dataset.location);
 			}
 		},
 		clearCanvas()
 		{
 			const ctx = this.canvas.getContext('2d');
 			ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+		},
+		arrow: function (start, end, color = '#FF000080')
+		{
+			if (start === end) return;
+//
+			const ctx = this.canvas.getContext('2d');
+//
+			ctx.save();
+//
+			ctx.strokeStyle = '#00000020';
+			ctx.fillStyle = color;
+//
+			const dx = REGIONS[end].x - REGIONS[start].x;
+			const dy = REGIONS[end].y - REGIONS[start].y;
+//
+			if (dx > 0) angle = Math.atan(dy / dx);
+			else if (dx < 0) angle = Math.PI + Math.atan(dy / dx);
+			else angle = Math.PI / 2 * Math.sign(dy);
+//
+			ctx.translate(REGIONS[start].x, REGIONS[start].y);
+			ctx.scale(Math.sqrt(dx * dx + dy * dy) / 100., Math.sqrt(dx * dx + dy * dy) / 100.);
+			ctx.rotate(angle);
+//
+			ctx.beginPath();
+			ctx.moveTo(0, 0);
+			ctx.lineTo(-5, 10);
+			ctx.lineTo(80, 5);
+			ctx.lineTo(80, 10);
+			ctx.lineTo(100, 00);
+			ctx.lineTo(80, -10);
+			ctx.lineTo(80, -5);
+			ctx.lineTo(0, -10);
+			ctx.lineTo(-5, -10);
+			ctx.closePath();
+//
+			ctx.fill();
+			ctx.stroke();
+//
+			ctx.restore();
 		}
 	}
 	);

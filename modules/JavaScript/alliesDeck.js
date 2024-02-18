@@ -128,6 +128,10 @@ define(["dojo", "dojo/_base/declare"], function (dojo, declare)
 //
 			this.bgagame.addTooltip(node.id, this.cards[card.type_arg][card.type][0], this.cards[card.type_arg][card.type][1], 1000);
 		},
+		discard: function (FACTION, card)
+		{
+			dojo.query(`.QGEFcardContainer[data-id='${card}']`, `QGEFhand-${FACTION}`).remove();
+		},
 		click: function (event)
 		{
 			const node = event.currentTarget;

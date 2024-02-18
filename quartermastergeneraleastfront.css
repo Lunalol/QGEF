@@ -24,7 +24,7 @@
 }
 /* <editor-fold defaultstate="collapsed" desc="BGA UI"> */
 div,img {
-	user-select: none;
+	/*	user-select: none;*/
 }
 html {
 	background: url('img/background.jpg');
@@ -53,6 +53,11 @@ html {
 }
 #QGEFcanvas{
 	position: absolute;
+	pointer-events: none;
+	z-index: 1;
+}
+#QGEFboard.QGEFhidePieces #QGEFcanvas {
+	visibility: hidden;
 }
 /* </editor-fold> */
 /* <editor-fold defaultstate="collapsed" desc="Regions"> */
@@ -307,29 +312,7 @@ html {
 /* </editor-fold> */
 /* <editor-fold defaultstate="collapsed" desc="Pieces"> */
 .QGEFpiece {
-	position: absolute;
 	background-image: url('img/pieces.png');
-	transform: scale(50%);
-	transition: left CALC(var(--DELAY) * 1ms), top CALC(var(--DELAY) * 1ms), transform .25s;
-}
-.QGEFhidePieces .QGEFpiece {
-	visibility: hidden;
-}
-.QGEFpiece:not(.QGEFselectable) {
-	filter: brightness(0.5);
-}
-.QGEFpiece.QGEFselected
-{
-	filter: contrast(2);
-	transform: scale(75%);
-	transition: transform .5s;
-}
-.QGEFpiece:not(.QGEFselected):hover
-{
-	filter: contrast(2);
-	transform: scale(60%);
-	z-index: 25 !important;
-	transition: transform .5s;
 }
 .QGEFpiece[data-type='infantery'] {
 	width: 196px;
@@ -415,3 +398,51 @@ html {
 	clip-path: path('M145 43C145 43 145 28 145 28 145 26 145 22 146 21 148 18 158 18 161 18 171 18 177 24 186 27 192 29 196 27 201 28 206 29 218 36 223 38 225 39 234 43 235 44 239 47 235 51 239 54 241 56 262 65 265 66 272 68 292 63 300 63 305 63 319 70 324 73 327 74 336 78 337 80 339 83 337 90 336 93 336 93 328 126 328 126 328 126 259 134 259 134 259 134 189 142 189 142 189 142 131 148 131 148 131 148 80 154 80 154 80 154 54 157 54 157 50 156 43 152 39 150 35 148 20 142 18 139 16 137 13 130 12 127 9 119 1 101 1 93 1 93 67 87 67 87 67 87 96 85 96 85 96 85 117 82 117 82 119 82 123 82 124 80 127 78 127 69 127 66 127 66 127 45 127 45 127 45 145 43 145 43Z');
 }
 /* </editor-fold> */
+/* <editor-fold defaultstate="collapsed" desc="Pieces on Board"> */
+#QGEFboard .QGEFpiece {
+	position: absolute;
+	background-image: url('img/pieces.png');
+	transform: scale(50%);
+	transition: left CALC(var(--DELAY) * 1ms), top CALC(var(--DELAY) * 1ms), transform .25s;
+}
+#QGEFboard.QGEFhidePieces .QGEFpiece {
+	visibility: hidden;
+}
+#QGEFboard .QGEFpiece:not(.QGEFselectable) {
+	filter: brightness(0.5);
+}
+#QGEFboard .QGEFpiece.QGEFselected
+{
+	filter: contrast(2);
+	transform: scale(75%);
+	transition: transform .5s;
+}
+#QGEFboard .QGEFpiece:not(.QGEFselected):hover
+{
+	filter: contrast(2);
+	transform: scale(60%);
+	z-index: 25 !important;
+	transition: transform .5s;
+}
+/* </editor-fold> */
+.QGEFpieceContainer {
+	height: 50px;
+	margin-left: 5px;
+	margin-right: 5px;
+}
+.QGEFpieceContainer
+{
+	transition: transform .25s;
+}
+.QGEFpieceContainer.QGEFselected
+{
+	filter: contrast(2);
+	transform: scale(150%);
+	transition: transform .5s;
+}
+.QGEFpieceContainer:not(.QGEFselected):hover
+{
+	filter: contrast(2);
+	transform: scale(120%);
+	transition: transform .5s;
+}

@@ -15,8 +15,6 @@ define(["dojo", "dojo/_base/declare"], function (dojo, declare)
 		},
 		place: function (piece)
 		{
-			console.log('place', piece);
-//
 			let location = null;
 //
 			let node = $(`QGEFpiece-${piece.id}`);
@@ -35,8 +33,6 @@ define(["dojo", "dojo/_base/declare"], function (dojo, declare)
 		},
 		arrange: function (location, type)
 		{
-			console.log('arrange', location, type);
-//
 			const decal = {infantery: 0, tank: -0.5, airplane: 0.5, fleet: -0.5}[type];
 			const nodes = dojo.query(`.QGEFpiece[data-type='${type}'][data-location='${location}']`, 'QGEFboard');
 			for (let i = 0; i < nodes.length; i++)
@@ -60,8 +56,9 @@ define(["dojo", "dojo/_base/declare"], function (dojo, declare)
 //
 				if ('move' in this.bgagame.gamedatas.gamestate.args)
 				{
-					const pieces = dojo.query('.QGEFpiece.QGEFselected', 'QGEFboard');
+					this.bgagame.board.clearCanvas();
 //
+					const pieces = dojo.query('.QGEFpiece.QGEFselected', 'QGEFboard');
 					dojo.query('.QGEFregion', 'QGEFboard').forEach((node) => {
 //
 						let possible = pieces.length > 0;
@@ -74,6 +71,7 @@ define(["dojo", "dojo/_base/declare"], function (dojo, declare)
 							}
 						}
 						node.setAttribute('class', possible ? 'QGEFregion QGEFselectable' : 'QGEFregion');
+						if (possible) for (let piece of pieces) this.bgagame.board.arrow(+piece.dataset.location, +node.dataset.location, '#00FF0080');
 					});
 				}
 			}
