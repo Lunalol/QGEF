@@ -104,7 +104,7 @@ trait gameStateActions
 //* -------------------------------------------------------------------------------------------------------- */
 		self::action($FACTION);
 	}
-	function acMove(string $location, array $pieces, bool $movement = true): void
+	function acMove(string $location, array $pieces): void
 	{
 		$this->checkAction('move');
 //
@@ -132,7 +132,48 @@ trait gameStateActions
 //* -------------------------------------------------------------------------------------------------------- */
 		}
 //
-		if (!$movement) self::action($FACTION);
+		if ($this->gamestate->state()['name'] === 'action') self::action($FACTION);
 		else $this->gamestate->nextState('continue');
+	}
+	function acAttack(string $location, array $pieces): void
+	{
+		$this->checkAction('attack');
+//
+		$FACTION = Factions::getActive();
+//
+// Check attack
+//
+		$faction = null;
+		foreach ($pieces as $id)
+		{
+			if (!array_key_exists($id, $this->possible)) throw new BgaVisibleSystemException("Invalid piece: $id");
+			if (!in_array($location, $this->possible[$id])) throw new BgaVisibleSystemException("Invalid location: $location");
+//
+			$piece = Pieces::get($id);
+			if (is_null($faction)) $faction = $piece['faction'];
+			if ($faction !== $piece['faction']) throw new BgaVisibleSystemException("Invalid faction");
+		}
+//
+// Do attack
+//
+		Factions::setStatus($FACTION, 'attack', ['location' => $location, 'faction' => $faction, 'pieces' => $pieces]);
+//
+		$this->gamestate->nextState('attack');
+	}
+	function acRemovePiece(int $piece): void
+	{
+		$this->checkAction('removePiece');
+//
+		$FACTION = Factions::getActive();
+//
+// Check remove piece
+//
+		if (!in_array($piece, $this->possible)) throw new BgaVisibleSystemException("Invalid piece: $piece");
+//* -------------------------------------------------------------------------------------------------------- */
+		self::notifyAllPlayers('removePiece', '', ['piece' => Pieces::get($piece)]);
+//* -------------------------------------------------------------------------------------------------------- */
+		Pieces::destroy($piece);
+//
+		$this->gamestate->nextState('continue');
 	}
 }

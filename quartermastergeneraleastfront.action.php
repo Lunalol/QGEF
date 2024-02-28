@@ -59,13 +59,25 @@ class action_quartermastergeneraleastfront extends APP_GameAction
 	public function move()
 	{
 		self::setAjaxMode();
-		$this->game->acMove(self::getArg("location", AT_int, true), self::getArg("pieces", AT_json, true), self::getArg("movement", AT_bool, false));
+		$this->game->acMove(self::getArg("location", AT_int, true), self::getArg("pieces", AT_json, true));
 		self::ajaxResponse("");
 	}
 	public function deploy()
 	{
 		self::setAjaxMode();
 		$this->game->acDeploy(self::getArg("location", AT_int, true), self::getArg("faction", AT_alphanum, true), self::getArg("type", AT_alphanum, true));
+		self::ajaxResponse("");
+	}
+	public function attack()
+	{
+		self::setAjaxMode();
+		$this->game->acAttack(self::getArg("location", AT_int, true), self::getArg("pieces", AT_json, true));
+		self::ajaxResponse("");
+	}
+	public function removePiece()
+	{
+		self::setAjaxMode();
+		$this->game->acRemovePiece(self::getArg("piece", AT_int, true));
 		self::ajaxResponse("");
 	}
 }

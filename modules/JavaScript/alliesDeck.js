@@ -15,99 +15,108 @@ define(["dojo", "dojo/_base/declare"], function (dojo, declare)
 //
 // Translate
 //
+			this.FACTIONS = {sovietUnion: _('Soviet Union')};
+//
 			this.cards = {
 //
 // First game (8-14)
 //
 				8: {
-					faction: 'sovietUnion', type: 'command',
-					[FIRST_GAME]: [_('Stavka'), _('Draw 1 card; move a Soviet piece; then take another action.')]
+					type: 'command', [FIRST_GAME]: [
+						_('Stavka'),
+						_('Draw 1 card; move a Soviet piece; then take another action.')]
 				},
 				9: {
-					faction: 'sovietUnion', type: 'air',
-					[FIRST_GAME]: [_('Women Volunteers'), _('Deploy a Soviet airplane in Moscow and an infantry in a Victory Star space east of the 1939 line.')]
+					type: 'air', [FIRST_GAME]: [
+						_('Women Volunteers'),
+						_('Deploy a Soviet airplane in Moscow and an infantry in a Victory Star space east of the 1939 line.')]
 				},
 				10: {
-					faction: 'sovietUnion', type: 'ground',
-					[FIRST_GAME]: [_('Molotov Cocktails'), _('Deploy a Soviet infantry in a space east of the 1939 line; then you may attack with a force containing that infantry.')]
+					type: 'ground', [FIRST_GAME]: [
+						_('Molotov Cocktails'),
+						_('Deploy a Soviet infantry in a space east of the 1939 line; then you may attack with a force containing that infantry.')]
 				},
 				11: {
-					faction: 'sovietUnion', type: 'ground',
-					[FIRST_GAME]: [_('Dig in!'), _('Deploy a Soviet infantry in each of 2 different spaces that already contain a Soviet piece.')]
+					type: 'ground', [FIRST_GAME]: [
+						_('Dig in!'),
+						_('Deploy a Soviet infantry in each of 2 different spaces that already contain a Soviet piece.')]
 				},
 				12: {
-					faction: 'sovietUnion', type: 'sea',
-					[FIRST_GAME]: [_('Black Sea Fleet'), _('Deploy a Soviet fleet in Sea of Azov.')]
+					type: 'sea', [FIRST_GAME]: [
+						_('Black Sea Fleet'),
+						_('Deploy a Soviet fleet in Sea of Azov.')]
 				},
 				13: {
-					faction: 'sovietUnion', type: 'ground',
-					[FIRST_GAME]: [_('Border Guards'), _('Deploy a Soviet infantry in each of 2 different spaces west of the 1939 line.')]
+					type: 'ground', [FIRST_GAME]: [
+						_('Border Guards'),
+						_('Deploy a Soviet infantry in each of 2 different spaces west of the 1939 line.')]
 				},
 				14: {
-					faction: 'sovietUnion', type: 'ground',
-					[[FIRST_GAME]]: [_('Mosin–Nagant M1891/30 Rifle'), _('Deploy a Soviet infantry in a space east of the 1939 line; then take another action.')]
+					type: 'ground', [FIRST_GAME]: [
+						_('Mosin–Nagant M1891/30 Rifle'),
+						_('Deploy a Soviet infantry in a space east of the 1939 line; then take another action.')]
 				},
 //
 // Mid game (34-48)
 //
 				34: {
-					faction: 'sovietUnion', type: 'ground',
+					type: 'ground',
 					[MID]: [_('Trans-Siberian Railway'), _('')]
 				},
 				35: {
-					faction: 'sovietUnion', type: 'ground',
+					type: 'ground',
 					[MID]: [_('People’s Militia Army'), _('')]
 				},
 				36: {
-					faction: 'sovietUnion', type: 'sea',
+					type: 'sea',
 					[MID]: [_('Red Banner Baltic Fleet'), _('')]
 				},
 				37: {
-					faction: 'sovietUnion', type: 'command',
+					type: 'command',
 					[MID]: [_('Scorched Earth'), _('')]
 				},
 				38: {
-					faction: 'sovietUnion', type: 'command',
+					type: 'command',
 					[MID]: [_('General Winter'), _('')]
 				},
 				39: {
-					faction: 'sovietUnion', type: 'command',
+					type: 'command',
 					[MID]: [_('Operation Countenance'), _('')]
 				},
 				40: {
-					faction: 'sovietUnion', type: 'ground',
+					type: 'ground',
 					[MID]: [_('Militsiya'), _('')]
 				},
 				41: {
-					faction: 'sovietUnion', type: 'ground',
+					type: 'ground',
 					[MID]: [_('Tank Desant'), _('')]
 				},
 				42: {
-					faction: 'sovietUnion', type: 'ground',
+					type: 'ground',
 					[MID]: [_('The Stronghold of Sevastopol'), _('')]
 				},
 				43: {
-					faction: 'sovietUnion', type: 'ground',
+					type: 'ground',
 					[MID]: [_('Soviet Cavalry Corps'), _('')]
 				},
 				44: {
-					faction: 'sovietUnion', type: 'ground',
+					type: 'ground',
 					[MID]: [_('Snipers'), _('')]
 				},
 				45: {
-					faction: 'sovietUnion', type: 'tank',
+					type: 'tank',
 					[MID]: [_('T-34 Medium Tank'), _('')]
 				},
 				46: {
-					faction: 'sovietUnion', type: 'ground',
+					type: 'ground',
 					[MID]: [_('Brothers and Sisters!'), _('')]
 				},
 				47: {
-					faction: 'sovietUnion', type: 'command',
+					type: 'command',
 					[MID]: [_('General Mud'), _('')]
 				},
 				48: {
-					faction: 'sovietUnion', type: 'command',
+					type: 'command',
 					[MID]: [_('5 Year Plan'), _('')]
 				}
 //
@@ -118,12 +127,16 @@ define(["dojo", "dojo/_base/declare"], function (dojo, declare)
 		place: function (card)
 		{
 			const node = dojo.place(this.bgagame.format_block('QGEFcard', {
-				id: card.id, faction: this.cards[card.type_arg].faction,
+				id: card.id,
+				FACTION: this.bgagame.gamedatas.CARDS.allies[card.type_arg].faction,
+				faction: this.FACTIONS[this.bgagame.gamedatas.CARDS.allies[card.type_arg].faction],
 				type: this.cards[card.type_arg].type,
 				title: this.cards[card.type_arg][card.type][0],
 				text: this.cards[card.type_arg][card.type][1]
 			}), `QGEFhand-allies`);
 //
+			dojo.place(`<img draggable='false' class='QGEFreactionSVG' src='${g_gamethemeurl}img/svg/${this.bgagame.gamedatas.CARDS.allies[card.type_arg].reaction}.svg'>`, node);
+			dojo.place(`<div class='QGEFreaction'>${this.bgagame.REACTIONS[this.bgagame.gamedatas.CARDS.allies[card.type_arg].reaction]}</div>`, node);
 			dojo.connect(node, 'click', this, 'click');
 //
 			this.bgagame.addTooltip(node.id, this.cards[card.type_arg][card.type][0], this.cards[card.type_arg][card.type][1], 1000);

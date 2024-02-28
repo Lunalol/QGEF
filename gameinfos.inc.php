@@ -15,6 +15,7 @@ $gameinfos = [
 	'fast_additional_time' => 60,
 	'medium_additional_time' => 120,
 	'slow_additional_time' => 480,
+	'tie_breaker_description' => "If the score is tied, the Axis player wins",
 	'is_beta' => 1,
 	'complexity' => 5,
 	'luck' => 2,

@@ -7,6 +7,31 @@
  */
 class AlliesDeck extends APP_GameClass
 {
+	const DECK = [
+		8 => ['faction' => Factions::SOVIETUNION, 'reaction' => 'Advance'],
+		9 => ['faction' => Factions::SOVIETUNION, 'reaction' => 'AntiAir'],
+		10 => ['faction' => Factions::SOVIETUNION, 'reaction' => 'SustainAttack'],
+		11 => ['faction' => Factions::SOVIETUNION, 'reaction' => 'StandFast'],
+		12 => ['faction' => Factions::SOVIETUNION, 'reaction' => 'NavalCombat'],
+		13 => ['faction' => Factions::SOVIETUNION, 'reaction' => 'Exchange'],
+		14 => ['faction' => Factions::SOVIETUNION, 'reaction' => 'Exchange'],
+		34 => ['faction' => Factions::SOVIETUNION, 'reaction' => 'Retreat'],
+		35 => ['faction' => Factions::SOVIETUNION, 'reaction' => 'StandFast'],
+		36 => ['faction' => Factions::SOVIETUNION, 'reaction' => 'NavalCombat'],
+		37 => ['faction' => Factions::SOVIETUNION, 'reaction' => 'Exchange'],
+		38 => ['faction' => Factions::SOVIETUNION, 'reaction' => 'Exchange'],
+		39 => ['faction' => Factions::SOVIETUNION, 'reaction' => 'Advance'],
+		40 => ['faction' => Factions::SOVIETUNION, 'reaction' => 'Retreat'],
+		41 => ['faction' => Factions::SOVIETUNION, 'reaction' => 'SustainAttack'],
+		42 => ['faction' => Factions::SOVIETUNION, 'reaction' => 'StandFast'],
+		43 => ['faction' => Factions::SOVIETUNION, 'reaction' => 'Exchange'],
+		44 => ['faction' => Factions::SOVIETUNION, 'reaction' => 'SustainAttack'],
+		45 => ['faction' => Factions::SOVIETUNION, 'reaction' => 'Advance'],
+		46 => ['faction' => Factions::SOVIETUNION, 'reaction' => 'Exchange'],
+		47 => ['faction' => Factions::SOVIETUNION, 'reaction' => 'Exchange'],
+		48 => ['faction' => Factions::SOVIETUNION, 'reaction' => 'Advance'],
+	];
+//
 	static function init()
 	{
 		$deck = self::getNew("module.common.deck");

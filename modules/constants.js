@@ -14,6 +14,7 @@ DELAYS = {[SLOW]: 1000, [NORMAL]: 500, [FAST]: 250};
 const boardWidth = 2048;
 const boardHeight = 2048;
 //
+//
 // Regions (44)
 //
 const REGIONS = {

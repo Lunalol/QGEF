@@ -50,6 +50,10 @@ class Pieces extends APP_GameClass
 		self::DbQuery("INSERT INTO pieces (player,faction,type,location,status) VALUES ('$player','$FACTION','$TYPE',$location,'$json')");
 		return self::DbGetLastId();
 	}
+	function destroy(int $id): void
+	{
+		self::DbQuery("DELETE FROM pieces WHERE id = $id");
+	}
 	function getAllDatas(): array
 	{
 		return self::getObjectListFromDB("SELECT id,player,faction,type,location FROM pieces ORDER BY player,faction,type");
@@ -63,6 +67,10 @@ class Pieces extends APP_GameClass
 	{
 		if ($status) return self::getNonEmptyObjectFromDB("SELECT id,player,faction,type,location,status FROM pieces WHERE id = $id");
 		return self::getNonEmptyObjectFromDB("SELECT id,player,faction,type,location FROM pieces WHERE id = $id");
+	}
+	static function getAtLocation(int $location)
+	{
+		return self::getCollectionFromDB("SELECT * FROM pieces WHERE location = $location ORDER BY faction,type");
 	}
 	static function setLocation(int $id, int $location): void
 	{

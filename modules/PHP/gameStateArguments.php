@@ -18,7 +18,7 @@ trait gameStateArguments
 	{
 		$FACTION = Factions::getActive();
 //
-		return ['FACTION' => $FACTION];
+		return ['FACTION' => $FACTION, 'action' => [1 => clienttranslate('first'), 2 => clienttranslate('second')][self::getGameStateValue('action')]];
 	}
 	function argAction()
 	{
@@ -67,5 +67,55 @@ trait gameStateArguments
 				return ['FACTION' => $FACTION, 'action' => $action, 'attack' => $this->possible];
 //
 		}
+	}
+	function argAttackRoundDefender()
+	{
+		$FACTION = Factions::getActive();
+		['location' => $location, 'faction' => $attackerfaction, 'pieces' => $attacker] = Factions::getStatus($FACTION, 'attack');
+//
+		$pieces = Pieces::getAtLocation($location);
+		$defenderfactions = array_unique(array_column($pieces, 'faction'));
+//
+		$defender = array_keys($pieces);
+		foreach (Board::ADJACENCY[$location] as $next_location)
+		{
+			foreach (Pieces::getAtLocation($next_location) as $piece)
+			{
+				if ($piece['type'] === 'airplane' || $piece['type'] === 'fleet')
+				{
+					if ($attacker && $piece['player'] === $FACTION && $piece['faction'] === $attackerfaction) $attacker[] = $piece['id'];
+					if ($defender && $piece['player'] !== $FACTION && in_array($piece['faction'], $defenderfactions)) $defender[] = $piece['id'];
+				}
+			}
+		}
+//
+		$this->possible = $defender;
+//
+		return ['FACTION' => $FACTION, 'location' => $location, 'attacker' => $attacker, 'defender' => $defender];
+	}
+	function argAttackRoundAttacker()
+	{
+		$FACTION = Factions::getActive();
+		['location' => $location, 'faction' => $attackerfaction, 'pieces' => $attacker] = Factions::getStatus($FACTION, 'attack');
+//
+		$pieces = Pieces::getAtLocation($location);
+		$defenderfactions = array_unique(array_column($pieces, 'faction'));
+//
+		$defender = array_keys($pieces);
+		foreach (Board::ADJACENCY[$location] as $next_location)
+		{
+			foreach (Pieces::getAtLocation($next_location) as $piece)
+			{
+				if ($piece['type'] === 'airplane' || $piece['type'] === 'fleet')
+				{
+					if ($attacker && $piece['player'] === $FACTION && $piece['faction'] === $attackerfaction) $attacker[] = $piece['id'];
+					if ($defender && $piece['player'] !== $FACTION && in_array($piece['faction'], $defenderfactions)) $defender[] = $piece['id'];
+				}
+			}
+		}
+//
+		$this->possible = $attacker;
+//
+		return ['FACTION' => $FACTION, 'location' => $location, 'attacker' => $attacker, 'defender' => $defender];
 	}
 }

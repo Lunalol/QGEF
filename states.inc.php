@@ -58,82 +58,57 @@ $machinestates = [
 		'description' => clienttranslate('Players may move all of their pieces'),
 		'type' => 'game',
 		'action' => 'stFirstMovementStep',
-		'transitions' => ['next' => 111]
+		'transitions' => ['firstMovementStep' => 115]
 	],
-	111 => [
+	115 => [
 		'name' => 'firstMovementStep',
 		'description' => clienttranslate('${actplayer} may move all of their pieces'),
 		'descriptionmyturn' => clienttranslate('${you} may move all of your pieces'),
 		'type' => 'activeplayer',
 		'args' => 'argMovementStep',
 		'possibleactions' => ['move', 'pass'],
-		'transitions' => ['continue' => 111, 'next' => 120]
+		'transitions' => ['continue' => 115, 'next' => 120]
 	],
 	120 => [
-		'name' => 'firstActionStep',
-		'description' => clienttranslate('Players may take their first action'),
+		'name' => 'actionStep',
+		'description' => clienttranslate('Players may take their action'),
 		'type' => 'game',
-		'action' => 'stFirstActionStep',
-		'transitions' => ['next' => 121]
-	],
-	121 => [
-		'name' => 'firstActionStep',
-		'description' => clienttranslate('${actplayer} may take their first action'),
-		'descriptionmyturn' => clienttranslate('${you} may take your first action'),
-		'type' => 'activeplayer',
-		'args' => 'argActionStep',
-		'possibleactions' => ['conscription', 'forcedMarch', 'desperateAttack', 'productionInitiative', 'pass'],
-		'transitions' => ['action' => 125, 'next' => 130]
+		'action' => 'stActionStep',
+		'transitions' => ['actionStep' => 125, 'next' => 140]
 	],
 	125 => [
-		'name' => 'action',
-		'description' => clienttranslate('${actplayer} is doing an action'),
-		'descriptionmyturn' => clienttranslate('${you} are doing an action'),
-		'type' => 'activeplayer',
-		'args' => 'argAction',
-		'possibleactions' => ['deploy', 'move', 'attack', 'cancel'],
-		'transitions' => ['continue' => 125, 'cancel' => 121, 'action' => 121, 'next' => 130]
-	],
-	130 => [
-		'name' => 'secondActionStep',
-		'description' => clienttranslate('Players may take their second action'),
-		'type' => 'game',
-		'action' => 'stSecondActionStep',
-		'transitions' => ['next' => 131]
-	],
-	131 => [
-		'name' => 'secondActionStep',
-		'description' => clienttranslate('${actplayer} may take their second action'),
-		'descriptionmyturn' => clienttranslate('${you} may take your second action'),
+		'name' => 'actionStep',
+		'description' => clienttranslate('${actplayer} may take their ${action} action'),
+		'descriptionmyturn' => clienttranslate('${you} may take your ${action} action'),
 		'type' => 'activeplayer',
 		'args' => 'argActionStep',
 		'possibleactions' => ['conscription', 'forcedMarch', 'desperateAttack', 'productionInitiative', 'pass'],
-		'transitions' => ['action' => 135, 'next' => 140]
+		'transitions' => ['action' => 130, 'next' => 120]
 	],
-	135 => [
+	130 => [
 		'name' => 'action',
 		'description' => clienttranslate('${actplayer} is doing an action'),
 		'descriptionmyturn' => clienttranslate('${you} are doing an action'),
 		'type' => 'activeplayer',
 		'args' => 'argAction',
 		'possibleactions' => ['deploy', 'move', 'attack', 'cancel'],
-		'transitions' => ['continue' => 135, 'cancel' => 131, 'action' => 131, 'next' => 140]
+		'transitions' => ['continue' => 130, 'cancel' => 125, 'action' => 125, 'attack' => 200, 'next' => 120]
 	],
 	140 => [
 		'name' => 'secondMovementStep',
 		'description' => clienttranslate('Players may move their tanks and fleets'),
 		'type' => 'game',
 		'action' => 'stSecondMovementStep',
-		'transitions' => ['next' => 141]
+		'transitions' => ['next' => 145]
 	],
-	141 => [
+	145 => [
 		'name' => 'secondMovementStep',
 		'description' => clienttranslate('${actplayer} may move their tanks and fleets'),
 		'descriptionmyturn' => clienttranslate('${you} may move your tanks and fleets'),
 		'type' => 'activeplayer',
 		'args' => 'argMovementStep',
 		'possibleactions' => ['move', 'pass'],
-		'transitions' => ['continue' => 141, 'next' => 150]
+		'transitions' => ['continue' => 145, 'next' => 150]
 	],
 	150 => [
 		'name' => 'supplyStep',
@@ -158,4 +133,31 @@ $machinestates = [
 //
 // Action
 //
+	200 => [
+		'name' => 'attackRound',
+		'description' => clienttranslate('Attack round'),
+		'type' => 'game',
+		'action' => 'stAttackRound',
+		'transitions' => ['attackRoundDefender' => 210]
+	],
+	210 => [
+		'name' => 'attackRoundDefender',
+		'description' => clienttranslate('${actplayer} must remove a piece'),
+		'descriptionmyturn' => clienttranslate('${you} must remove a piece'),
+		'type' => 'activeplayer',
+		'action' => 'stAttackRoundDefender',
+		'args' => 'argAttackRoundDefender',
+		'possibleactions' => ['reaction', 'removePiece'],
+		'transitions' => ['reaction' => 210, 'continue' => 220, 'end' => 120]
+	],
+	220 => [
+		'name' => 'attackRoundAttacker',
+		'description' => clienttranslate('${actplayer} can remove a piece to initiate a new combat round'),
+		'descriptionmyturn' => clienttranslate('${you} can remove a piece to initiate a new combat round'),
+		'type' => 'activeplayer',
+		'action' => 'stAttackRoundAttacker',
+		'args' => 'argAttackRoundAttacker',
+		'possibleactions' => ['reaction', 'removePiece'],
+		'transitions' => ['continue' => 200, 'end' => 120]
+	],
 ];

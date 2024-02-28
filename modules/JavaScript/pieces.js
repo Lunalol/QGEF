@@ -31,6 +31,11 @@ define(["dojo", "dojo/_base/declare"], function (dojo, declare)
 			this.arrange(piece.location, piece.type);
 			if (location && location !== piece.location) this.arrange(location, piece.type);
 		},
+		remove: function (piece)
+		{
+			dojo.query(`.QGEFpiece[data-id='${piece.id}']`, 'QGEFboard').remove();
+			this.arrange(piece.location, piece.type);
+		},
 		arrange: function (location, type)
 		{
 			const decal = {infantery: 0, tank: -0.5, airplane: 0.5, fleet: -0.5}[type];
@@ -46,17 +51,19 @@ define(["dojo", "dojo/_base/declare"], function (dojo, declare)
 		click: function (event)
 		{
 			const node = event.currentTarget;
-//0
+//
 			if (dojo.hasClass(node, 'QGEFselectable'))
 			{
 				dojo.stopEvent(event);
+//
+				if (this.bgagame.gamedatas.gamestate.possibleactions.includes('removePiece')) return this.bgagame.action('removePiece', {piece: node.dataset.id});
 //
 				if (this.bgagame.gamedatas.gamestate.possibleactions.includes('forcedMarch'))
 				{
 					if (!dojo.hasClass(node, 'QGEFselected')) dojo.query(`.QGEFpiece.QGEFselectable`, 'QGEFboard').removeClass('QGEFselected');
 					dojo.toggleClass(node, 'QGEFselected');
 				}
-				if (this.bgagame.gamedatas.gamestate.possibleactions.includes('desperateAttack'))
+				else if (this.bgagame.gamedatas.gamestate.possibleactions.includes('desperateAttack'))
 				{
 					dojo.query(`.QGEFpiece.QGEFselectable`, 'QGEFboard').removeClass('QGEFselected');
 					dojo.query(`.QGEFpiece.QGEFselectable[data-faction='${node.dataset.faction}'][data-location='${node.dataset.location}']`, 'QGEFboard').toggleClass('QGEFselected');
@@ -68,7 +75,7 @@ define(["dojo", "dojo/_base/declare"], function (dojo, declare)
 						dojo.query(`.QGEFpiece.QGEFselectable[data-type='${node.dataset.type}'][data-location='${node.dataset.location}']`, 'QGEFboard').toggleClass('QGEFselected', dojo.hasClass(node, 'QGEFselected'));
 				}
 //
-				if ('move' in this.bgagame.gamedatas.gamestate.args)
+				if (this.bgagame.gamedatas.gamestate.possibleactions.includes('move') || this.bgagame.gamedatas.gamestate.possibleactions.includes('forcedMarch'))
 				{
 					this.bgagame.board.clearCanvas();
 //
@@ -89,7 +96,7 @@ define(["dojo", "dojo/_base/declare"], function (dojo, declare)
 					});
 				}
 //
-				if ('attack' in this.bgagame.gamedatas.gamestate.args)
+				if (this.bgagame.gamedatas.gamestate.possibleactions.includes('attack') || this.bgagame.gamedatas.gamestate.possibleactions.includes('desperateAttack'))
 				{
 					this.bgagame.board.clearCanvas();
 //

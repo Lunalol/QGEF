@@ -14,6 +14,8 @@ define(["dojo", "dojo/_base/declare"], function (dojo, declare)
 //
 // Translate
 //
+			this.FACTIONS = {sovietUnion: _('Soviet Union'), germany: _('GERMANY'), pact: _('Pact')}
+//
 			this.cards = {
 //
 // Axis
@@ -77,7 +79,8 @@ define(["dojo", "dojo/_base/declare"], function (dojo, declare)
 		{
 			const node = dojo.place(this.bgagame.format_block('QGEFcard', {
 				id: card.id,
-				faction: this.cards[card.type_arg].faction,
+				FACTION: this.cards[card.type_arg].faction,
+				faction: this.FACTIONS[this.cards[card.type_arg].faction],
 				type: this.cards[card.type_arg].type,
 				title: this.cards[card.type_arg][card.type][0],
 				text: this.cards[card.type_arg][card.type][1]

@@ -7,6 +7,35 @@
  */
 class AxisDeck extends APP_GameClass
 {
+	const DECK = [
+		1 => ['faction' => Factions::GERMANY, 'reaction' => 'SustainAttack'],
+		2 => ['faction' => Factions::GERMANY, 'reaction' => 'SustainAttack'],
+		3 => ['faction' => Factions::GERMANY, 'reaction' => 'SustainAttack'],
+		4 => ['faction' => Factions::GERMANY, 'reaction' => 'AntiAir'],
+		5 => ['faction' => Factions::GERMANY, 'reaction' => 'Advance'],
+		6 => ['faction' => Factions::GERMANY, 'reaction' => 'Advance'],
+		7 => ['faction' => Factions::PACT, 'reaction' => 'SustainAttack'],
+		15 => ['faction' => Factions::GERMANY, 'reaction' => 'Advance'],
+		16 => ['faction' => Factions::GERMANY, 'reaction' => 'Advance'],
+		17 => ['faction' => Factions::GERMANY, 'reaction' => 'Advance'],
+		18 => ['faction' => Factions::GERMANY, 'reaction' => 'Advance'],
+		19 => ['faction' => Factions::GERMANY, 'reaction' => 'StandFast'],
+		20 => ['faction' => Factions::GERMANY, 'reaction' => 'Exchange'],
+		21 => ['faction' => Factions::GERMANY, 'reaction' => 'AntiAir'],
+		22 => ['faction' => Factions::GERMANY, 'reaction' => 'Advance'],
+		23 => ['faction' => Factions::GERMANY, 'reaction' => 'Exchange'],
+		24 => ['faction' => Factions::GERMANY, 'reaction' => 'SustainAttack'],
+		25 => ['faction' => Factions::PACT, 'reaction' => 'SustainAttack'],
+		26 => ['faction' => Factions::PACT, 'reaction' => 'SustainAttack'],
+		27 => ['faction' => Factions::PACT, 'reaction' => 'Advance'],
+		28 => ['faction' => Factions::PACT, 'reaction' => 'Exchange'],
+		29 => ['faction' => Factions::PACT, 'reaction' => 'AntiAir'],
+		30 => ['faction' => Factions::PACT, 'reaction' => 'Retreat'],
+		31 => ['faction' => Factions::PACT, 'reaction' => 'Retreat'],
+		32 => ['faction' => Factions::PACT, 'reaction' => 'Retreat'],
+		33 => ['faction' => Factions::PACT, 'reaction' => 'SustainAttack'],
+	];
+//
 	static function init()
 	{
 		$deck = self::getNew("module.common.deck");

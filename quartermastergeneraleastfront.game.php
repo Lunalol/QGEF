@@ -42,7 +42,7 @@ class QuartermasterGeneralEastFront extends Table
 //
 // Globals
 //
-			'round' => ROUND
+			'round' => ROUND, 'action' => ACTION
 		]);
 //
 // Initialize Decks
@@ -111,7 +111,7 @@ class QuartermasterGeneralEastFront extends Table
 					default: throw new BgaVisibleSystemException('Invalid factionsChoice: ' . $options[FACTIONSCHOICE]);
 				}
 //
-				foreach ([Factions::ALLIES, Factions::AXIS] as $FACTION)
+				foreach (array_keys(Factions::FACTIONS) as $FACTION)
 				{
 					$ID = array_shift($IDs);
 					Factions::create($FACTION, $ID);
@@ -146,6 +146,11 @@ class QuartermasterGeneralEastFront extends Table
 			'ADJACENCY' => Board::ADJACENCY,
 			'PIECES' => Pieces::PIECES,
 //
+			'CARDS' => [
+				Factions::ALLIES => AlliesDeck::DECK,
+				Factions::AXIS => AxisDeck::DECK,
+			],
+//
 			'players' => self::getCollectionFromDb("SELECT player_id id, player_score score FROM player"),
 //
 			'contingency' => [
@@ -176,6 +181,19 @@ class QuartermasterGeneralEastFront extends Table
 		if ($player_id === Factions::getPlayerID(Factions::AXIS)) $result['private'][Factions::AXIS] = $this->axisDeck->getPlayerHand(Factions::AXIS);
 //
 		return $result;
+	}
+	function dbGetScore(int $player_id): int
+	{
+		return intval(self::getUniqueValueFromDB("SELECT player_score FROM player WHERE player_id = $player_id"));
+	}
+	function dbSetScore(int $player_id, int $score, int $score_aux = 0): void
+	{
+		self::DbQuery("UPDATE player SET player_score = $score, player_score_aux = $score_aux WHERE player_id = $player_id");
+		self::notifyAllPlayers('updateScore', '', ['player_id' => $player_id, 'score' => $score]);
+	}
+	function dbIncScore(int $player_id, int $inc): void
+	{
+		$this->dbSetScore($player_id, self::dbGetScore($player_id + $inc));
 	}
 	function getGameProgression()
 	{

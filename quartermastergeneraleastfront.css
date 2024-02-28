@@ -234,17 +234,45 @@ html {
 {
 	background-position-x: 100%;
 }
+.QGEFfactionName {
+	position: absolute;
+	top: 0px;
+	padding: 15px 5px 5px 35px;
+	font-size: 15px;
+	font-family: EldonWF;
+	color: white;
+	word-spacing: -1px;
+}
+.QGEFreactionSVG {
+	position: absolute;
+	top: 150px;
+	padding: 5px;
+	height: 30px;
+}
+.QGEFreaction {
+	position: absolute;
+	top: 155px;
+	padding: 5px 5px 0px 35px;
+	font-size: 12px;
+	font-family: EldonWF;
+	color: white;
+}
 .QGEFtitle {
-	padding: 40px 5px 5px 5px;
+	padding: 40px 5px 0px 5px;
 	font-size: 14px;
 	font-family: CutrightWF;
 	line-height: 12px;
+	text-align: justify;
+	letter-spacing: -1px;
+	word-spacing: -1px;
 }
 .QGEFtext {
-	padding: 0px 5px 5px 5px;
+	padding: 5px 5px 0px 5px;
 	font-size: 12px;
 	font-family: GaramondPremrPro;
 	line-height: 12px;
+	text-align: justify;
+	word-spacing: -1px;
 }
 /* </editor-fold> */
 /**/

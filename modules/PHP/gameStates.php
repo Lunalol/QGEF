@@ -61,6 +61,10 @@ trait gameStates
 			if ($region['type'] === WATER) self::DbQuery("INSERT INTO control VALUES ($location, 'both', 'water')");
 		}
 //
+// If the score is tied, the Axis player wins
+//
+		self::dbSetScore(Factions::getPlayerID(Factions::AXIS), 0, 1);
+//
 		Factions::setActivation();
 //
 		$this->gamestate->nextState('startOfGame');
@@ -82,6 +86,8 @@ trait gameStates
 //* -------------------------------------------------------------------------------------------------------- */
 		self::notifyAllPlayers('updateRound', '<span class="QGEF-phase">${faction}${LOG}</span>', ['i18n' => ['LOG'], 'LOG' => clienttranslate('Start of turn'), 'faction' => $FACTION]);
 //* -------------------------------------------------------------------------------------------------------- */
+		self::setGameStateValue('action', 0);
+//
 		$this->gamestate->nextState('next');
 	}
 	function stFirstMovementStep()
@@ -93,25 +99,20 @@ trait gameStates
 //* -------------------------------------------------------------------------------------------------------- */
 		foreach (Pieces::getAll($FACTION) as $piece) Pieces::setStatus($piece['id'], 'moved', 'no');
 //
-		$this->gamestate->nextState('next');
+		$this->gamestate->nextState('firstMovementStep');
 	}
-	function stFirstActionStep()
+	function stActionStep()
 	{
+		$action = intval(self::incGameStateValue('action', 1));
+		if ($action > 2) return $this->gamestate->nextState('next');
+//
 		$FACTION = Factions::getActive();
 		Factions::updateControl();
 //* -------------------------------------------------------------------------------------------------------- */
-		self::notifyAllPlayers('updateRound', '<span class="QGEF-phase">${faction}${LOG}</span>', ['i18n' => ['LOG'], 'LOG' => clienttranslate('First Action step'), 'faction' => $FACTION]);
+		if ($action == 1) self::notifyAllPlayers('updateRound', '<span class="QGEF-phase">${faction}${LOG}</span>', ['i18n' => ['LOG'], 'LOG' => clienttranslate('First Action step'), 'faction' => $FACTION]);
+		if ($action == 2) self::notifyAllPlayers('updateRound', '<span class="QGEF-phase">${faction}${LOG}</span>', ['i18n' => ['LOG'], 'LOG' => clienttranslate('Second Action step'), 'faction' => $FACTION]);
 //* -------------------------------------------------------------------------------------------------------- */
-		$this->gamestate->nextState('next');
-	}
-	function stSecondActionStep()
-	{
-		$FACTION = Factions::getActive();
-		Factions::updateControl();
-//* -------------------------------------------------------------------------------------------------------- */
-		self::notifyAllPlayers('updateRound', '<span class="QGEF-phase">${faction}${LOG}</span>', ['i18n' => ['LOG'], 'LOG' => clienttranslate('Second Action step'), 'faction' => $FACTION]);
-//* -------------------------------------------------------------------------------------------------------- */
-		$this->gamestate->nextState('next');
+		$this->gamestate->nextState('actionStep');
 	}
 	function stSecondMovementStep()
 	{
@@ -196,5 +197,22 @@ trait gameStates
 		Factions::setActivation();
 //
 		$this->gamestate->nextState('startOfRound');
+	}
+	function stAttackRound()
+	{
+		self::activeNextPlayer();
+//
+		$this->gamestate->nextState('attackRoundDefender');
+	}
+	function stAttackRoundDefender()
+	{
+		$args = self::argAttackRoundDefender();
+//
+		if (sizeof($args['defender']) === 0) return $this->gamestate->nextState('end');
+	}
+	function stAttackRoundAttacker()
+	{
+		$args = self::argAttackRoundAttacker();
+		if (sizeof($args['defender']) === 0 || sizeof($args['attacker']) <= 1) return $this->gamestate->nextState('end');
 	}
 }

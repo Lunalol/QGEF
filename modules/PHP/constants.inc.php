@@ -22,6 +22,7 @@ define('FIRSTGAME', 102);
 # Globals
 #
 define('ROUND', 10);
+define('ACTION', 11);
 #
 # Card types
 #

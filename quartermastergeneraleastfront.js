@@ -18,6 +18,7 @@ define(["dojo", "dojo/_base/declare", "ebg/core/gamegui", "ebg/counter",
 			this.default_viewport = 'initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,width=device-width,user-scalable=no';
 //
 			this.dontPreloadImage('background.jpg');
+//
 		},
 		setLoader(value, max)
 		{
@@ -25,7 +26,17 @@ define(["dojo", "dojo/_base/declare", "ebg/core/gamegui", "ebg/counter",
 		},
 		setup: function (gamedatas)
 		{
-			console.log("Starting game setup");
+			console.log("Starting game setup", gamedatas);
+//
+			this.REACTIONS = {
+				StandFast: _('Stand Fast'),
+				SustainAttack: _('Sustain Attack'),
+				Retreat: _('Retreat'),
+				Exchange: _('Exchange'),
+				AntiAir: _('Anti-Air'),
+				NavalCombat: _('Naval Combat'),
+				Advance: _('Advance!')
+			};
 //
 			dojo.connect(dojo.byId('QGEFplayArea'), 'click', () => this.restoreServerGameState());
 //
@@ -96,20 +107,17 @@ define(["dojo", "dojo/_base/declare", "ebg/core/gamegui", "ebg/counter",
 					for (let location of state.args.attack[piece]) this.board.arrow(+node.dataset.location, location);
 				}
 			}
-
 //
 			if ('FACTION' in state.args)
 			{
-				if (state.args.FACTION === 'axis') $('QGEFflex').appendChild($('QGEFhand-allies'));
-				if (state.args.FACTION === 'allies') $('QGEFflex').appendChild($('QGEFhand-axis'));
+				if (state.args.FACTION === 'axis' && $('QGEFhand-allies')) $('QGEFflex').appendChild($('QGEFhand-allies'));
+				if (state.args.FACTION === 'allies' && $('QGEFhand-axis')) $('QGEFflex').appendChild($('QGEFhand-axis'));
 			}
 //
 			switch (stateName)
 			{
 //
-				case 'firstActionStep':
-				case 'secondActionStep':
-//
+				case 'actionStep':
 //
 					dojo.query('.QGEFhandHolder .QGEFselected').removeClass('QGEFselected');
 					dojo.query('.QGEFcontingencyHolder .QGEFselected').removeClass('QGEFselected');
@@ -137,6 +145,47 @@ define(["dojo", "dojo/_base/declare", "ebg/core/gamegui", "ebg/counter",
 							break;
 					}
 					this.updatePageTitle();
+//
+					break;
+//
+				case 'attackRoundDefender':
+//
+					$(`QGEFregion-${state.args.location}`).setAttribute('class', 'QGEFregion QGEFselectable');
+//
+					for (let piece of state.args.attacker)
+					{
+						const node = $(`QGEFpiece-${piece}`);
+						dojo.addClass(node, 'QGEFselected');
+						this.board.arrow(+node.dataset.location, state.args.location);
+					}
+					for (let piece of state.args.defender)
+					{
+						const node = $(`QGEFpiece-${piece}`);
+						dojo.addClass(node, 'QGEFselectable QGEFselected');
+//						this.board.arrow(+node.dataset.location, state.args.location);
+					}
+//
+					break;
+//
+				case 'attackRoundAttacker':
+//
+					$(`QGEFregion-${state.args.location}`).setAttribute('class', 'QGEFregion QGEFselectable');
+//
+					for (let piece of state.args.attacker)
+					{
+						const node = $(`QGEFpiece-${piece}`);
+						dojo.addClass(node, 'QGEFselectable QGEFselected');
+						this.board.arrow(+node.dataset.location, state.args.location);
+					}
+					for (let piece of state.args.defender)
+					{
+						const node = $(`QGEFpiece-${piece}`);
+						dojo.addClass(node, 'QGEFselected');
+//						this.board.arrow(+node.dataset.location, state.args.location);
+					}
+//
+					break;
+//
 			}
 		},
 		onLeavingState: function (stateName)
@@ -151,13 +200,7 @@ define(["dojo", "dojo/_base/declare", "ebg/core/gamegui", "ebg/counter",
 			dojo.query('.QGEFregion', 'QGEFboard').forEach((node) => node.setAttribute('class', 'QGEFregion'));
 //
 			dojo.query('.QGEFhandHolder .QGEFselectable').removeClass('QGEFselectable');
-//
-			switch (stateName)
-			{
-				case 'action':
-					dojo.query('.QGEFhandHolder .QGEFselected').removeClass('QGEFselected');
-					break;
-			}
+			dojo.query('.QGEFhandHolder .QGEFselected').removeClass('QGEFselected');
 		},
 		onUpdateActionButtons: function (stateName, args)
 		{
@@ -180,8 +223,7 @@ define(["dojo", "dojo/_base/declare", "ebg/core/gamegui", "ebg/counter",
 //
 						break;
 //
-					case 'firstActionStep':
-					case 'secondActionStep':
+					case 'actionStep':
 //
 						this.addActionButton('QGEFplay', _('Play'), (event) => {
 							dojo.stopEvent(event);
@@ -276,6 +318,30 @@ define(["dojo", "dojo/_base/declare", "ebg/core/gamegui", "ebg/counter",
 //
 						break;
 //
+					case 'attackRoundDefender':
+//
+						this.addActionButton('QGEFreaction', _('Reaction'), (event) => {
+							dojo.stopEvent(event);
+//
+							const cards = dojo.query('.QGEFcardContainer.QGEFselected', `QGEFhand-${FACTION}`).reduce((L, node) => [...L, +node.dataset.id], []);
+							this.confirm(event, _('Play a card to utilize its reaction'), 'reaction', {cards: JSON.stringify(cards)});
+						});
+						dojo.addClass('QGEFreaction', 'disabled');
+//
+						break;
+//
+					case 'attackRoundAttacker':
+//
+						this.addActionButton('QGEFreaction', _('Reaction'), (event) => {
+							dojo.stopEvent(event);
+//
+							const cards = dojo.query('.QGEFcardContainer.QGEFselected', `QGEFhand-${FACTION}`).reduce((L, node) => [...L, +node.dataset.id], []);
+							this.confirm(event, _('Play a card to utilize its reaction'), 'reaction', {cards: JSON.stringify(cards)});
+						});
+						dojo.addClass('QGEFreaction', 'disabled');
+//
+						break;
+//
 				}
 			}
 		},
@@ -284,6 +350,7 @@ define(["dojo", "dojo/_base/declare", "ebg/core/gamegui", "ebg/counter",
 			console.log('notifications subscriptions setup');
 //
 			dojo.subscribe('placePiece', (notif) => this.pieces.place(notif.args.piece));
+			dojo.subscribe('removePiece', (notif) => this.pieces.remove(notif.args.piece));
 			dojo.subscribe('alliesDeck', (notif) => this.alliesDeck.place(notif.args.card));
 			dojo.subscribe('axisDeck', (notif) => this.axisDeck.place(notif.args.card));
 			dojo.subscribe('alliesDiscard', (notif) => this.alliesDeck.discard(notif.args.FACTION, notif.args.card));
@@ -294,6 +361,7 @@ define(["dojo", "dojo/_base/declare", "ebg/core/gamegui", "ebg/counter",
 		setSynchronous()
 		{
 			this.notifqueue.setSynchronous('placePiece', DELAY);
+			this.notifqueue.setSynchronous('removePiece', DELAY);
 			this.notifqueue.setSynchronous('alliesDeck', DELAY);
 			this.notifqueue.setSynchronous('axisDeck', DELAY);
 			this.notifqueue.setSynchronous('alliesDiscard', DELAY);
@@ -318,7 +386,21 @@ define(["dojo", "dojo/_base/declare", "ebg/core/gamegui", "ebg/counter",
 				dojo.style('QGEFproductionInitiative', 'display', (cards + contingency === 0) ? '' : 'none');
 			}
 		},
-		QGEFmovement: function (location, movement = true)
+		QGEFdeploy: function (location)
+		{
+			const node = $('generalactions').querySelector('.QGEFpieceContainer.QGEFselected>.QGEFpiece');
+			if (node && this.isCurrentPlayerActive()) this.action('deploy', {location: location, faction: node.dataset.faction, type: node.dataset.type});
+		},
+		QGEFmovement: function (location)
+		{
+			this.board.clearCanvas();
+//
+			const pieces = dojo.query('.QGEFpiece.QGEFselected', 'QGEFboard');
+			for (let piece of pieces) this.board.arrow(+piece.dataset.location, location, '#00FF0080');
+//
+			if (pieces.length > 0 && this.isCurrentPlayerActive()) this.action('move', {location: location, pieces: JSON.stringify(pieces.reduce((L, node) => [...L, +node.dataset.id], []))});
+		},
+		QGEFattack: function (location)
 		{
 			this.board.clearCanvas();
 //
@@ -326,12 +408,8 @@ define(["dojo", "dojo/_base/declare", "ebg/core/gamegui", "ebg/counter",
 			for (let piece of pieces) this.board.arrow(+piece.dataset.location, location, '#00FF0080');
 //
 			if (pieces.length > 0 && this.isCurrentPlayerActive())
-				this.action('move', {location: location, pieces: JSON.stringify(pieces.reduce((L, node) => [...L, +node.dataset.id], [])), movement: movement});
-		},
-		QGEFdeploy: function (location)
-		{
-			const node = $('generalactions').querySelector('.QGEFpieceContainer.QGEFselected>.QGEFpiece');
-			if (node && this.isCurrentPlayerActive()) this.action('deploy', {location: location, faction: node.dataset.faction, type: node.dataset.type});
+				this.action('attack', {location: location, pieces: JSON.stringify(pieces.reduce((L, node) => [...L, +node.dataset.id], []))});
+
 		},
 		updatePreference: function (event)
 		{

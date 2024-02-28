@@ -15,6 +15,18 @@ $this->FACTIONS = [
 	Factions::PACT => clienttranslate('Pact'),
 ];
 //
+// Reactions (7)
+//
+$this->REACTIONS = [
+	'StandFast' => clienttranslate('Stand Fast'),
+	'SustainAttack' => clienttranslate('Sustain Attack'),
+	'Retreat' => clienttranslate('Retreat'),
+	'Exchange' => clienttranslate('Exchange'),
+	'AntiAir' => clienttranslate('Anti-Air'),
+	'NavalCombat' => clienttranslate('Naval Combat'),
+	'Advance' => clienttranslate('Advance!'),
+];
+//
 // Regions (44)
 //
 $this->REGIONS = [
