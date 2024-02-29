@@ -30,11 +30,15 @@ define(["dojo", "dojo/_base/declare"], function (dojo, declare)
 //
 			this.arrange(piece.location, piece.type);
 			if (location && location !== piece.location) this.arrange(location, piece.type);
+//
+			this.bgagame.panels.update(piece.player, piece.faction, piece.type);
 		},
 		remove: function (piece)
 		{
 			dojo.query(`.QGEFpiece[data-id='${piece.id}']`, 'QGEFboard').remove();
 			this.arrange(piece.location, piece.type);
+//
+			this.bgagame.panels.update(piece.player, piece.faction, piece.type);
 		},
 		arrange: function (location, type)
 		{

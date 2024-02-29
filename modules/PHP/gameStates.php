@@ -109,8 +109,8 @@ trait gameStates
 		$FACTION = Factions::getActive();
 		Factions::updateControl();
 //* -------------------------------------------------------------------------------------------------------- */
-		if ($action == 1) self::notifyAllPlayers('updateRound', '<span class="QGEF-phase">${faction}${LOG}</span>', ['i18n' => ['LOG'], 'LOG' => clienttranslate('First Action step'), 'faction' => $FACTION]);
-		if ($action == 2) self::notifyAllPlayers('updateRound', '<span class="QGEF-phase">${faction}${LOG}</span>', ['i18n' => ['LOG'], 'LOG' => clienttranslate('Second Action step'), 'faction' => $FACTION]);
+		if ($action === 1) self::notifyAllPlayers('updateRound', '<span class="QGEF-phase">${faction}${LOG}</span>', ['i18n' => ['LOG'], 'LOG' => clienttranslate('First Action step'), 'faction' => $FACTION]);
+		if ($action === 2) self::notifyAllPlayers('updateRound', '<span class="QGEF-phase">${faction}${LOG}</span>', ['i18n' => ['LOG'], 'LOG' => clienttranslate('Second Action step'), 'faction' => $FACTION]);
 //* -------------------------------------------------------------------------------------------------------- */
 		$this->gamestate->nextState('actionStep');
 	}
@@ -206,13 +206,24 @@ trait gameStates
 	}
 	function stAttackRoundDefender()
 	{
-		$args = self::argAttackRoundDefender();
+		$FACTION = Factions::getActive();
 //
-		if (sizeof($args['defender']) === 0) return $this->gamestate->nextState('end');
+		$args = self::argAttackRoundDefender();
+		if (sizeof($args['defender']) === 0)
+		{
+			$this->gamestate->nextState('end');
+			self::action($FACTION);
+		}
 	}
 	function stAttackRoundAttacker()
 	{
+		$FACTION = Factions::getActive();
+//
 		$args = self::argAttackRoundAttacker();
-		if (sizeof($args['defender']) === 0 || sizeof($args['attacker']) <= 1) return $this->gamestate->nextState('end');
+		if (sizeof($args['defender']) === 0 || sizeof($args['attacker']) <= 1)
+		{
+			$this->gamestate->nextState('end');
+			self::action($FACTION);
+		}
 	}
 }

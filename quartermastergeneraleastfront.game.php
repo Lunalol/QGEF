@@ -145,13 +145,11 @@ class QuartermasterGeneralEastFront extends Table
 			'REGIONS' => $this->REGIONS,
 			'ADJACENCY' => Board::ADJACENCY,
 			'PIECES' => Pieces::PIECES,
-//
-			'CARDS' => [
-				Factions::ALLIES => AlliesDeck::DECK,
-				Factions::AXIS => AxisDeck::DECK,
-			],
+			'FACTIONS' => Factions::FACTIONS,
+			'CARDS' => [Factions::ALLIES => AlliesDeck::DECK, Factions::AXIS => AxisDeck::DECK],
 //
 			'players' => self::getCollectionFromDb("SELECT player_id id, player_score score FROM player"),
+			'factions' => Factions::getAllDatas(),
 //
 			'contingency' => [
 				Factions::ALLIES => $this->alliesDeck->getCardsInLocation('contingency'),

@@ -159,10 +159,7 @@ define(["dojo", "dojo/_base/declare"], function (dojo, declare)
 		},
 		discard: function (FACTION, card)
 		{
-			dojo.query(
-					`.QGEFcardContainer[data - id = '${card}']`, `QGEFhand - ${
-					FACTION}`
-					).remove();
+			dojo.query(`.QGEFcardContainer[data-id='${card}']`, `QGEFhand-${FACTION}`).remove();
 		},
 		click: function (event)
 		{

@@ -24,7 +24,7 @@
 }
 /* <editor-fold defaultstate="collapsed" desc="BGA UI"> */
 div,img {
-	/*	user-select: none;*/
+	user-select: none;
 }
 html {
 	background: url('img/background.jpg');
@@ -459,7 +459,7 @@ html {
 }
 /* </editor-fold> */
 /* <editor-fold defaultstate="collapsed" desc="Pieces on Action Bar"> */
-.QGEFpieceContainer {
+#generalactions .QGEFpieceContainer {
 	height: 50px;
 	margin-left: 5px;
 	margin-right: 5px;
@@ -468,17 +468,20 @@ html {
 {
 	transition: transform .25s;
 }
-.QGEFpieceContainer.QGEFselected
+#generalactions .QGEFpieceContainer.QGEFselected
 {
 	filter: contrast(2);
 	transform: scale(150%);
 	transition: transform .5s;
 }
-.QGEFpieceContainer:not(.QGEFselected):hover
+#generalactions .QGEFpieceContainer:not(.QGEFselected):hover
 {
 	filter: contrast(2);
 	transform: scale(120%);
 	transition: transform .5s;
 }
 /* </editor-fold> */
-
+.QGEFplayer .QGEFpieceContainer{
+	width: 20px;
+	height: 20px;
+}

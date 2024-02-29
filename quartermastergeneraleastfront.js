@@ -2,6 +2,7 @@ define(["dojo", "dojo/_base/declare", "ebg/core/gamegui", "ebg/counter",
 	g_gamethemeurl + "modules/constants.js",
 	g_gamethemeurl + "modules/JavaScript/board.js",
 	g_gamethemeurl + "modules/JavaScript/track.js",
+	g_gamethemeurl + "modules/JavaScript/panels.js",
 	g_gamethemeurl + "modules/JavaScript/contingency.js",
 	g_gamethemeurl + "modules/JavaScript/alliesDeck.js",
 	g_gamethemeurl + "modules/JavaScript/axisDeck.js",
@@ -46,6 +47,11 @@ define(["dojo", "dojo/_base/declare", "ebg/core/gamegui", "ebg/counter",
 			document.documentElement.style.setProperty('--DELAY', DELAY);
 			dojo.query('.preference_control').connect('onchange', this, 'updatePreference');
 //
+// Setup Player Panels
+//
+			this.panels = new Panels(this);
+			for (let FACTION in gamedatas.factions) this.panels.place(FACTION, gamedatas.FACTIONS[FACTION], gamedatas.factions[FACTION].player_id);
+//
 // Setup Game Board
 //
 			this.board = new Board(this);
@@ -74,6 +80,7 @@ define(["dojo", "dojo/_base/declare", "ebg/core/gamegui", "ebg/counter",
 //
 			this.alliesDeck = new alliesDeck(this);
 			this.axisDeck = new axisDeck(this);
+//
 			if ('private' in gamedatas)
 			{
 				if ('allies' in gamedatas.private)
