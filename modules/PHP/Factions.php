@@ -53,6 +53,10 @@ class Factions extends APP_GameClass
 	{
 		return self::getUniqueValueFromDB("SELECT faction FROM factions WHERE activation = 'yes'");
 	}
+	static function getInactive(): string
+	{
+		return self::getUniqueValueFromDB("SELECT faction FROM factions WHERE activation <> 'yes'");
+	}
 	static function getStatus(string $FACTION, string $status)
 	{
 		return json_decode(self::getUniqueValueFromDB("SELECT JSON_UNQUOTE(status->'$.$status') FROM factions WHERE faction = '$FACTION'"), JSON_OBJECT_AS_ARRAY);

@@ -15,7 +15,7 @@ trait gameUtils
 		foreach ($action['cards'] as $card)
 		{
 			$this->{$FACTION . 'Deck'}->moveCard($card, 'discard', $FACTION);
-			self::notifyAllPlayers($FACTION . 'Discard', '${faction} Discard 1 card', ['card' => $card, 'FACTION' => $FACTION, 'faction' => $FACTION]);
+			self::notifyAllPlayers($FACTION . 'Discard', '${FACTION} Discard 1 card', ['card' => $card, 'FACTION' => $FACTION]);
 		}
 //
 		if ($actions)

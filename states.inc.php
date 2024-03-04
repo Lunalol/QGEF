@@ -142,22 +142,34 @@ $machinestates = [
 	],
 	210 => [
 		'name' => 'attackRoundDefender',
+		'description' => clienttranslate('Defender attack round'),
+		'type' => 'game',
+		'action' => 'stAttackRoundDefender',
+		'transitions' => ['continue' => 215, 'end' => 125]
+	],
+	215 => [
+		'name' => 'attackRoundDefender',
 		'description' => clienttranslate('${actplayer} must remove a piece'),
 		'descriptionmyturn' => clienttranslate('${you} must remove a piece'),
 		'type' => 'activeplayer',
-		'action' => 'stAttackRoundDefender',
 		'args' => 'argAttackRoundDefender',
 		'possibleactions' => ['reaction', 'removePiece'],
-		'transitions' => ['reaction' => 210, 'continue' => 220, 'end' => 120]
+		'transitions' => ['reaction' => 215, 'continue' => 220]
 	],
 	220 => [
+		'name' => 'attackRoundAttacker',
+		'description' => clienttranslate('Attacker attack round'),
+		'type' => 'game',
+		'action' => 'stAttackRoundAttacker',
+		'transitions' => ['continue' => 225, 'end' => 125]
+	],
+	225 => [
 		'name' => 'attackRoundAttacker',
 		'description' => clienttranslate('${actplayer} can remove a piece to initiate a new combat round'),
 		'descriptionmyturn' => clienttranslate('${you} can remove a piece to initiate a new combat round'),
 		'type' => 'activeplayer',
-		'action' => 'stAttackRoundAttacker',
 		'args' => 'argAttackRoundAttacker',
 		'possibleactions' => ['reaction', 'removePiece'],
-		'transitions' => ['continue' => 200, 'end' => 120]
+		'transitions' => ['reaction' => 225, 'continue' => 210]
 	],
 ];

@@ -9,21 +9,23 @@ class Pieces extends APP_GameClass
 {
 	const ALL = 0;
 #
-	const INFANTERY = 'infantery';
+	const INFANTRY = 'infantry';
 	const TANK = 'tank';
 	const AIRPLANE = 'airplane';
 	const FLEET = 'fleet';
 #
+	const RANK = [self::INFANTRY => 0, self::TANK => 1, self::AIRPLANE => 2, self::FLEET => 2, 'StandFast' => 3, 'SustainAttack' => 3];
+#
 	const PIECES = [
-		Factions::SOVIETUNION => [self::INFANTERY => 14, self::TANK => 5, self::AIRPLANE => 4, self::FLEET => 3],
-		Factions::GERMANY => [self::INFANTERY => 7, self::TANK => 5, self::AIRPLANE => 5, self::FLEET => 2],
-		Factions::PACT => [self::INFANTERY => 6, self::TANK => 1, self::AIRPLANE => 2, self::FLEET => 1],
+		Factions::SOVIETUNION => [self::INFANTRY => 14, self::TANK => 5, self::AIRPLANE => 4, self::FLEET => 3],
+		Factions::GERMANY => [self::INFANTRY => 7, self::TANK => 5, self::AIRPLANE => 5, self::FLEET => 2],
+		Factions::PACT => [self::INFANTRY => 6, self::TANK => 1, self::AIRPLANE => 2, self::FLEET => 1],
 	];
 #
 	const STARTING = [
 		Factions::ALLIES => [
 			Factions::SOVIETUNION => [
-				self::INFANTERY => [KARELIA, BALTICSTATES, BREST, LWOW, BESSARABIA, SEVASTOPOL],
+				self::INFANTRY => [KARELIA, BALTICSTATES, BREST, LWOW, BESSARABIA, SEVASTOPOL],
 				self::TANK => [MOSCOW, KIEV],
 				self::AIRPLANE => [LENINGRAD, SMOLENSK, ROSTOV],
 				self::FLEET => [GULFOFFINLAND, BLACKSEA],
@@ -31,13 +33,13 @@ class Pieces extends APP_GameClass
 		],
 		Factions::AXIS => [
 			Factions::GERMANY => [
-				self::INFANTERY => [BERLIN, EASTPRUSSIA, WARSAW, WARSAW, ROMANIA],
+				self::INFANTRY => [BERLIN, EASTPRUSSIA, WARSAW, WARSAW, ROMANIA],
 				self::TANK => [EASTPRUSSIA, WARSAW, WARSAW],
 				self::AIRPLANE => [BERLIN, EASTPRUSSIA, WARSAW, WARSAW],
 				self::FLEET => [WESTBALTICSEA],
 			],
 			Factions::PACT => [
-				self::INFANTERY => [HUNGARY, YUGOSLAVIA, FINLAND, ROMANIA],
+				self::INFANTRY => [HUNGARY, YUGOSLAVIA, FINLAND, ROMANIA],
 				self::TANK => [ROMANIA],
 				self::AIRPLANE => [FINLAND, ROMANIA],
 				self::FLEET => [],
@@ -111,7 +113,7 @@ class Pieces extends APP_GameClass
 			switch ($piece['type'])
 			{
 #
-				case self::INFANTERY:
+				case self::INFANTRY:
 				case self::TANK:
 #
 					foreach (Board::ADJACENCY[$piece['location']] as $next_location)
@@ -199,7 +201,7 @@ class Pieces extends APP_GameClass
 		$possibles = [];
 		foreach ($pieces as $piece)
 		{
-			if ($piece['type'] == self::INFANTERY || $piece['type'] == self::TANK)
+			if ($piece['type'] == self::INFANTRY || $piece['type'] == self::TANK)
 			{
 				$locations = [];
 				foreach (Board::ADJACENCY[$piece['location']] as $next_location)

@@ -40,6 +40,7 @@ define(["dojo", "dojo/_base/declare", "ebg/core/gamegui", "ebg/counter",
 			};
 //
 			dojo.connect(dojo.byId('QGEFplayArea'), 'click', () => this.restoreServerGameState());
+			dojo.connect(dojo.byId('game_play_area'), 'click', () => this.restoreServerGameState());
 //
 // Animations Speed
 //
@@ -168,8 +169,12 @@ define(["dojo", "dojo/_base/declare", "ebg/core/gamegui", "ebg/counter",
 					for (let piece of state.args.defender)
 					{
 						const node = $(`QGEFpiece-${piece}`);
-						dojo.addClass(node, 'QGEFselectable QGEFselected');
+						dojo.addClass(node, 'QGEFselectable');
 //						this.board.arrow(+node.dataset.location, state.args.location);
+					}
+					if ('_private' in state.args && 'reactions' in state.args._private)
+					{
+						for (let card of state.args._private.reactions) dojo.addClass(`QGEFcardContainer-${card}`, 'QGEFselectable');
 					}
 //
 					break;
@@ -181,7 +186,7 @@ define(["dojo", "dojo/_base/declare", "ebg/core/gamegui", "ebg/counter",
 					for (let piece of state.args.attacker)
 					{
 						const node = $(`QGEFpiece-${piece}`);
-						dojo.addClass(node, 'QGEFselectable QGEFselected');
+						dojo.addClass(node, 'QGEFselectable');
 						this.board.arrow(+node.dataset.location, state.args.location);
 					}
 					for (let piece of state.args.defender)
@@ -206,8 +211,8 @@ define(["dojo", "dojo/_base/declare", "ebg/core/gamegui", "ebg/counter",
 //
 			dojo.query('.QGEFregion', 'QGEFboard').forEach((node) => node.setAttribute('class', 'QGEFregion'));
 //
-			dojo.query('.QGEFhandHolder .QGEFselectable').removeClass('QGEFselectable');
-			dojo.query('.QGEFhandHolder .QGEFselected').removeClass('QGEFselected');
+			dojo.query('.QGEFcardContainer.QGEFselectable').removeClass('QGEFselectable');
+			dojo.query('.QGEFcardContainer.QGEFselected').removeClass('QGEFselected');
 		},
 		onUpdateActionButtons: function (stateName, args)
 		{
@@ -330,10 +335,16 @@ define(["dojo", "dojo/_base/declare", "ebg/core/gamegui", "ebg/counter",
 						this.addActionButton('QGEFreaction', _('Reaction'), (event) => {
 							dojo.stopEvent(event);
 //
-							const cards = dojo.query('.QGEFcardContainer.QGEFselected', `QGEFhand-${FACTION}`).reduce((L, node) => [...L, +node.dataset.id], []);
-							this.confirm(event, _('Play a card to utilize its reaction'), 'reaction', {cards: JSON.stringify(cards)});
+							const cards = dojo.query('.QGEFcardContainer.QGEFselected', `QGEFhand-${FACTION}`);
+							if (cards.length === 1)
+							{
+								const card = cards[0];
+								const reaction = this.REACTIONS[this.gamedatas.CARDS[args.FACTION][card.dataset.type_arg].reaction];
+								this.confirm(dojo.string.substitute(_('Play a card for reaction: <B>${reaction}</B>'), {reaction: reaction.toUpperCase()}), 'reaction', {card: card.dataset.id});
+							}
 						});
-						dojo.addClass('QGEFreaction', 'disabled');
+//
+						this.updateActionButtons();
 //
 						break;
 //
@@ -342,10 +353,16 @@ define(["dojo", "dojo/_base/declare", "ebg/core/gamegui", "ebg/counter",
 						this.addActionButton('QGEFreaction', _('Reaction'), (event) => {
 							dojo.stopEvent(event);
 //
-							const cards = dojo.query('.QGEFcardContainer.QGEFselected', `QGEFhand-${FACTION}`).reduce((L, node) => [...L, +node.dataset.id], []);
-							this.confirm(event, _('Play a card to utilize its reaction'), 'reaction', {cards: JSON.stringify(cards)});
+							const cards = dojo.query('.QGEFcardContainer.QGEFselected', `QGEFhand-${FACTION}`);
+							if (cards.length === 1)
+							{
+								const card = cards[0];
+								const reaction = this.REACTIONS[this.gamedatas.CARDS[args.FACTION][card.dataset.type_arg].reaction];
+								this.confirm(dojo.string.substitute(_('Play a card for reaction: <B>${reaction}</B>'), {reaction: reaction.toUpperCase()}), 'reaction', {card: card.dataset.id});
+							}
 						});
-						dojo.addClass('QGEFreaction', 'disabled');
+//
+						this.updateActionButtons();
 //
 						break;
 //
@@ -360,8 +377,8 @@ define(["dojo", "dojo/_base/declare", "ebg/core/gamegui", "ebg/counter",
 			dojo.subscribe('removePiece', (notif) => this.pieces.remove(notif.args.piece));
 			dojo.subscribe('alliesDeck', (notif) => this.alliesDeck.place(notif.args.card));
 			dojo.subscribe('axisDeck', (notif) => this.axisDeck.place(notif.args.card));
-			dojo.subscribe('alliesDiscard', (notif) => this.alliesDeck.discard(notif.args.FACTION, notif.args.card));
-			dojo.subscribe('axisDiscard', (notif) => this.axisDeck.discard(notif.args.FACTION, notif.args.card));
+			dojo.subscribe('alliesDiscard', (notif) => this.alliesDeck.discard(notif.args.card));
+			dojo.subscribe('axisDiscard', (notif) => this.axisDeck.discard(notif.args.card));
 //
 			this.setSynchronous();
 		},
@@ -381,16 +398,17 @@ define(["dojo", "dojo/_base/declare", "ebg/core/gamegui", "ebg/counter",
 				const FACTION = this.gamedatas.gamestate.args.FACTION;
 //
 				const cards = dojo.query('.QGEFcardContainer.QGEFselected', `QGEFhand-${FACTION}`).length;
-				dojo.toggleClass('QGEFplay', 'disabled', cards !== 1);
-				dojo.style('QGEFconscription', 'display', (cards === 1 || cards === 2) ? '' : 'none');
-				dojo.style('QGEforcedMarch', 'display', (cards === 1) ? '' : 'none');
-				dojo.style('QGEFdesperateAttack', 'display', (cards === 2) ? '' : 'none');
+				if ($('QGEFreaction')) dojo.toggleClass('QGEFreaction', 'disabled', cards !== 1);
+				if ($('QGEFplay')) dojo.toggleClass('QGEFplay', 'disabled', cards !== 1);
+				if ($('QGEFconscription')) dojo.style('QGEFconscription', 'display', (cards === 1 || cards === 2) ? '' : 'none');
+				if ($('QGEforcedMarch')) dojo.style('QGEforcedMarch', 'display', (cards === 1) ? '' : 'none');
+				if ($('QGEFdesperateAttack')) dojo.style('QGEFdesperateAttack', 'display', (cards === 2) ? '' : 'none');
 //
 				const contingency = dojo.query('.QGEFcardContainer.QGEFselected', `QGEFcontingency-${FACTION}`).length;
-				dojo.style('QGEFcontingency', 'display', (contingency === 1) ? '' : 'none');
+				if ($('QGEFcontingency')) dojo.style('QGEFcontingency', 'display', (contingency === 1) ? '' : 'none');
 //
-				dojo.toggleClass('QGEFpass', 'disabled', cards + contingency !== 0);
-				dojo.style('QGEFproductionInitiative', 'display', (cards + contingency === 0) ? '' : 'none');
+				if ($('QGEFpass')) dojo.toggleClass('QGEFpass', 'disabled', cards + contingency !== 0);
+				if ($('QGEFproductionInitiative')) dojo.style('QGEFproductionInitiative', 'display', (cards + contingency === 0) ? '' : 'none');
 			}
 		},
 		QGEFdeploy: function (location)
@@ -444,7 +462,8 @@ define(["dojo", "dojo/_base/declare", "ebg/core/gamegui", "ebg/counter",
 				args.processed = true;
 //
 				if ('round' in args) args.round = $(`QGEFround-${args.round}`).outerHTML;
-				if ('faction' in args) args.faction = `<div class='QGEFfaction' faction='${args.faction}'></div>`;
+				if ('FACTION' in args) args.FACTION = `<div class='QGEFfaction' faction='${args.FACTION}'></div>`;
+				if ('faction' in args) args.faction = `<img style='width:20px;vertical-align:middle;' src='${g_gamethemeurl}img/flag_${args.faction}.jpg'>`;
 			}
 			return this.inherited(arguments);
 		},

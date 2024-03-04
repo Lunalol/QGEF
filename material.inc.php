@@ -27,6 +27,15 @@ $this->REACTIONS = [
 	'Advance' => clienttranslate('Advance!'),
 ];
 //
+// Wooden piece (4)
+//
+$this->PIECES = [
+	Pieces::INFANTRY => clienttranslate('Infantery'),
+	Pieces::TANK => clienttranslate('Tank'),
+	Pieces::AIRPLANE => clienttranslate('Airplane'),
+	Pieces::FLEET => clienttranslate('Fleet'),
+];
+//
 // Regions (44)
 //
 $this->REGIONS = [

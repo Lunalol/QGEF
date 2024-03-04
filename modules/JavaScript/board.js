@@ -4,7 +4,7 @@ define(["dojo", "dojo/_base/declare"], function (dojo, declare)
 	{
 		constructor: function (bgagame)
 		{
-			console.log('board constructor');
+			console.log('Board constructor');
 //
 // Reference to BGA game
 //
@@ -181,7 +181,7 @@ define(["dojo", "dojo/_base/declare"], function (dojo, declare)
 		{
 			const node = event.currentTarget;
 //
-			if (node.getAttribute('class').indexOf('QGEFselectable') >= 0)
+			if (node.getAttribute('class').indexOf('QGEFselectable') >= 0 && this.bgagame.isCurrentPlayerActive())
 			{
 				dojo.stopEvent(event);
 //

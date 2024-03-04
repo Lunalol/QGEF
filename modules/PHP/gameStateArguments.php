@@ -37,7 +37,7 @@ trait gameStateArguments
 				$this->possible = [];
 				foreach (Factions::FACTIONS[$FACTION] as $faction)
 				{
-					foreach ([1 => [Pieces::INFANTERY], 2 => [Pieces::TANK, Pieces::AIRPLANE, Pieces::FLEET]][sizeof($action['cards'])] as $type)
+					foreach ([1 => [Pieces::INFANTRY], 2 => [Pieces::TANK, Pieces::AIRPLANE, Pieces::FLEET]][sizeof($action['cards'])] as $type)
 					{
 						$locations = [];
 						foreach (Board::SUPPLY[$faction] as $location)
@@ -70,8 +70,11 @@ trait gameStateArguments
 	}
 	function argAttackRoundDefender()
 	{
-		$FACTION = Factions::getActive();
-		['location' => $location, 'faction' => $attackerfaction, 'pieces' => $attacker] = Factions::getStatus($FACTION, 'attack');
+		$attackerFACTION = Factions::getActive();
+		$defenderFACTION = Factions::getInactive();
+		$player_id = Factions::getPlayerID($defenderFACTION);
+//
+		['location' => $location, 'faction' => $attackerfaction, 'pieces' => $attacker] = Factions::getStatus($attackerFACTION, 'attack');
 //
 		$pieces = Pieces::getAtLocation($location);
 		$defenderfactions = array_unique(array_column($pieces, 'faction'));
@@ -83,20 +86,34 @@ trait gameStateArguments
 			{
 				if ($piece['type'] === 'airplane' || $piece['type'] === 'fleet')
 				{
-					if ($attacker && $piece['player'] === $FACTION && $piece['faction'] === $attackerfaction) $attacker[] = $piece['id'];
-					if ($defender && $piece['player'] !== $FACTION && in_array($piece['faction'], $defenderfactions)) $defender[] = $piece['id'];
+					if ($attacker && $piece['player'] === $attackerFACTION && $piece['faction'] === $attackerfaction) $attacker[] = +$piece['id'];
+					if ($defender && $piece['player'] === $defenderFACTION && in_array($piece['faction'], $defenderfactions)) $defender[] = +$piece['id'];
 				}
 			}
 		}
 //
-		$this->possible = $defender;
+		$this->possible = ['reactions' => [], 'pieces' => $defender];
 //
-		return ['FACTION' => $FACTION, 'location' => $location, 'attacker' => $attacker, 'defender' => $defender];
+		$class = "${defenderFACTION}Deck";
+		foreach ($this->{$defenderFACTION . 'Deck'}->getPlayerHand($defenderFACTION) as $card)
+		{
+			if ($class::DECK[$card['type_arg']]['reaction'] === 'StandFast' && $class::standFast($card['type_arg'], $location, $defender)) $this->possible['reactions'][] = +$card['id'];
+			if ($class::DECK[$card['type_arg']]['reaction'] === 'Retreat') $this->possible['reactions'][] = +$card['id'];
+			if ($class::DECK[$card['type_arg']]['reaction'] === 'Exchange') $this->possible['reactions'][] = +$card['id'];
+			if ($class::DECK[$card['type_arg']]['reaction'] === 'AntiAir') $this->possible['reactions'][] = +$card['id'];
+			if ($class::DECK[$card['type_arg']]['reaction'] === 'NavalCombat') $this->possible['reactions'][] = +$card['id'];
+		}
+//
+		return ['FACTION' => $defenderFACTION, '_private' => [$player_id => $this->possible],
+			'location' => $location, 'attacker' => $attacker, 'defender' => $defender];
 	}
 	function argAttackRoundAttacker()
 	{
-		$FACTION = Factions::getActive();
-		['location' => $location, 'faction' => $attackerfaction, 'pieces' => $attacker] = Factions::getStatus($FACTION, 'attack');
+		$attackerFACTION = Factions::getActive();
+		$defenderFACTION = Factions::getInactive();
+		$player_id = Factions::getPlayerID($attackerFACTION);
+//
+		['location' => $location, 'faction' => $attackerfaction, 'pieces' => $attacker] = Factions::getStatus($attackerFACTION, 'attack');
 //
 		$pieces = Pieces::getAtLocation($location);
 		$defenderfactions = array_unique(array_column($pieces, 'faction'));
@@ -108,14 +125,23 @@ trait gameStateArguments
 			{
 				if ($piece['type'] === 'airplane' || $piece['type'] === 'fleet')
 				{
-					if ($attacker && $piece['player'] === $FACTION && $piece['faction'] === $attackerfaction) $attacker[] = $piece['id'];
-					if ($defender && $piece['player'] !== $FACTION && in_array($piece['faction'], $defenderfactions)) $defender[] = $piece['id'];
+					if ($attacker && $piece['player'] === $attackerFACTION && $piece['faction'] === $attackerfaction) $attacker[] = $piece['id'];
+					if ($defender && $piece['player'] === $defenderFACTION && in_array($piece['faction'], $defenderfactions)) $defender[] = $piece['id'];
 				}
 			}
 		}
 //
-		$this->possible = $attacker;
+		$this->possible = ['reactions' => [], 'pieces' => $attacker];
 //
-		return ['FACTION' => $FACTION, 'location' => $location, 'attacker' => $attacker, 'defender' => $defender];
+		$class = "${attackerFACTION}Deck";
+		foreach ($this->{$attackerFACTION . 'Deck'}->getPlayerHand($attackerFACTION) as $card)
+		{
+			if ($class::DECK[$card['type_arg']]['reaction'] === 'SustainAttack') $this->possible['reactions'][] = +$card['id'];
+			if ($class::DECK[$card['type_arg']]['reaction'] === 'AntiAir') $this->possible['reactions'][] = +$card['id'];
+			if ($class::DECK[$card['type_arg']]['reaction'] === 'NavalCombat') $this->possible['reactions'][] = +$card['id'];
+			if ($class::DECK[$card['type_arg']]['reaction'] === 'Advance') $this->possible['reactions'][] = +$card['id'];
+		}
+		return ['FACTION' => $attackerFACTION, '_private' => [$player_id => $this->possible],
+			'location' => $location, 'attacker' => $attacker, 'defender' => $defender];
 	}
 }

@@ -14,7 +14,7 @@ CREATE TABLE IF NOT EXISTS `pieces` (
 	`id` INT(2) unsigned NOT NULL AUTO_INCREMENT PRIMARY KEY,
 	`player` ENUM ('allies', 'axis'),
 	`faction` ENUM ('sovietUnion', 'germany', 'pact'),
-	`type` ENUM('infantery', 'tank', 'airplane', 'fleet'),
+	`type` ENUM('infantry', 'tank', 'airplane', 'fleet'),
 	`location` INT(2), `status` JSON
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1;
 

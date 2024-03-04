@@ -5,6 +5,8 @@ define(["dojo", "dojo/_base/declare"], function (dojo, declare)
 //
 		constructor: function (bgagame)
 		{
+			console.log('AlliesDeck constructor');
+//
 			const FIRST_GAME = 0;
 			const MID = 1;
 			const LATE = 2;
@@ -37,7 +39,7 @@ define(["dojo", "dojo/_base/declare"], function (dojo, declare)
 						_('Deploy a Soviet infantry in a space east of the 1939 line; then you may attack with a force containing that infantry.')]
 				},
 				11: {
-					type: 'ground', [FIRST_GAME]: [
+					type: 'ground', text: _('Defending infantry'), [FIRST_GAME]: [
 						_('Dig in!'),
 						_('Deploy a Soviet infantry in each of 2 different spaces that already contain a Soviet piece.')]
 				},
@@ -64,7 +66,7 @@ define(["dojo", "dojo/_base/declare"], function (dojo, declare)
 					[MID]: [_('Trans-Siberian Railway'), _('')]
 				},
 				35: {
-					type: 'ground',
+					type: 'ground', text: _('Leningrad'),
 					[MID]: [_('People’s Militia Army'), _('')]
 				},
 				36: {
@@ -92,7 +94,7 @@ define(["dojo", "dojo/_base/declare"], function (dojo, declare)
 					[MID]: [_('Tank Desant'), _('')]
 				},
 				42: {
-					type: 'ground',
+					type: 'ground', text: _('Sevastopol'),
 					[MID]: [_('The Stronghold of Sevastopol'), _('')]
 				},
 				43: {
@@ -130,32 +132,40 @@ define(["dojo", "dojo/_base/declare"], function (dojo, declare)
 				id: card.id,
 				FACTION: this.bgagame.gamedatas.CARDS.allies[card.type_arg].faction,
 				faction: this.FACTIONS[this.bgagame.gamedatas.CARDS.allies[card.type_arg].faction],
-				type: this.cards[card.type_arg].type,
+				type: this.cards[card.type_arg].type, type_arg: card.type_arg,
 				title: this.cards[card.type_arg][card.type][0],
 				text: this.cards[card.type_arg][card.type][1]
 			}), `QGEFhand-allies`);
 //
 			dojo.place(`<img draggable='false' class='QGEFreactionSVG' src='${g_gamethemeurl}img/svg/${this.bgagame.gamedatas.CARDS.allies[card.type_arg].reaction}.svg'>`, node);
-			dojo.place(`<div class='QGEFreaction'>${this.bgagame.REACTIONS[this.bgagame.gamedatas.CARDS.allies[card.type_arg].reaction]}</div>`, node);
+//
+			let reaction = `<div>${this.bgagame.REACTIONS[this.bgagame.gamedatas.CARDS.allies[card.type_arg].reaction]}</div>`;
+			if ('text' in this.cards[card.type_arg]) reaction += `<div class='QGEFreactionText'>${this.cards[card.type_arg].text}</div>`;
+			if (this.bgagame.gamedatas.CARDS.allies[card.type_arg].reaction === 'Advance') reaction += `<div class='QGEFreactionText'>${_('No Spring Turns')}</div>`;
+			if (this.bgagame.gamedatas.CARDS.allies[card.type_arg].reaction === 'SustainAttack') reaction += `<div class='QGEFreactionText'>${_('No Winter Turns')}</div>`;
+			dojo.place(`<div class='QGEFreaction'>${reaction}</div>`, node);
+//
 			dojo.connect(node, 'click', this, 'click');
 //
 			this.bgagame.addTooltip(node.id, this.cards[card.type_arg][card.type][0], this.cards[card.type_arg][card.type][1], 1000);
 		},
-		discard: function (FACTION, card)
+		discard: function (card)
 		{
-			dojo.query(`.QGEFcardContainer[data-id='${card}']`, `QGEFhand-${FACTION}`).remove();
+			dojo.query(`.QGEFcardContainer[data-id='${card}']`, `QGEFhand-allies`).remove();
 		},
 		click: function (event)
 		{
 			const node = event.currentTarget;
 //
-			if (dojo.hasClass(node, 'QGEFselectable'))
+			if (dojo.hasClass(node, 'QGEFselectable') && this.bgagame.isCurrentPlayerActive())
 			{
 				dojo.stopEvent(event);
 //
 				if (!dojo.hasClass(node, 'QGEFselected'))
 				{
-					if (dojo.query('.QGEFcardContainer.QGEFselected').length >= 2) return;
+					if (dojo.query('.QGEFhandHolder>.QGEFcardContainer.QGEFselected').length >= 2) return;
+					if (this.bgagame.gamedatas.gamestate.name !== 'actionStep') dojo.query('.QGEFcardContainer.QGEFselected').removeClass('QGEFselected');
+					dojo.query('.QGEFcontingencyHolder>.QGEFcardContainer.QGEFselected').removeClass('QGEFselected');
 				}
 				dojo.toggleClass(node, 'QGEFselected');
 //

@@ -44,19 +44,43 @@ class AlliesDeck extends APP_GameClass
 //
 // ➤ 51 Soviet Union cards
 //
-		for ($index = 8; $index <= 14; $index++) $DECK[] = ['type' => FIRST_GAME, 'type_arg' => $index, 'nbr' => 1];
-		for ($index = 34; $index <= 48; $index++) $DECK[] = ['type' => MID, 'type_arg' => $index, 'nbr' => 1];
+		for ($index = 8;
+			$index <= 14;
+			$index++) $DECK[] = ['type' => FIRST_GAME, 'type_arg' => $index, 'nbr' => 1];
+		for ($index = 34;
+			$index <= 48;
+			$index++) $DECK[] = ['type' => MID, 'type_arg' => $index, 'nbr' => 1];
 		$deck->createCards($DECK, 'deck');
 //
 		$ASIDE = [];
-		for ($index = 72; $index <= 100; $index++) $ASIDE[] = ['type' => LATE, 'type_arg' => $index, 'nbr' => 1];
+		for ($index = 72;
+			$index <= 100;
+			$index++) $ASIDE[] = ['type' => LATE, 'type_arg' => $index, 'nbr' => 1];
 		$deck->createCards($ASIDE, 'aside');
 //
 // ➤ 5 Soviet Union Contingency cards
 //
 		$CONTINGENCY = [];
-		for ($index = 106; $index <= 110; $index++) $CONTINGENCY[] = ['type' => INITIAL_SIDE, 'type_arg' => $index, 'nbr' => 1];
+		for ($index = 106;
+			$index <= 110;
+			$index++) $CONTINGENCY[] = ['type' => INITIAL_SIDE, 'type_arg' => $index, 'nbr' => 1];
 		$deck->createCards($CONTINGENCY, 'contingency');
 //
+	}
+	static function standFast(int $card, string $location, array $pieces)
+	{
+		switch ($card)
+		{
+			case 11: // Defending infantry
+				$infantry = false;
+				foreach ($pieces as $piece) if (Pieces::get($piece)['type'] === 'infantry') $infantry = true;
+				return $infantry;
+			case 35:
+				return $location === LENINGRAD;
+			case 42:
+				return $location === SEVASTOPOL;
+			default:
+				return false;
+		}
 	}
 }

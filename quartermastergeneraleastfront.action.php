@@ -80,4 +80,10 @@ class action_quartermastergeneraleastfront extends APP_GameAction
 		$this->game->acRemovePiece(self::getArg("piece", AT_int, true));
 		self::ajaxResponse("");
 	}
+	public function reaction()
+	{
+		self::setAjaxMode();
+		$this->game->acReaction(self::getArg("card", AT_int, true));
+		self::ajaxResponse("");
+	}
 }

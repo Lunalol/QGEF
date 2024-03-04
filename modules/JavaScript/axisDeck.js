@@ -5,6 +5,8 @@ define(["dojo", "dojo/_base/declare"], function (dojo, declare)
 //
 		constructor: function (bgagame)
 		{
+			console.log('AxisDeck constructor');
+//
 			const FIRST_GAME = 0;
 			const MID = 1;
 			const LATE = 2;
@@ -76,7 +78,7 @@ define(["dojo", "dojo/_base/declare"], function (dojo, declare)
 					[MID]: [_('Directive 21'), _('')]
 				},
 				19: {
-					type: 'ground',
+					type: 'ground', text: _('Defending infantry'),
 					[MID]: [_('Engineers'), _('')]
 				},
 				20: {
@@ -146,32 +148,40 @@ define(["dojo", "dojo/_base/declare"], function (dojo, declare)
 				id: card.id,
 				FACTION: this.bgagame.gamedatas.CARDS.axis[card.type_arg].faction,
 				faction: this.FACTIONS[this.bgagame.gamedatas.CARDS.axis[card.type_arg].faction],
-				type: this.cards[card.type_arg].type,
+				type: this.cards[card.type_arg].type, type_arg: card.type_arg,
 				title: this.cards[card.type_arg][card.type][0],
 				text: this.cards[card.type_arg][card.type][1]
 			}), `QGEFhand-axis`);
 //
 			dojo.place(`<img draggable='false' class='QGEFreactionSVG' src='${g_gamethemeurl}img/svg/${this.bgagame.gamedatas.CARDS.axis[card.type_arg].reaction}.svg'>`, node);
-			dojo.place(`<div class='QGEFreaction'>${this.bgagame.REACTIONS[this.bgagame.gamedatas.CARDS.axis[card.type_arg].reaction]}</div>`, node);
+//
+			let reaction = `<div>${this.bgagame.REACTIONS[this.bgagame.gamedatas.CARDS.axis[card.type_arg].reaction]}</div>`;
+			if ('text' in this.cards[card.type_arg]) reaction += `<div class='QGEFreactionText'>${this.cards[card.type_arg].text}</div>`;
+			if (this.bgagame.gamedatas.CARDS.axis[card.type_arg].reaction === 'Advance') reaction += `<div class='QGEFreactionText'>${_('No Spring Turns')}</div>`;
+			if (this.bgagame.gamedatas.CARDS.axis[card.type_arg].reaction === 'SustainAttack') reaction += `<div class='QGEFreactionText'>${_('No Winter Turns')}</div>`;
+			dojo.place(`<div class='QGEFreaction'>${reaction}</div>`, node);
+//
 			dojo.connect(node, 'click', this, 'click');
 //
 			this.bgagame.addTooltip(node.id, this.cards[card.type_arg][card.type][0], this.cards[card.type_arg][card.type][1], 1000);
 		},
-		discard: function (FACTION, card)
+		discard: function (card)
 		{
-			dojo.query(`.QGEFcardContainer[data-id='${card}']`, `QGEFhand-${FACTION}`).remove();
+			dojo.query(`.QGEFcardContainer[data-id='${card}']`, `QGEFhand-axis`).remove();
 		},
 		click: function (event)
 		{
 			const node = event.currentTarget;
 //
-			if (dojo.hasClass(node, 'QGEFselectable'))
+			if (dojo.hasClass(node, 'QGEFselectable') && this.bgagame.isCurrentPlayerActive())
 			{
 				dojo.stopEvent(event);
 //
 				if (!dojo.hasClass(node, 'QGEFselected'))
 				{
-					if (dojo.query('.QGEFcardContainer.QGEFselected').length >= 2) return;
+					if (dojo.query('.QGEFhandHolder>.QGEFcardContainer.QGEFselected').length >= 2) return;
+					if (this.bgagame.gamedatas.gamestate.name !== 'actionStep') dojo.query('.QGEFcardContainer.QGEFselected').removeClass('QGEFselected');
+					dojo.query('.QGEFcontingencyHolder>.QGEFcardContainer.QGEFselected').removeClass('QGEFselected');
 				}
 				dojo.toggleClass(node, 'QGEFselected');
 //

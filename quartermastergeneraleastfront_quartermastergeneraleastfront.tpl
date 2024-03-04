@@ -77,8 +77,8 @@
 	var QGEFroundTrackRED =
 			"<div class='QGEFroundTrackElement QGEFroundTrackElement-red'><div style='padding-top:25px;'>${text}</div></div>";
 	var QGEFcard = "\
-<div id='QGEFcardContainer-${faction}-${id}' class='QGEFcardContainer' data-faction='${faction}' data-type='${type}' data-id='${id}'>\n\
-	<div id='QGEFcard-${FACTION}-${id}' class='QGEFcard' data-faction='${FACTION}' data-type='${type}'>\n\
+<div id='QGEFcardContainer-${id}' class='QGEFcardContainer' data-faction='${FACTION}' data-type='${type}' data-type_arg='${type_arg}' data-id='${id}'>\n\
+	<div id='QGEFcard-${id}' class='QGEFcard' data-faction='${FACTION}' data-type='${type}'>\n\
 		<div class='QGEFfactionName'>${faction}</div>\n\
 		<div class='QGEFtitle'>${title}</div>\n\
 		<div class='QGEFtext'>${text}</div>\n\

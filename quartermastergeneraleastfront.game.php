@@ -42,7 +42,7 @@ class QuartermasterGeneralEastFront extends Table
 //
 // Globals
 //
-			'round' => ROUND, 'action' => ACTION
+			'round' => ROUND, 'action' => ACTION, 'rank' => RANK
 		]);
 //
 // Initialize Decks
@@ -127,7 +127,7 @@ class QuartermasterGeneralEastFront extends Table
 //
 // Color Preferences
 //
-		if (sizeof($players) === 1)
+		if (sizeof($players) === 1 && false)
 		{
 			$gameinfos = self::getGameinfos();
 			self::reattributeColorsBasedOnPreferences($players, $gameinfos['player_colors']);

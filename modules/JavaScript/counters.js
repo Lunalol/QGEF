@@ -4,7 +4,7 @@ define(["dojo", "dojo/_base/declare"], function (dojo, declare)
 	{
 		constructor: function (bgagame)
 		{
-			console.log('counters constructor');
+			console.log('Counters constructor');
 //
 // Reference to BGA game
 //

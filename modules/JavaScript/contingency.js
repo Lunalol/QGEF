@@ -5,6 +5,8 @@ define(["dojo", "dojo/_base/declare"], function (dojo, declare)
 //
 		constructor: function (bgagame)
 		{
+			console.log('Contingency constructor');
+//
 			const INITIAL_SIDE = 3;
 			const SECOND_SIDE = 4;
 //
@@ -81,7 +83,7 @@ define(["dojo", "dojo/_base/declare"], function (dojo, declare)
 				id: card.id,
 				FACTION: this.cards[card.type_arg].faction,
 				faction: this.FACTIONS[this.cards[card.type_arg].faction],
-				type: this.cards[card.type_arg].type,
+				type: this.cards[card.type_arg].type, type_arg: card.type_arg,
 				title: this.cards[card.type_arg][card.type][0],
 				text: this.cards[card.type_arg][card.type][1]
 			}), `QGEFcontingency-${faction}`);
@@ -94,7 +96,7 @@ define(["dojo", "dojo/_base/declare"], function (dojo, declare)
 		{
 			const node = event.currentTarget;
 //
-			if (dojo.hasClass(node, 'QGEFselectable'))
+			if (dojo.hasClass(node, 'QGEFselectable') && this.bgagame.isCurrentPlayerActive())
 			{
 				dojo.stopEvent(event);
 //

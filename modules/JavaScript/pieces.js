@@ -4,14 +4,14 @@ define(["dojo", "dojo/_base/declare"], function (dojo, declare)
 	{
 		constructor: function (bgagame)
 		{
-			console.log('pieces constructor');
+			console.log('Pieces constructor');
 //
 // Reference to BGA game
 //
 			this.bgagame = bgagame;
 			this.board = bgagame.board.board;
 //
-			this.decals = {infantery: 0, tank: -0.5, airplane: 0.5, fleet: -0.5};
+			this.decals = {infantry: 0, tank: -0.5, airplane: 0.5, fleet: -0.5};
 		},
 		place: function (piece)
 		{
@@ -42,7 +42,7 @@ define(["dojo", "dojo/_base/declare"], function (dojo, declare)
 		},
 		arrange: function (location, type)
 		{
-			const decal = {infantery: 0, tank: -0.5, airplane: 0.5, fleet: -0.5}[type];
+			const decal = {infantry: 0, tank: -0.5, airplane: 0.5, fleet: -0.5}[type];
 			const nodes = dojo.query(`.QGEFpiece[data-type='${type}'][data-location='${location}']`, 'QGEFboard');
 			for (let i = 0; i < nodes.length; i++)
 			{
@@ -56,7 +56,7 @@ define(["dojo", "dojo/_base/declare"], function (dojo, declare)
 		{
 			const node = event.currentTarget;
 //
-			if (dojo.hasClass(node, 'QGEFselectable'))
+			if (dojo.hasClass(node, 'QGEFselectable') && this.bgagame.isCurrentPlayerActive())
 			{
 				dojo.stopEvent(event);
 //

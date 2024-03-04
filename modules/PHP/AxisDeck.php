@@ -64,4 +64,16 @@ class AxisDeck extends APP_GameClass
 		$deck->createCards($CONTINGENCY, 'contingency');
 //
 	}
+	static function standFast(int $card, string $location, array $pieces)
+	{
+		switch ($card)
+		{
+			case 19: // Defending infantry
+				$infantry = false;
+				foreach ($pieces as $piece) if (Pieces::get($piece)['type'] === 'infantry') $infantry = true;
+				return $infantry;
+			default:
+				return false;
+		}
+	}
 }
