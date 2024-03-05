@@ -145,7 +145,8 @@ trait gameStates
 		{
 			$card = $this->{$FACTION . 'Deck'}->pickCard('deck', $FACTION);
 //* -------------------------------------------------------------------------------------------------------- */
-			self::notifyAllPlayers($FACTION . 'Deck', '${FACTION} Draw 1 card', ['card' => $card, 'FACTION' => $FACTION]);
+			self::notifyAllPlayers('msg', '${FACTION} Draw 1 card', ['FACTION' => $FACTION]);
+			self::notifyPlayer(Factions::getPlayerID($FACTION), $FACTION . 'Deck', '', ['card' => $card]);
 //* -------------------------------------------------------------------------------------------------------- */
 		}
 		$this->gamestate->nextState('next');
@@ -204,31 +205,33 @@ trait gameStates
 	}
 	function stAttackRoundDefender()
 	{
-		$FACTION = Factions::getActive();
-//
 		$args = self::argAttackRoundDefender();
 		if (sizeof($args['defender']) === 0)
 		{
+			$this->gamestate->changeActivePlayer(Factions::getPlayerID(Factions::getActive()));
 			$this->gamestate->nextState('end');
-			return self::action($FACTION);
+			return self::action();
 		}
 //
-		self::activeNextPlayer();
+		$this->gamestate->changeActivePlayer(Factions::getPlayerID(Factions::getInactive()));
 		$this->gamestate->nextState('continue');
 	}
 	function stAttackRoundAttacker()
 	{
-		$FACTION = Factions::getActive();
-//
 		$args = self::argAttackRoundAttacker();
 		if (sizeof($args['defender']) === 0 || sizeof($args['attacker']) <= 1)
 		{
-			self::activeNextPlayer();
+			$this->gamestate->changeActivePlayer(Factions::getPlayerID(Factions::getActive()));
 			$this->gamestate->nextState('end');
-			return self::action($FACTION);
+			return self::action();
 		}
 //
-		self::activeNextPlayer();
+		$this->gamestate->changeActivePlayer(Factions::getPlayerID(Factions::getActive()));
+		$this->gamestate->nextState('continue');
+	}
+	function stAttackRoundExchange()
+	{
+		$this->gamestate->changeActivePlayer(Factions::getPlayerID(Factions::getActive()));
 		$this->gamestate->nextState('continue');
 	}
 }

@@ -42,7 +42,7 @@ class QuartermasterGeneralEastFront extends Table
 //
 // Globals
 //
-			'round' => ROUND, 'action' => ACTION, 'rank' => RANK
+			'round' => ROUND, 'action' => ACTION
 		]);
 //
 // Initialize Decks

@@ -7,135 +7,160 @@
  */
 trait gameStateActions
 {
-	function acPass(): void
+	function acPass(string $FACTION): void
 	{
 		$this->checkAction('pass');
+		if ($FACTION !== Factions::getActive()) throw new BgaVisibleSystemException("Invalid FACTION: $FACTION");
 //
 		Pieces::setStatus(Pieces::ALL, 'moved');
 //
-		$this->gamestate->nextState('next');
+		if ($this->gamestate->state()['name'] === 'attackRoundAttacker')
+		{
+			$this->gamestate->nextState('end');
+			self::action();
+		}
+		else $this->gamestate->nextState('next');
 	}
-	function acCancel(): void
+	function acCancel(string $FACTION): void
 	{
 		$this->checkAction('cancel');
+		if ($FACTION !== Factions::getActive()) throw new BgaVisibleSystemException("Invalid FACTION: $FACTION");
 //
-		$FACTION = Factions::getActive();
 		Factions::setStatus($FACTION, 'action');
 //* -------------------------------------------------------------------------------------------------------- */
 		self::notifyAllPlayers('msg', '${FACTION} Last action canceled', ['FACTION' => $FACTION]);
 //* -------------------------------------------------------------------------------------------------------- */
 		$this->gamestate->nextState('cancel');
 	}
-	function acPlay(array $cards): void
+	function acPlay(string $FACTION, array $cards): void
 	{
-		$this->checkAction('play');
 //
+// Check Play
+//
+		$this->checkAction('play');
+		if ($FACTION !== Factions::getActive()) throw new BgaVisibleSystemException("Invalid FACTION: $FACTION");
 		if (sizeof($cards) !== 1) throw new BgaVisibleSystemException("Invalid number of cards: " . json_encode($cards));
 //
-		$FACTION = Factions::getActive();
 		Factions::setStatus($FACTION, 'action', [['name' => 'play', 'cards' => $cards]]);
 //* -------------------------------------------------------------------------------------------------------- */
 		self::notifyAllPlayers('msg', '${FACTION} <B>Play</B>', ['FACTION' => $FACTION]);
 //* -------------------------------------------------------------------------------------------------------- */
 		$this->gamestate->nextState('action');
 	}
-	function acConscription(array $cards): void
+	function acConscription(string $FACTION, array $cards): void
 	{
-		$this->checkAction('conscription');
 //
+// Check Conscription
+//
+		$this->checkAction('conscription');
+		if ($FACTION !== Factions::getActive()) throw new BgaVisibleSystemException("Invalid FACTION: $FACTION");
 		if (sizeof($cards) < 1 || sizeof($cards) > 2) throw new BgaVisibleSystemException("Invalid number of cards: " . json_encode($cards));
 //
-		$FACTION = Factions::getActive();
 		Factions::setStatus($FACTION, 'action', [['name' => 'conscription', 'cards' => $cards]]);
 //* -------------------------------------------------------------------------------------------------------- */
 		self::notifyAllPlayers('msg', '${FACTION} <B>Conscription</B>', ['FACTION' => $FACTION]);
 //* -------------------------------------------------------------------------------------------------------- */
 		$this->gamestate->nextState('action');
 	}
-	function acForcedMarch(array $cards): void
+	function acForcedMarch(string $FACTION, array $cards): void
 	{
-		$this->checkAction('forcedMarch');
 //
+// Check ForcedMarch
+//
+		$this->checkAction('forcedMarch');
+		if ($FACTION !== Factions::getActive()) throw new BgaVisibleSystemException("Invalid FACTION: $FACTION");
 		if (sizeof($cards) !== 1) throw new BgaVisibleSystemException("Invalid number of cards: " . json_encode($cards));
 //
-		$FACTION = Factions::getActive();
 		Factions::setStatus($FACTION, 'action', [['name' => 'forcedMarch', 'cards' => $cards]]);
 //* -------------------------------------------------------------------------------------------------------- */
 		self::notifyAllPlayers('msg', '${FACTION} <B>Forced March</B>', ['FACTION' => $FACTION]);
 //* -------------------------------------------------------------------------------------------------------- */
 		$this->gamestate->nextState('action');
 	}
-	function acDesperateAttack(array $cards): void
+	function acDesperateAttack(string $FACTION, array $cards): void
 	{
-		$this->checkAction('desperateAttack');
 //
+// Check DesperateAttack
+//
+		$this->checkAction('desperateAttack');
+		if ($FACTION !== Factions::getActive()) throw new BgaVisibleSystemException("Invalid FACTION: $FACTION");
 		if (sizeof($cards) !== 2) throw new BgaVisibleSystemException("Invalid number of cards: " . json_encode($cards));
 //
-		$FACTION = Factions::getActive();
 		Factions::setStatus($FACTION, 'action', [['name' => 'desperateAttack', 'cards' => $cards]]);
 //* -------------------------------------------------------------------------------------------------------- */
 		self::notifyAllPlayers('msg', '${FACTION} <B>Desperate Attack</B>', ['FACTION' => $FACTION]);
 //* -------------------------------------------------------------------------------------------------------- */
 		$this->gamestate->nextState('action');
 	}
-	function acProductionInitiative(): void
+	function acProductionInitiative(string $FACTION): void
 	{
-		$this->checkAction('productionInitiative');
 //
-		$FACTION = Factions::getActive();
+// Check ProductionInitiative
+//
+		$this->checkAction('productionInitiative');
+		if ($FACTION !== Factions::getActive()) throw new BgaVisibleSystemException("Invalid FACTION: $FACTION");
+//
 		$card = $this->{$FACTION . 'Deck'}->pickCard('deck', $FACTION);
+		if (!$card) throw new BgaUserException(self::_('Your deck is empty'));
 //* -------------------------------------------------------------------------------------------------------- */
 //* -------------------------------------------------------------------------------------------------------- */
 		self::notifyAllPlayers('msg', '${FACTION} <B>Production Initiative</B>', ['FACTION' => $FACTION]);
-		self::notifyAllPlayers($FACTION . 'Deck', '${FACTION} Draw 1 card', ['card' => $card, 'FACTION' => $FACTION]);
+		self::notifyAllPlayers('msg', '${FACTION} Draw 1 card', ['FACTION' => $FACTION]);
+		self::notifyPlayer(Factions::getPlayerID($FACTION), $FACTION . 'Deck', '', ['card' => $card]);
 //* -------------------------------------------------------------------------------------------------------- */
 		$this->gamestate->nextState('next');
 	}
-	function acContingency(array $cards): void
+	function acContingency(string $FACTION, array $cards): void
 	{
-		$this->checkAction('play');
 //
+// Check Contingency
+//
+		$this->checkAction('play');
+		if ($FACTION !== Factions::getActive()) throw new BgaVisibleSystemException("Invalid FACTION: $FACTION");
 		if (sizeof($cards) !== 1) throw new BgaVisibleSystemException("Invalid number of cards: " . json_encode($cards));
 //
-		$FACTION = Factions::getActive();
 		Factions::setStatus($FACTION, 'action', [['name' => 'contingency', 'cards' => $cards]]);
 //* -------------------------------------------------------------------------------------------------------- */
 		self::notifyAllPlayers('msg', '${FACTION} <B>Contingency</B>', ['FACTION' => $FACTION]);
 //* -------------------------------------------------------------------------------------------------------- */
 		$this->gamestate->nextState('action');
 	}
-	function acDeploy(string $location, string $faction, string $type): void
+	function acDeploy(string $FACTION, string $location, string $faction, string $type): void
 	{
-		$this->checkAction('deploy');
 //
+// Check Deploy
+//
+		$this->checkAction('deploy');
+		if ($FACTION !== Factions::getActive()) throw new BgaVisibleSystemException("Invalid FACTION: $FACTION");
 		if (!array_key_exists($faction, $this->possible)) throw new BgaVisibleSystemException("Invalid faction: $faction");
 		if (!array_key_exists($type, $this->possible[$faction])) throw new BgaVisibleSystemException("Invalid type: $type");
 		if (!in_array($location, $this->possible[$faction][$type])) throw new BgaVisibleSystemException("Invalid location: $location");
 //
-		$FACTION = Factions::getActive();
+		if ($this->gamestate->state()['name'] === 'action') self::discard();
 //* -------------------------------------------------------------------------------------------------------- */
 		self::notifyAllPlayers('placePiece', '${faction} <B>${type}</B> deploys at <B>${location}</B>', [
 			'faction' => $faction, 'type' => $this->PIECES[$type],
 			'location' => $this->REGIONS[$location], 'i18n' => ['type', 'location'],
 			'piece' => Pieces::get(Pieces::create($FACTION, $faction, $type, $location))]);
 //* -------------------------------------------------------------------------------------------------------- */
-		self::action($FACTION);
+		if ($this->gamestate->state()['name'] === 'action') self::action();
+		else $this->gamestate->nextState('continue');
 	}
-	function acMove(string $location, array $pieces): void
+	function acMove(string $FACTION, string $location, array $pieces): void
 	{
+//
+// Check Move
+//
 		$this->checkAction('move');
-//
-		$FACTION = Factions::getActive();
-//
-// Check movement
-//
+		if ($FACTION !== Factions::getActive()) throw new BgaVisibleSystemException("Invalid FACTION: $FACTION");
+		if (!$pieces) throw new BgaVisibleSystemException("No pieces selected");
 		foreach ($pieces as $id)
 		{
 			if (!array_key_exists($id, $this->possible)) throw new BgaVisibleSystemException("Invalid piece: $id");
 			if (!in_array($location, $this->possible[$id])) throw new BgaVisibleSystemException("Invalid location: $location");
 		}
 //
-// Do movement
+		if ($this->gamestate->state()['name'] === 'action') self::discard();
 //
 		foreach ($pieces as $id)
 		{
@@ -154,57 +179,65 @@ trait gameStateActions
 //* -------------------------------------------------------------------------------------------------------- */
 		}
 //
-		if ($this->gamestate->state()['name'] === 'action') self::action($FACTION);
+		if ($this->gamestate->state()['name'] === 'action') self::action();
 		else $this->gamestate->nextState('continue');
 	}
-	function acAttack(string $location, array $pieces): void
+	function acAttack(string $FACTION, string $location, array $pieces): void
 	{
+//
+// Check Attack
+//
 		$this->checkAction('attack');
-//
-		$FACTION = Factions::getActive();
-//
-// Check attack
-//
-		$faction = null;
+		if ($FACTION !== Factions::getActive()) throw new BgaVisibleSystemException("Invalid FACTION: $FACTION");
+		if (!$pieces) throw new BgaVisibleSystemException("No pieces selected");
 		foreach ($pieces as $id)
 		{
 			if (!array_key_exists($id, $this->possible)) throw new BgaVisibleSystemException("Invalid piece: $id");
 			if (!in_array($location, $this->possible[$id])) throw new BgaVisibleSystemException("Invalid location: $location");
 //
 			$piece = Pieces::get($id);
-			if (is_null($faction)) $faction = $piece['faction'];
-			if ($faction !== $piece['faction']) throw new BgaVisibleSystemException("Invalid faction");
+			if (!isset($faction)) $faction = $piece['faction'];
+			else if ($faction !== $piece['faction']) throw new BgaVisibleSystemException("Invalid faction: $piece[faction]");
 		}
 //
-// Do attack
+		if ($this->gamestate->state()['name'] === 'action') self::discard();
 //
+		Factions::setStatus(Factions::getActive(), 'attack', ['location' => $location, 'faction' => $faction, 'pieces' => $pieces]);
+		Factions::setStatus(Factions::getActive(), 'removedPiece');
+		Factions::setStatus(Factions::getInactive(), 'removedPiece');
 //* -------------------------------------------------------------------------------------------------------- */
 		self::notifyAllPlayers('msg', '${faction} Attack on <B>${location}</B>', [
 			'faction' => $faction, 'location' => $this->REGIONS[$location], 'i18n' => ['location']]);
 //* -------------------------------------------------------------------------------------------------------- */
-		Factions::setStatus($FACTION, 'attack', ['location' => $location, 'faction' => $faction, 'pieces' => $pieces]);
-		self::setGameStateValue('rank', 0);
-//
 		$this->gamestate->nextState('attack');
 	}
-	function acRemovePiece(int $pieceID): void
+	function acRemovePiece(string $FACTION, int $id, bool $exchange = false): void
 	{
+//
+// Check Remove Piece
+//
 		$this->checkAction('removePiece');
-//
-// Check remove piece
-//
-		$piece = Pieces::get($pieceID);
-		if (!$piece) throw new BgaVisibleSystemException("Invalid piece: $pieceID");
-//
+		switch ($this->gamestate->state()['name'])
+		{
+			case 'attackRoundDefender':
+				if ($FACTION !== Factions::getInactive()) throw new BgaVisibleSystemException("Invalid FACTION: $FACTION");
+				break;
+			default:
+				if ($FACTION !== Factions::getActive()) throw new BgaVisibleSystemException("Invalid FACTION: $FACTION");
+				break;
+		}
 		if (!array_key_exists('pieces', $this->possible)) throw new BgaVisibleSystemException("Invalid possible: " . json_encode($this->possible));
-		if (!in_array($pieceID, $this->possible['pieces'])) throw new BgaVisibleSystemException("Invalid piece: $pieceID");
+		if (!in_array($id, $this->possible['pieces'])) throw new BgaVisibleSystemException("Invalid piece: $id");
 //
-		$rank = Pieces::RANK[$piece['type']];
+		$piece = Pieces::get($id);
+		if (!$piece) throw new BgaVisibleSystemException("Invalid piece: $id");
+//
 		if ($this->gamestate->state()['name'] === 'attackRoundAttacker')
 		{
-			if ($rank < self::getGameStateValue('rank'))
+			$removedPiece = Factions::getStatus(Factions::getInactive(), 'removedPiece');
+			if ($removedPiece && Pieces::RANK[$piece['type']] < Pieces::RANK[$removedPiece['type']])
 			{
-				switch (self::getGameStateValue('rank'))
+				switch (Pieces::RANK[$removedPiece['type']])
 				{
 					case 1:
 						throw new BgaUserException(self::_('You must remove a <B>Tank</B>, an Airplane, a Fleet or react with Sustain Attack to initiate a new round of combat'));
@@ -216,77 +249,91 @@ trait gameStateActions
 			}
 		}
 //
-// Do remove piece
-//
-		self::setGameStateValue('rank', $rank);
+		Factions::setStatus($FACTION, 'removedPiece', $piece);
+		Pieces::destroy($id);
 //* -------------------------------------------------------------------------------------------------------- */
-		self::notifyAllPlayers('removePiece', '', ['piece' => $piece]);
+		self::notifyAllPlayers('removePiece', '${faction} <B>${type}</B> is removed at <B>${location}</B>', [
+			'faction' => $piece['faction'], 'type' => $this->PIECES[$piece['type']],
+			'location' => $this->REGIONS[$piece['location']], 'i18n' => ['type', 'location'],
+			'piece' => $piece]);
 //* -------------------------------------------------------------------------------------------------------- */
-		Pieces::destroy($pieceID);
-//
-		$this->gamestate->nextState('continue');
+		if (!$exchange) $this->gamestate->nextState('continue');
+		else Factions::setStatus($FACTION, 'factionExchange', $piece['faction']);
 	}
-	function acReaction(int $id): void
+	function acReaction(string $FACTION, int $id, $removedPiece = null): void
 	{
+//
+// Check Reaction
+//
 		$this->checkAction('reaction');
-//
-// Check reaction
-//
 		if (!array_key_exists('reactions', $this->possible)) throw new BgaVisibleSystemException("Invalid possible: " . json_encode($this->possible));
 		if (!in_array($id, $this->possible['reactions'])) throw new BgaVisibleSystemException("Invalid card: $id");
 //
-// Do reaction
+		$card = $this->{$FACTION . 'Deck'}->getCard($id);
+		if (!$card) throw new BgaVisibleSystemException("Invalid attacker card: $id");
+		$class = "${FACTION}Deck";
 //
-		$attackerFACTION = Factions::getActive();
-		$defenderFACTION = Factions::getInactive();
+		$reaction = $class::DECK[$card['type_arg']]['reaction'];
+		if ($removedPiece && Pieces::get($removedPiece)['faction'] !== $class::DECK[$card['type_arg']]['faction']) throw new BgaVisibleSystemException("Invalid faction");
 //
-		['location' => $location, 'faction' => $attackerfaction, 'pieces' => $attacker] = Factions::getStatus($attackerFACTION, 'attack');
-//
-		$state = $this->gamestate->state()['name'];
-		switch ($state)
+		switch ($this->gamestate->state()['name'])
 		{
 //
 			case 'attackRoundAttacker':
 //
-				$card = $this->{$attackerFACTION . 'Deck'}->getCard($id);
-				if (!$card) throw new BgaVisibleSystemException("Invalid attacker card: $id");
-//
-				$class = "${$attackerFACTION}Deck";
-//
-				$reaction = $class::DECK[$card['type_arg']]['reaction'];
 				switch ($reaction)
 				{
-					case 'sustainAttack':
+					case 'SustainAttack':
+						if (intval(self::getGameStateValue('round')) % 4 === 3) throw new BgaUserException(self::_('You may not use a Sustain Attack reaction during a Winter turn'));
+						break;
+					case 'AntiAir':
+					case 'Naval':
+						break;
+					case 'Advance':
+						if (intval(self::getGameStateValue('round')) % 4 === 0) throw new BgaUserException(self::_('You cannot use the Advance!reaction during a Spring turn'));
+						throw new BgaVisibleSystemException("Not implemented !");
 						break;
 					default:
 						throw new BgaVisibleSystemException("Invalid reaction for attacker: $reaction");
 				}
-//
 				break;
 //
 			case 'attackRoundDefender':
 //
-				$card = $this->{$defenderFACTION . 'Deck'}->getCard($id);
-				if (!$card) throw new BgaVisibleSystemException("Invalid defender card: $id");
-//
-				$class = "${defenderFACTION}Deck";
-//
-				$reaction = $class::DECK[$card['type_arg']]['reaction'];
 				switch ($reaction)
 				{
-					case 'standFast':
+					case 'StandFast':
+						Factions::setStatus(Factions::getInactive(), 'removedPiece', ['faction' => $class::DECK[$card['type_arg']]['faction'], 'type' => 'StandFast']);
+						break;
+					case 'AntiAir':
+					case 'Naval':
+					case 'Exchange':
+						break;
+					case 'Retreat':
+						throw new BgaVisibleSystemException("Not implemented !");
 						break;
 					default:
 						throw new BgaVisibleSystemException("Invalid reaction for defender: $reaction");
 				}
-//
 				break;
 //
 			default:
 //
-				throw new BgaVisibleSystemException("Invalid game state for reaction: $state");
+				throw new BgaVisibleSystemException("Invalid game state for reaction: $this->gamestate->state()['name']");
 //
 		}
-		die;
+//
+		$this->{$FACTION . 'Deck'}->playCard($id);
+//* -------------------------------------------------------------------------------------------------------- */
+		self::notifyAllPlayers($FACTION . 'Discard', '${FACTION} <B>${reaction}</B>', [
+			'card' => $id, 'FACTION' => $FACTION,
+			'reaction' => $this->REACTIONS[$reaction], 'i18n' => ['reaction']]);
+//* -------------------------------------------------------------------------------------------------------- */
+		if ($reaction === 'Exchange')
+		{
+			self::acRemovePiece($FACTION, $removedPiece, true);
+			$this->gamestate->nextState('exchange');
+		}
+		else $this->gamestate->nextState('continue');
 	}
 }

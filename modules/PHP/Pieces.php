@@ -14,7 +14,7 @@ class Pieces extends APP_GameClass
 	const AIRPLANE = 'airplane';
 	const FLEET = 'fleet';
 #
-	const RANK = [self::INFANTRY => 0, self::TANK => 1, self::AIRPLANE => 2, self::FLEET => 2, 'StandFast' => 3, 'SustainAttack' => 3];
+	const RANK = [null => 0, self::INFANTRY => 0, self::TANK => 1, self::AIRPLANE => 2, self::FLEET => 2, 'StandFast' => 3, 'SustainAttack' => 3];
 #
 	const PIECES = [
 		Factions::SOVIETUNION => [self::INFANTRY => 14, self::TANK => 5, self::AIRPLANE => 4, self::FLEET => 3],

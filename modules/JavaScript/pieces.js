@@ -60,7 +60,7 @@ define(["dojo", "dojo/_base/declare"], function (dojo, declare)
 			{
 				dojo.stopEvent(event);
 //
-				if (this.bgagame.gamedatas.gamestate.possibleactions.includes('removePiece')) return this.bgagame.action('removePiece', {piece: node.dataset.id});
+				if (this.bgagame.gamedatas.gamestate.possibleactions.includes('removePiece')) return this.bgagame.QGEFremove(node.dataset.id);
 //
 				if (this.bgagame.gamedatas.gamestate.possibleactions.includes('forcedMarch'))
 				{

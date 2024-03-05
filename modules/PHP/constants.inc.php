@@ -23,7 +23,6 @@ define('FIRSTGAME', 102);
 #
 define('ROUND', 10);
 define('ACTION', 11);
-define('RANK', 20);
 #
 # Card types
 #

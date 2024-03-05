@@ -7,16 +7,27 @@
  */
 trait gameUtils
 {
-	function action($FACTION)
+	function discard()
 	{
+		$FACTION = Factions::getActive();
+//
 		$actions = Factions::getStatus($FACTION, 'action');
 		$action = array_pop($actions);
 //
-		foreach ($action['cards'] as $card)
+		foreach ($action['cards'] as $id)
 		{
-			$this->{$FACTION . 'Deck'}->moveCard($card, 'discard', $FACTION);
-			self::notifyAllPlayers($FACTION . 'Discard', '${FACTION} Discard 1 card', ['card' => $card, 'FACTION' => $FACTION]);
+			$this->{$FACTION . 'Deck'}->playCard($id);
+//* -------------------------------------------------------------------------------------------------------- */
+			self::notifyAllPlayers($FACTION . 'Discard', '${FACTION} Discard 1 card', ['card' => $id, 'FACTION' => $FACTION]);
+//* -------------------------------------------------------------------------------------------------------- */
 		}
+	}
+	function action()
+	{
+		$FACTION = Factions::getActive();
+//
+		$actions = Factions::getStatus($FACTION, 'action');
+		array_pop($actions);
 //
 		if ($actions)
 		{
