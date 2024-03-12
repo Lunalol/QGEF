@@ -106,6 +106,8 @@ trait gameStateArguments
 			if ($class::DECK[$card['type_arg']]['reaction'] === 'NavalCombat' && $removedPiece && $removedPiece['type'] === 'fleet') $this->possible['reactions'][] = +$card['id'];
 		}
 //
+		$this->possible['retreat'] = Pieces::getPossibleRetreats($defenderFACTION, $pieces);
+//
 		return ['FACTION' => $defenderFACTION, '_private' => [Factions::getPlayerID($defenderFACTION) => $this->possible],
 			'location' => $location, 'attacker' => $attacker, 'defender' => $defender];
 	}
@@ -144,6 +146,8 @@ trait gameStateArguments
 			if ($class::DECK[$card['type_arg']]['reaction'] === 'NavalCombat' && $removedPiece && $removedPiece['type'] === 'fleet') $this->possible['reactions'][] = +$card['id'];
 			if ($class::DECK[$card['type_arg']]['reaction'] === 'Advance') $this->possible['reactions'][] = +$card['id'];
 		}
+//
+		if (!$defender) $this->possible['advance'] = $location;
 //
 		return ['FACTION' => $attackerFACTION, '_private' => [Factions::getPlayerID($attackerFACTION) => $this->possible],
 			'location' => $location, 'attacker' => $attacker, 'defender' => $defender];

@@ -28,7 +28,7 @@ trait gameStateActions
 //
 		Factions::setStatus($FACTION, 'action');
 //* -------------------------------------------------------------------------------------------------------- */
-		self::notifyAllPlayers('msg', '${FACTION} Last action canceled', ['FACTION' => $FACTION]);
+		self::notifyAllPlayers('msg', clienttranslate('${FACTION} Last action canceled'), ['FACTION' => $FACTION]);
 //* -------------------------------------------------------------------------------------------------------- */
 		$this->gamestate->nextState('cancel');
 	}
@@ -43,7 +43,7 @@ trait gameStateActions
 //
 		Factions::setStatus($FACTION, 'action', [['name' => 'play', 'cards' => $cards]]);
 //* -------------------------------------------------------------------------------------------------------- */
-		self::notifyAllPlayers('msg', '${FACTION} <B>Play</B>', ['FACTION' => $FACTION]);
+		self::notifyAllPlayers('msg', clienttranslate('${FACTION} <B>Play</B>'), ['FACTION' => $FACTION]);
 //* -------------------------------------------------------------------------------------------------------- */
 		$this->gamestate->nextState('action');
 	}
@@ -58,7 +58,7 @@ trait gameStateActions
 //
 		Factions::setStatus($FACTION, 'action', [['name' => 'conscription', 'cards' => $cards]]);
 //* -------------------------------------------------------------------------------------------------------- */
-		self::notifyAllPlayers('msg', '${FACTION} <B>Conscription</B>', ['FACTION' => $FACTION]);
+		self::notifyAllPlayers('msg', clienttranslate('${FACTION} <B>Conscription</B>'), ['FACTION' => $FACTION]);
 //* -------------------------------------------------------------------------------------------------------- */
 		$this->gamestate->nextState('action');
 	}
@@ -73,7 +73,7 @@ trait gameStateActions
 //
 		Factions::setStatus($FACTION, 'action', [['name' => 'forcedMarch', 'cards' => $cards]]);
 //* -------------------------------------------------------------------------------------------------------- */
-		self::notifyAllPlayers('msg', '${FACTION} <B>Forced March</B>', ['FACTION' => $FACTION]);
+		self::notifyAllPlayers('msg', clienttranslate('${FACTION} <B>Forced March</B>'), ['FACTION' => $FACTION]);
 //* -------------------------------------------------------------------------------------------------------- */
 		$this->gamestate->nextState('action');
 	}
@@ -88,7 +88,7 @@ trait gameStateActions
 //
 		Factions::setStatus($FACTION, 'action', [['name' => 'desperateAttack', 'cards' => $cards]]);
 //* -------------------------------------------------------------------------------------------------------- */
-		self::notifyAllPlayers('msg', '${FACTION} <B>Desperate Attack</B>', ['FACTION' => $FACTION]);
+		self::notifyAllPlayers('msg', clienttranslate('${FACTION} <B>Desperate Attack</B>'), ['FACTION' => $FACTION]);
 //* -------------------------------------------------------------------------------------------------------- */
 		$this->gamestate->nextState('action');
 	}
@@ -104,8 +104,8 @@ trait gameStateActions
 		if (!$card) throw new BgaUserException(self::_('Your deck is empty'));
 //* -------------------------------------------------------------------------------------------------------- */
 //* -------------------------------------------------------------------------------------------------------- */
-		self::notifyAllPlayers('msg', '${FACTION} <B>Production Initiative</B>', ['FACTION' => $FACTION]);
-		self::notifyAllPlayers('msg', '${FACTION} Draw 1 card', ['FACTION' => $FACTION]);
+		self::notifyAllPlayers('msg', clienttranslate('${FACTION} <B>Production Initiative</B>'), ['FACTION' => $FACTION]);
+		self::notifyAllPlayers('msg', clienttranslate('${FACTION} Draw 1 card'), ['FACTION' => $FACTION]);
 		self::notifyPlayer(Factions::getPlayerID($FACTION), $FACTION . 'Deck', '', ['card' => $card]);
 //* -------------------------------------------------------------------------------------------------------- */
 		$this->gamestate->nextState('next');
@@ -121,7 +121,7 @@ trait gameStateActions
 //
 		Factions::setStatus($FACTION, 'action', [['name' => 'contingency', 'cards' => $cards]]);
 //* -------------------------------------------------------------------------------------------------------- */
-		self::notifyAllPlayers('msg', '${FACTION} <B>Contingency</B>', ['FACTION' => $FACTION]);
+		self::notifyAllPlayers('msg', clienttranslate('${FACTION} <B>Contingency</B>'), ['FACTION' => $FACTION]);
 //* -------------------------------------------------------------------------------------------------------- */
 		$this->gamestate->nextState('action');
 	}
@@ -138,7 +138,7 @@ trait gameStateActions
 //
 		if ($this->gamestate->state()['name'] === 'action') self::discard();
 //* -------------------------------------------------------------------------------------------------------- */
-		self::notifyAllPlayers('placePiece', '${faction} <B>${type}</B> deploys at <B>${location}</B>', [
+		self::notifyAllPlayers('placePiece', clienttranslate('${faction} <B>${type}</B> deploys at <B>${location}</B>'), [
 			'faction' => $faction, 'type' => $this->PIECES[$type],
 			'location' => $this->REGIONS[$location], 'i18n' => ['type', 'location'],
 			'piece' => Pieces::get(Pieces::create($FACTION, $faction, $type, $location))]);
@@ -171,7 +171,7 @@ trait gameStateActions
 			$piece['location'] = $location;
 			Pieces::setLocation($id, $location);
 //* -------------------------------------------------------------------------------------------------------- */
-			self::notifyAllPlayers('placePiece', '${faction} <B>${type}</B> moves from <B>${old}</B> to <B>${new}</B>', [
+			self::notifyAllPlayers('placePiece', clienttranslate('${faction} <B>${type}</B> moves from <B>${old}</B> to <B>${new}</B>'), [
 				'faction' => $piece['faction'], 'type' => $this->PIECES[$piece['type']],
 				'old' => $this->REGIONS[$old_location], 'new' => $this->REGIONS[$location],
 				'i18n' => ['type', 'old', 'new'],
@@ -206,10 +206,23 @@ trait gameStateActions
 		Factions::setStatus(Factions::getActive(), 'removedPiece');
 		Factions::setStatus(Factions::getInactive(), 'removedPiece');
 //* -------------------------------------------------------------------------------------------------------- */
-		self::notifyAllPlayers('msg', '${faction} Attack on <B>${location}</B>', [
+		self::notifyAllPlayers('msg', clienttranslate('${faction} Attack on <B>${location}</B>'), [
 			'faction' => $faction, 'location' => $this->REGIONS[$location], 'i18n' => ['location']]);
 //* -------------------------------------------------------------------------------------------------------- */
 		$this->gamestate->nextState('attack');
+	}
+	function acRetreat(string $FACTION, int $location, int $id): void
+	{
+//
+// Check Retreat
+//
+		$this->checkAction('retreat');
+		if (!array_key_exists('retreat', $this->possible)) throw new BgaVisibleSystemException("Invalid possible: " . json_encode($this->possible));
+		if (!array_key_exists($id, $this->possible['retreat'])) throw new BgaVisibleSystemException("Invalid piece: $id");
+		if (!in_array($location, $this->possible['retreat'][$id])) throw new BgaVisibleSystemException("Invalid location: $location");
+//
+
+		die;
 	}
 	function acRemovePiece(string $FACTION, int $id, bool $exchange = false): void
 	{
@@ -252,7 +265,7 @@ trait gameStateActions
 		Factions::setStatus($FACTION, 'removedPiece', $piece);
 		Pieces::destroy($id);
 //* -------------------------------------------------------------------------------------------------------- */
-		self::notifyAllPlayers('removePiece', '${faction} <B>${type}</B> is removed at <B>${location}</B>', [
+		self::notifyAllPlayers('removePiece', clienttranslate('${faction} <B>${type}</B> is removed at <B>${location}</B>'), [
 			'faction' => $piece['faction'], 'type' => $this->PIECES[$piece['type']],
 			'location' => $this->REGIONS[$piece['location']], 'i18n' => ['type', 'location'],
 			'piece' => $piece]);
@@ -260,21 +273,21 @@ trait gameStateActions
 		if (!$exchange) $this->gamestate->nextState('continue');
 		else Factions::setStatus($FACTION, 'factionExchange', $piece['faction']);
 	}
-	function acReaction(string $FACTION, int $id, $removedPiece = null): void
+	function acReaction(string $FACTION, int $cardID, $pieceID = null, $location = null): void
 	{
 //
 // Check Reaction
 //
 		$this->checkAction('reaction');
 		if (!array_key_exists('reactions', $this->possible)) throw new BgaVisibleSystemException("Invalid possible: " . json_encode($this->possible));
-		if (!in_array($id, $this->possible['reactions'])) throw new BgaVisibleSystemException("Invalid card: $id");
+		if (!in_array($cardID, $this->possible['reactions'])) throw new BgaVisibleSystemException("Invalid card: $cardID");
 //
-		$card = $this->{$FACTION . 'Deck'}->getCard($id);
-		if (!$card) throw new BgaVisibleSystemException("Invalid attacker card: $id");
+		$card = $this->{$FACTION . 'Deck'}->getCard($cardID);
+		if (!$card) throw new BgaVisibleSystemException("Invalid attacker card: $cardID");
 		$class = "${FACTION}Deck";
 //
 		$reaction = $class::DECK[$card['type_arg']]['reaction'];
-		if ($removedPiece && Pieces::get($removedPiece)['faction'] !== $class::DECK[$card['type_arg']]['faction']) throw new BgaVisibleSystemException("Invalid faction");
+		if ($pieceID && Pieces::get($pieceID)['faction'] !== $class::DECK[$card['type_arg']]['faction']) throw new BgaVisibleSystemException("Invalid faction");
 //
 		switch ($this->gamestate->state()['name'])
 		{
@@ -303,14 +316,10 @@ trait gameStateActions
 				switch ($reaction)
 				{
 					case 'StandFast':
-						Factions::setStatus(Factions::getInactive(), 'removedPiece', ['faction' => $class::DECK[$card['type_arg']]['faction'], 'type' => 'StandFast']);
-						break;
 					case 'AntiAir':
 					case 'Naval':
 					case 'Exchange':
-						break;
 					case 'Retreat':
-						throw new BgaVisibleSystemException("Not implemented !");
 						break;
 					default:
 						throw new BgaVisibleSystemException("Invalid reaction for defender: $reaction");
@@ -323,17 +332,45 @@ trait gameStateActions
 //
 		}
 //
-		$this->{$FACTION . 'Deck'}->playCard($id);
+		$this->{$FACTION . 'Deck'}->playCard($cardID);
 //* -------------------------------------------------------------------------------------------------------- */
-		self::notifyAllPlayers($FACTION . 'Discard', '${FACTION} <B>${reaction}</B>', [
-			'card' => $id, 'FACTION' => $FACTION,
-			'reaction' => $this->REACTIONS[$reaction], 'i18n' => ['reaction']]);
+		self::notifyAllPlayers($FACTION . 'Play', clienttranslate('${FACTION} <B>${reaction}</B>${CARD}'), [
+			'card' => $card, 'CARD' => ['FACTION' => $FACTION, 'card' => $card], 'FACTION' => $FACTION, 'reaction' => $this->REACTIONS[$reaction], 'i18n' => ['reaction']]);
 //* -------------------------------------------------------------------------------------------------------- */
-		if ($reaction === 'Exchange')
+		self::notifyAllPlayers($FACTION . 'Discard', '', ['card' => $card]);
+//* -------------------------------------------------------------------------------------------------------- */
+		switch ($reaction)
 		{
-			self::acRemovePiece($FACTION, $removedPiece, true);
-			$this->gamestate->nextState('exchange');
+//
+			case 'Exchange':
+//
+				self::acRemovePiece($FACTION, $pieceID, true);
+				$this->gamestate->nextState('exchange');
+//
+				break;
+//
+			case 'Retreat':
+//
+				$piece = Pieces::get($pieceID);
+//
+				$old_location = $piece['location'];
+				$piece['location'] = $location;
+				Pieces::setLocation($pieceID, $location);
+//* -------------------------------------------------------------------------------------------------------- */
+				self::notifyAllPlayers('placePiece', clienttranslate('${faction} <B>${type}</B> retreat from <B>${old}</B> to <B>${new}</B>'), [
+					'faction' => $piece['faction'], 'type' => $this->PIECES[$piece['type']],
+					'old' => $this->REGIONS[$old_location], 'new' => $this->REGIONS[$location],
+					'i18n' => ['type', 'old', 'new'],
+					'piece' => $piece]);
+//* -------------------------------------------------------------------------------------------------------- */
+				$this->gamestate->nextState('retreat');
+//
+				break;
+//
+			default:
+//
+				$this->gamestate->nextState('continue');
+//
 		}
-		else $this->gamestate->nextState('continue');
 	}
 }

@@ -65,6 +65,7 @@
 	</div>
 	<div id='QGEFcontingency-allies' class='QGEFcontingencyHolder' faction='Axis'></div>
 </div>
+<div id='QGEFinvisible' style='display:none;'></div>
 <script type="text/javascript">
 	var QGEvpTrackGRAY =
 			"<div class='QGEvpTrackElement' VP='${VP}'></div>";
@@ -76,6 +77,14 @@
 			"<div class='QGEFroundTrackElement QGEFroundTrackElement-yellow'><div style='padding-top:25px;'>${text}</div></div>";
 	var QGEFroundTrackRED =
 			"<div class='QGEFroundTrackElement QGEFroundTrackElement-red'><div style='padding-top:25px;'>${text}</div></div>";
+	var QGEFcontingency = "\
+<div id='QGEFcardContainer-${id}' class='QGEFcardContainer' data-faction='${FACTION}' data-type='${type}' data-type_arg='${type_arg}' data-id='${id}'>\n\
+	<div id='QGEFcard-${id}' class='QGEFcard' data-faction='${FACTION}' data-type='${type}'>\n\
+		<div class='QGEFfactionName'>${faction}</div>\n\
+		<div class='QGEFtitle'>${title}</div>\n\
+		<div class='QGEFtext'>${text}</div>\n\
+	</div>\n\
+</div>";
 	var QGEFcard = "\
 <div id='QGEFcardContainer-${id}' class='QGEFcardContainer' data-faction='${FACTION}' data-type='${type}' data-type_arg='${type_arg}' data-id='${id}'>\n\
 	<div id='QGEFcard-${id}' class='QGEFcard' data-faction='${FACTION}' data-type='${type}'>\n\
@@ -83,6 +92,7 @@
 		<div class='QGEFtitle'>${title}</div>\n\
 		<div class='QGEFtext'>${text}</div>\n\
 	</div>\n\
+	${reactionSVG}<div class='QGEFreaction'>${reaction}</div>\n\
 </div>";
 </script>
 

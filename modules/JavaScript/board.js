@@ -190,6 +190,7 @@ define(["dojo", "dojo/_base/declare"], function (dojo, declare)
 				if (this.bgagame.gamedatas.gamestate.possibleactions.includes('deploy')) return this.bgagame.QGEFdeploy(+node.dataset.location);
 				if (this.bgagame.gamedatas.gamestate.possibleactions.includes('desperateAttack')) return this.bgagame.QGEFattack(+node.dataset.location);
 				if (this.bgagame.gamedatas.gamestate.possibleactions.includes('attack')) return this.bgagame.QGEFattack(+node.dataset.location);
+				if (this.bgagame.gamedatas.gamestate.possibleactions.includes('retreat')) return this.bgagame.QGEFretreat(+node.dataset.location);
 			}
 		},
 		clearCanvas()

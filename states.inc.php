@@ -154,7 +154,7 @@ $machinestates = [
 		'type' => 'activeplayer',
 		'args' => 'argAttackRoundDefender',
 		'possibleactions' => ['reaction', 'removePiece'],
-		'transitions' => ['reaction' => 215, 'exchange' => 230, 'continue' => 220]
+		'transitions' => ['reaction' => 215, 'retreat' => 210, 'exchange' => 230, 'continue' => 220]
 	],
 	220 => [
 		'name' => 'attackRoundAttacker',

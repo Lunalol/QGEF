@@ -16,9 +16,10 @@ trait gameUtils
 //
 		foreach ($action['cards'] as $id)
 		{
-			$this->{$FACTION . 'Deck'}->playCard($id);
+			$this->{$FACTION . 'Deck'
+			}->playCard($id);
 //* -------------------------------------------------------------------------------------------------------- */
-			self::notifyAllPlayers($FACTION . 'Discard', '${FACTION} Discard 1 card', ['card' => $id, 'FACTION' => $FACTION]);
+			self::notifyAllPlayers($FACTION . 'Discard', clienttranslate('${FACTION} Discard 1 card'), ['card' => ['id' => $id], 'FACTION' => $FACTION]);
 //* -------------------------------------------------------------------------------------------------------- */
 		}
 	}

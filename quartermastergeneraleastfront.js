@@ -172,7 +172,7 @@ define(["dojo", "dojo/_base/declare", "ebg/core/gamegui", "ebg/counter",
 					for (let piece of state.args.defender)
 					{
 						const node = $(`QGEFpiece-${piece}`);
-						if (node) dojo.addClass(node, 'QGEFselectable');
+						if (node) dojo.addClass(node, 'QGEFselectable QGEFselected');
 					}
 					if ('_private' in state.args && 'reactions' in state.args._private)
 					{
@@ -191,7 +191,7 @@ define(["dojo", "dojo/_base/declare", "ebg/core/gamegui", "ebg/counter",
 						const node = $(`QGEFpiece-${piece}`);
 						if (node)
 						{
-							dojo.addClass(node, 'QGEFselectable');
+							dojo.addClass(node, 'QGEFselectable QGEFselected');
 							this.board.arrow(+node.dataset.location, state.args.location);
 						}
 					}
@@ -207,6 +207,19 @@ define(["dojo", "dojo/_base/declare", "ebg/core/gamegui", "ebg/counter",
 //
 					break;
 //
+				case 'retreat':
+//
+					const piece = $(`QGEFpiece-${state.args.piece}`);
+					dojo.addClass(piece, 'QGEFselected');
+//
+					dojo.query('.QGEFregion', 'QGEFboard').forEach((node) => {
+//
+						const possible = state.args._private.retreat[piece.dataset.id].includes(+node.dataset.location);
+						node.setAttribute('class', possible ? 'QGEFregion QGEFselectable' : 'QGEFregion');
+						if (possible) this.board.arrow(+piece.dataset.location, +node.dataset.location, '#FF660080');
+					});
+//
+					break;
 			}
 		},
 		onLeavingState: function (stateName)
@@ -381,6 +394,11 @@ define(["dojo", "dojo/_base/declare", "ebg/core/gamegui", "ebg/counter",
 //
 						break;
 //
+					case 'retreat':
+//
+						dojo.addClass(`QGEFcardContainer-${args.card}`, 'QGEFselected');
+//
+						break;
 				}
 			}
 		},
@@ -392,7 +410,9 @@ define(["dojo", "dojo/_base/declare", "ebg/core/gamegui", "ebg/counter",
 			dojo.subscribe('removePiece', (notif) => this.pieces.remove(notif.args.piece));
 			dojo.subscribe('alliesDeck', (notif) => this.alliesDeck.place(notif.args.card));
 			dojo.subscribe('axisDeck', (notif) => this.axisDeck.place(notif.args.card));
+			dojo.subscribe('alliesPlay', (notif) => this.alliesDeck.play(notif.args.card));
 			dojo.subscribe('alliesDiscard', (notif) => this.alliesDeck.discard(notif.args.card));
+			dojo.subscribe('axisPlay', (notif) => this.axisDeck.play(notif.args.card));
 			dojo.subscribe('axisDiscard', (notif) => this.axisDeck.discard(notif.args.card));
 //
 			this.setSynchronous();
@@ -450,7 +470,11 @@ define(["dojo", "dojo/_base/declare", "ebg/core/gamegui", "ebg/counter",
 //
 			if (pieces.length > 0 && this.isCurrentPlayerActive())
 				this.action('attack', {FACTION: this.FACTION, location: location, pieces: JSON.stringify(pieces.reduce((L, node) => [...L, +node.dataset.id], []))});
-
+		},
+		QGEFretreat: function (location)
+		{
+			const node = $(`QGEFpiece-${this.gamedatas.gamestate.args.piece}`);
+			this.confirm(`Retreat to <B>${_(this.gamedatas.REGIONS[location])}<B>: ${node.outerHTML}`, 'reaction', {FACTION: this.FACTION, card: this.gamedatas.gamestate.args.card, piece: this.gamedatas.gamestate.args.piece, location: location});
 		},
 		QGEFremove: function (piece)
 		{
@@ -461,11 +485,21 @@ define(["dojo", "dojo/_base/declare", "ebg/core/gamegui", "ebg/counter",
 				{
 					const card = cards[0];
 					const reaction = this.gamedatas.CARDS[this.FACTION][card.dataset.type_arg].reaction;
-					if (reaction !== 'Exchange') return this.showMessage(_('Deselect reaction first'), 'info');
-					return this.confirm(dojo.string.substitute(_('Play a card for reaction: <B>${reaction}</B>'), {reaction: this.REACTIONS[reaction].toUpperCase()}), 'reaction', {FACTION: this.FACTION, card: card.dataset.id, piece: piece});
+					switch (reaction)
+					{
+						case 'Exchange':
+							return this.confirm(dojo.string.substitute(_('Play a card for reaction: <B>${reaction}</B>'), {reaction: this.REACTIONS[reaction].toUpperCase()}), 'reaction', {FACTION: this.FACTION, card: card.dataset.id, piece: piece});
+						case 'Retreat':
+							this.gamedatas.gamestate.args['card'] = card.dataset.id;
+							this.gamedatas.gamestate.args['piece'] = piece;
+							return this.setClientState('retreat', {possibleactions: ['retreat'], descriptionmyturn: _('${you} may move one piece out of the attacked space')});
+						default:
+							return this.showMessage(_('Deselect reaction first'), 'info');
+					}
 				}
 			}
-			this.action('removePiece', {FACTION: this.FACTION, piece: piece});
+			const node = $(`QGEFpiece-${piece}`);
+			this.confirm(`Remove from <B>${_(this.gamedatas.REGIONS[node.dataset.location])}<B>: ${node.outerHTML}`, 'removePiece', {FACTION: this.FACTION, piece: piece});
 		},
 		updatePreference: function (event)
 		{
@@ -493,8 +527,11 @@ define(["dojo", "dojo/_base/declare", "ebg/core/gamegui", "ebg/counter",
 				args.processed = true;
 //
 				if ('round' in args) args.round = $(`QGEFround-${args.round}`).outerHTML;
+//
 				if ('FACTION' in args) args.FACTION = `<div class='QGEFfaction' faction='${args.FACTION}'></div>`;
 				if ('faction' in args) args.faction = `<img style='width:20px;vertical-align:middle;' src='${g_gamethemeurl}img/flag_${args.faction}.jpg'>`;
+//
+				if ('CARD' in args) args.CARD = this[args.CARD.FACTION + 'Deck'].card(args.CARD.card);
 			}
 			return this.inherited(arguments);
 		},

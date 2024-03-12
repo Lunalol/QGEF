@@ -83,7 +83,7 @@ class action_quartermastergeneraleastfront extends APP_GameAction
 	public function reaction()
 	{
 		self::setAjaxMode();
-		$this->game->acReaction(self::getArg("FACTION", AT_alphanum, true), self::getArg("card", AT_int, true), self::getArg("piece", AT_int, false));
+		$this->game->acReaction(self::getArg("FACTION", AT_alphanum, true), self::getArg("card", AT_int, true), self::getArg("piece", AT_int, false), self::getArg("location", AT_int, false));
 		self::ajaxResponse("");
 	}
 }

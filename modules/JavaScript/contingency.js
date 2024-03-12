@@ -79,7 +79,7 @@ define(["dojo", "dojo/_base/declare"], function (dojo, declare)
 		},
 		place: function (faction, card)
 		{
-			const node = dojo.place(this.bgagame.format_block('QGEFcard', {
+			const node = dojo.place(this.bgagame.format_block('QGEFcontingency', {
 				id: card.id,
 				FACTION: this.cards[card.type_arg].faction,
 				faction: this.FACTIONS[this.cards[card.type_arg].faction],

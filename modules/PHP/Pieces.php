@@ -194,6 +194,53 @@ class Pieces extends APP_GameClass
 #
 		return $possibles;
 	}
+	function getPossibleRetreats(string $FACTION, array $pieces): array
+	{
+		$ennemies = self::getEnnemyControled($FACTION);
+		$control = Factions::getControl($FACTION);
+#
+		$supply = [];
+		foreach (Factions::FACTIONS[$FACTION] as $faction) $supply[$faction] = self::getSupply($faction);
+#
+		$possibles = [];
+		foreach ($pieces as $piece)
+		{
+#			$possibles[$piece['id']] = [+$piece['location']];
+#
+			switch ($piece['type'])
+			{
+#
+				case self::INFANTRY:
+				case self::TANK:
+				case self::AIRPLANE:
+#
+					foreach (Board::ADJACENCY[$piece['location']] as $next_location)
+					{
+						# Infantry, tanks and airplanes may only move to land spaces
+						if (Board::REGIONS[$next_location]['type'] === LAND)
+						{
+							# You may never move a piece to a space occupied by an enemy piece
+							if (!in_array($next_location, $ennemies))
+							{
+								if (in_array($next_location, $supply[$piece['faction']]))
+								{
+									# The retreating piece must move to a space you currently control
+									if (in_array($next_location, $control)) $possibles[$piece['id']][] = $next_location;
+								}
+							}
+						}
+					}
+					break;
+#
+				case self::FLEET:
+#
+					throw new BgaVisibleSystemException("No retreat for fleets");
+#
+			}
+		}
+#
+		return $possibles;
+	}
 	function getPossibleAttacks(string $FACTION, array $pieces): array
 	{
 		$ennemies = self::getEnnemyControled($FACTION);
