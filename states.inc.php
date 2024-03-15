@@ -145,7 +145,7 @@ $machinestates = [
 		'description' => clienttranslate('Defender attack round'),
 		'type' => 'game',
 		'action' => 'stAttackRoundDefender',
-		'transitions' => ['continue' => 215, 'end' => 125]
+		'transitions' => ['continue' => 215, 'advance' => 240]
 	],
 	215 => [
 		'name' => 'attackRoundDefender',
@@ -161,7 +161,7 @@ $machinestates = [
 		'description' => clienttranslate('Attacker attack round'),
 		'type' => 'game',
 		'action' => 'stAttackRoundAttacker',
-		'transitions' => ['continue' => 225, 'end' => 125]
+		'transitions' => ['continue' => 225, 'advance' => 240]
 	],
 	225 => [
 		'name' => 'attackRoundAttacker',
@@ -170,7 +170,7 @@ $machinestates = [
 		'type' => 'activeplayer',
 		'args' => 'argAttackRoundAttacker',
 		'possibleactions' => ['reaction', 'removePiece', 'pass'],
-		'transitions' => ['reaction' => 225, 'continue' => 210, 'end' => 125]
+		'transitions' => ['reaction' => 225, 'continue' => 210]
 	],
 	230 => [
 		'name' => 'attackRoundExchange',
@@ -187,5 +187,14 @@ $machinestates = [
 		'args' => 'argAttackRoundExchange',
 		'possibleactions' => ['removePiece'],
 		'transitions' => ['continue' => 220]
+	],
+	240 => [
+		'name' => 'attackRoundAdvance',
+		'description' => clienttranslate('${actplayer} can advance after combat'),
+		'descriptionmyturn' => clienttranslate('${you} can advance after combat'),
+		'type' => 'activeplayer',
+		'args' => 'argAttackRoundAdvance',
+		'possibleactions' => ['reaction', 'pass'],
+		'transitions' => ['end' => 125]
 	],
 ];

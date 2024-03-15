@@ -165,10 +165,9 @@ define(["dojo", "dojo/_base/declare"], function (dojo, declare)
 		{
 			const node = event.currentTarget;
 //
+			dojo.stopEvent(event);
 			if (dojo.hasClass(node, 'QGEFselectable') && this.bgagame.isCurrentPlayerActive())
 			{
-				dojo.stopEvent(event);
-//
 				if (!dojo.hasClass(node, 'QGEFselected'))
 				{
 					if (dojo.query('.QGEFhandHolder>.QGEFcardContainer.QGEFselected').length >= 2) return;

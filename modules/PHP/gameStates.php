@@ -209,12 +209,13 @@ trait gameStates
 		if (sizeof($args['defender']) === 0)
 		{
 			$this->gamestate->changeActivePlayer(Factions::getPlayerID(Factions::getActive()));
-			$this->gamestate->nextState('end');
-			return self::action();
+			$this->gamestate->nextState('advance');
 		}
-//
-		$this->gamestate->changeActivePlayer(Factions::getPlayerID(Factions::getInactive()));
-		$this->gamestate->nextState('continue');
+		else
+		{
+			$this->gamestate->changeActivePlayer(Factions::getPlayerID(Factions::getInactive()));
+			$this->gamestate->nextState('continue');
+		}
 	}
 	function stAttackRoundAttacker()
 	{
@@ -222,12 +223,13 @@ trait gameStates
 		if (sizeof($args['defender']) === 0 || sizeof($args['attacker']) <= 1)
 		{
 			$this->gamestate->changeActivePlayer(Factions::getPlayerID(Factions::getActive()));
-			$this->gamestate->nextState('end');
-			return self::action();
+			$this->gamestate->nextState('advance');
 		}
-//
-		$this->gamestate->changeActivePlayer(Factions::getPlayerID(Factions::getActive()));
-		$this->gamestate->nextState('continue');
+		else
+		{
+			$this->gamestate->changeActivePlayer(Factions::getPlayerID(Factions::getActive()));
+			$this->gamestate->nextState('continue');
+		}
 	}
 	function stAttackRoundExchange()
 	{

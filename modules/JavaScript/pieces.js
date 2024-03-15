@@ -60,7 +60,8 @@ define(["dojo", "dojo/_base/declare"], function (dojo, declare)
 			{
 				dojo.stopEvent(event);
 //
-				if (this.bgagame.gamedatas.gamestate.possibleactions.includes('removePiece')) return this.bgagame.QGEFremove(node.dataset.id);
+				if (this.bgagame.gamedatas.gamestate.possibleactions.includes('removePiece')) return this.bgagame.QGEFreaction(node.dataset.id);
+				if (this.bgagame.gamedatas.gamestate.possibleactions.includes('reaction')) return this.bgagame.QGEFreaction(node.dataset.id);
 //
 				if (this.bgagame.gamedatas.gamestate.possibleactions.includes('forcedMarch'))
 				{
@@ -121,6 +122,7 @@ define(["dojo", "dojo/_base/declare"], function (dojo, declare)
 					});
 				}
 			}
+			else $(`QGEFregion-${node.dataset.location}`).dispatchEvent(new MouseEvent(event.type, event));
 		}
 	}
 	);

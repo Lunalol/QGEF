@@ -150,6 +150,11 @@ define(["dojo", "dojo/_base/declare"], function (dojo, declare)
 				}
 			}
 		},
+		centerMap: function (location)
+		{
+			const zoom = this.board.scale;
+			this.playarea.scrollTo({left: REGIONS[location].x * zoom - this.playarea.clientWidth / 2, top: REGIONS[location].y * zoom - this.playarea.clientHeight / 2, behavior: 'smooth'});
+		},
 		scroll: function ()
 		{
 			localStorage.setItem(`${this.bgagame.game_id}.${this.bgagame.table_id}.sX`, this.playarea.scrollLeft);

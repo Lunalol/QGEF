@@ -220,6 +220,30 @@ define(["dojo", "dojo/_base/declare", "ebg/core/gamegui", "ebg/counter",
 					});
 //
 					break;
+//
+				case 'attackRoundAdvance':
+//
+					$(`QGEFregion-${state.args.location}`).setAttribute('class', 'QGEFregion QGEFselectable');
+//
+					for (let piece of state.args.attacker)
+					{
+						const node = $(`QGEFpiece-${piece}`);
+						if (node)
+						{
+							if (node.dataset.type === 'infantry' || node.dataset.type === 'tank')
+							{
+								dojo.addClass(node, 'QGEFselected QGEFselectable');
+								this.board.arrow(+node.dataset.location, state.args.location);
+							}
+						}
+					}
+					if ('_private' in state.args && 'reactions' in state.args._private)
+					{
+						for (let card of state.args._private.reactions) dojo.addClass(`QGEFcardContainer-${card}`, 'QGEFselectable');
+					}
+//
+					break;
+//
 			}
 		},
 		onLeavingState: function (stateName)
@@ -354,6 +378,8 @@ define(["dojo", "dojo/_base/declare", "ebg/core/gamegui", "ebg/counter",
 //
 					case 'attackRoundDefender':
 //
+						this.board.centerMap(args.location);
+//
 						this.addActionButton('QGEFreaction', _('Reaction'), (event) => {
 							dojo.stopEvent(event);
 //
@@ -372,6 +398,8 @@ define(["dojo", "dojo/_base/declare", "ebg/core/gamegui", "ebg/counter",
 						break;
 //
 					case 'attackRoundAttacker':
+//
+						this.board.centerMap(args.location);
 //
 						this.addActionButton('QGEFreaction', _('Reaction'), (event) => {
 							dojo.stopEvent(event);
@@ -399,6 +427,18 @@ define(["dojo", "dojo/_base/declare", "ebg/core/gamegui", "ebg/counter",
 						dojo.addClass(`QGEFcardContainer-${args.card}`, 'QGEFselected');
 //
 						break;
+//
+					case 'attackRoundAdvance':
+//
+						this.board.centerMap(args.location);
+//
+						this.addActionButton('QGEFpass', _('Pass'), (event) => {
+							dojo.stopEvent(event);
+							this.confirm(_('Do nothing'), 'pass', {FACTION: this.FACTION});
+						});
+//
+						break;
+//
 				}
 			}
 		},
@@ -476,8 +516,10 @@ define(["dojo", "dojo/_base/declare", "ebg/core/gamegui", "ebg/counter",
 			const node = $(`QGEFpiece-${this.gamedatas.gamestate.args.piece}`);
 			this.confirm(`Retreat to <B>${_(this.gamedatas.REGIONS[location])}<B>: ${node.outerHTML}`, 'reaction', {FACTION: this.FACTION, card: this.gamedatas.gamestate.args.card, piece: this.gamedatas.gamestate.args.piece, location: location});
 		},
-		QGEFremove: function (piece)
+		QGEFreaction: function (piece)
 		{
+			const node = $(`QGEFpiece-${piece}`);
+//
 			if (this.gamedatas.gamestate.name === 'attackRoundDefender')
 			{
 				const cards = dojo.query('.QGEFcardContainer.QGEFselected', `QGEFhand-${this.FACTION}`);
@@ -488,7 +530,7 @@ define(["dojo", "dojo/_base/declare", "ebg/core/gamegui", "ebg/counter",
 					switch (reaction)
 					{
 						case 'Exchange':
-							return this.confirm(dojo.string.substitute(_('Play a card for reaction: <B>${reaction}</B>'), {reaction: this.REACTIONS[reaction].toUpperCase()}), 'reaction', {FACTION: this.FACTION, card: card.dataset.id, piece: piece});
+							return this.confirm(dojo.string.substitute(_(`Play a card for reaction: <B>${reaction}</B>${node.outerHTML}`), {reaction: this.REACTIONS[reaction].toUpperCase()}), 'reaction', {FACTION: this.FACTION, card: card.dataset.id, piece: piece});
 						case 'Retreat':
 							this.gamedatas.gamestate.args['card'] = card.dataset.id;
 							this.gamedatas.gamestate.args['piece'] = piece;
@@ -498,8 +540,19 @@ define(["dojo", "dojo/_base/declare", "ebg/core/gamegui", "ebg/counter",
 					}
 				}
 			}
-			const node = $(`QGEFpiece-${piece}`);
-			this.confirm(`Remove from <B>${_(this.gamedatas.REGIONS[node.dataset.location])}<B>: ${node.outerHTML}`, 'removePiece', {FACTION: this.FACTION, piece: piece});
+			if (this.gamedatas.gamestate.name === 'attackRoundAdvance')
+			{
+				const cards = dojo.query('.QGEFcardContainer.QGEFselected', `QGEFhand-${this.FACTION}`);
+				if (cards.length === 1)
+				{
+					const card = cards[0];
+					const reaction = this.gamedatas.CARDS[this.FACTION][card.dataset.type_arg].reaction;
+					if (reaction === 'Advance')
+						return this.confirm(dojo.string.substitute(_(`Play a card for reaction: <B>${reaction}</B>${node.outerHTML}`), {reaction: this.REACTIONS[reaction].toUpperCase()}), 'reaction', {FACTION: this.FACTION, card: card.dataset.id, piece: piece});
+				}
+				return this.showMessage(_('Advance reaction only'), 'info');
+			}
+			this.confirm(`Remove from <B>${_(this.gamedatas.REGIONS[node.dataset.location])}<B>:${node.outerHTML}`, 'removePiece', {FACTION: this.FACTION, piece: piece});
 		},
 		updatePreference: function (event)
 		{

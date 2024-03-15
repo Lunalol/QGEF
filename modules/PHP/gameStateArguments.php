@@ -144,10 +144,7 @@ trait gameStateArguments
 			if ($class::DECK[$card['type_arg']]['reaction'] === 'SustainAttack') $this->possible['reactions'][] = +$card['id'];
 			if ($class::DECK[$card['type_arg']]['reaction'] === 'AntiAir' && $removedPiece && $removedPiece['type'] === 'airplane') $this->possible['reactions'][] = +$card['id'];
 			if ($class::DECK[$card['type_arg']]['reaction'] === 'NavalCombat' && $removedPiece && $removedPiece['type'] === 'fleet') $this->possible['reactions'][] = +$card['id'];
-			if ($class::DECK[$card['type_arg']]['reaction'] === 'Advance') $this->possible['reactions'][] = +$card['id'];
 		}
-//
-		if (!$defender) $this->possible['advance'] = $location;
 //
 		return ['FACTION' => $attackerFACTION, '_private' => [Factions::getPlayerID($attackerFACTION) => $this->possible],
 			'location' => $location, 'attacker' => $attacker, 'defender' => $defender];
@@ -179,5 +176,23 @@ trait gameStateArguments
 //
 		return ['FACTION' => $attackerFACTION, '_private' => [Factions::getPlayerID($attackerFACTION) => $this->possible],
 			'location' => $location, 'attacker' => $attacker, 'defender' => $defender];
+	}
+	function argAttackRoundAdvance()
+	{
+		$attackerFACTION = Factions::getActive();
+//
+		['location' => $location, 'faction' => $attackerfaction, 'pieces' => $attacker] = Factions::getStatus($attackerFACTION, 'attack');
+//
+		$this->possible = ['pieces' => $attacker];
+//
+		$class = "${attackerFACTION}Deck";
+		foreach ($this->{$attackerFACTION . 'Deck'}->getPlayerHand($attackerFACTION) as $card)
+		{
+			if ($class::DECK[$card['type_arg']]['faction'] !== $attackerfaction) continue;
+			if ($class::DECK[$card['type_arg']]['reaction'] === 'Advance') $this->possible['reactions'][] = +$card['id'];
+		}
+//
+		return ['FACTION' => $attackerFACTION, '_private' => [Factions::getPlayerID($attackerFACTION) => $this->possible],
+			'location' => $location, 'attacker' => $attacker];
 	}
 }

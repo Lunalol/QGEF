@@ -14,7 +14,7 @@ trait gameStateActions
 //
 		Pieces::setStatus(Pieces::ALL, 'moved');
 //
-		if ($this->gamestate->state()['name'] === 'attackRoundAttacker')
+		if ($this->gamestate->state()['name'] === 'attackRoundAdvance')
 		{
 			$this->gamestate->nextState('end');
 			self::action();
@@ -287,7 +287,11 @@ trait gameStateActions
 		$class = "${FACTION}Deck";
 //
 		$reaction = $class::DECK[$card['type_arg']]['reaction'];
-		if ($pieceID && Pieces::get($pieceID)['faction'] !== $class::DECK[$card['type_arg']]['faction']) throw new BgaVisibleSystemException("Invalid faction");
+		if ($pieceID)
+		{
+			if (!in_array($pieceID, $this->possible['pieces'])) throw new BgaVisibleSystemException("Invalid piece: $pieceID");
+			if (Pieces::get($pieceID)['faction'] !== $class::DECK[$card['type_arg']]['faction']) throw new BgaVisibleSystemException("Invalid faction");
+		}
 //
 		switch ($this->gamestate->state()['name'])
 		{
@@ -302,10 +306,6 @@ trait gameStateActions
 					case 'AntiAir':
 					case 'Naval':
 						break;
-					case 'Advance':
-						if (intval(self::getGameStateValue('round')) % 4 === 0) throw new BgaUserException(self::_('You cannot use the Advance!reaction during a Spring turn'));
-						throw new BgaVisibleSystemException("Not implemented !");
-						break;
 					default:
 						throw new BgaVisibleSystemException("Invalid reaction for attacker: $reaction");
 				}
@@ -319,22 +319,38 @@ trait gameStateActions
 					case 'AntiAir':
 					case 'Naval':
 					case 'Exchange':
+						break;
 					case 'Retreat':
+						if (!array_key_exists('retreat', $this->possible)) throw new BgaVisibleSystemException("Invalid possible: " . json_encode($this->possible));
+						if (!array_key_exists($pieceID, $this->possible['retreat'])) throw new BgaVisibleSystemException("Invalid piece: $pieceID");
+						if (!in_array($location, $this->possible['retreat'][$pieceID])) throw new BgaVisibleSystemException("Invalid location: $location");
 						break;
 					default:
 						throw new BgaVisibleSystemException("Invalid reaction for defender: $reaction");
 				}
 				break;
 //
+			case 'attackRoundAdvance':
+//
+				switch ($reaction)
+				{
+					case 'Advance':
+						if (intval(self::getGameStateValue('round')) % 4 === 0) throw new BgaUserException(self::_('You cannot use the Advance!reaction during a Spring turn'));
+						break;
+					default:
+						throw new BgaVisibleSystemException("Invalid reaction for attacker: $reaction");
+				}
+				break;
+//
 			default:
 //
-				throw new BgaVisibleSystemException("Invalid game state for reaction: $this->gamestate->state()['name']");
+				throw new BgaVisibleSystemException("Invalid game state for reaction: " . $this->gamestate->state()['name']);
 //
 		}
 //
 		$this->{$FACTION . 'Deck'}->playCard($cardID);
 //* -------------------------------------------------------------------------------------------------------- */
-		self::notifyAllPlayers($FACTION . 'Play', clienttranslate('${FACTION} <B>${reaction}</B>${CARD}'), [
+		self::notifyAllPlayers($FACTION . 'Play', clienttranslate('${FACTION} <B>${reaction}</B>${CARD} '), [
 			'card' => $card, 'CARD' => ['FACTION' => $FACTION, 'card' => $card], 'FACTION' => $FACTION, 'reaction' => $this->REACTIONS[$reaction], 'i18n' => ['reaction']]);
 //* -------------------------------------------------------------------------------------------------------- */
 		self::notifyAllPlayers($FACTION . 'Discard', '', ['card' => $card]);
@@ -357,13 +373,33 @@ trait gameStateActions
 				$piece['location'] = $location;
 				Pieces::setLocation($pieceID, $location);
 //* -------------------------------------------------------------------------------------------------------- */
-				self::notifyAllPlayers('placePiece', clienttranslate('${faction} <B>${type}</B> retreat from <B>${old}</B> to <B>${new}</B>'), [
+				self::notifyAllPlayers('placePiece', clienttranslate('${faction} <B>${type}</B> retreat from <B>${old}</B> to <B>${new} </B>'), [
 					'faction' => $piece['faction'], 'type' => $this->PIECES[$piece['type']],
 					'old' => $this->REGIONS[$old_location], 'new' => $this->REGIONS[$location],
 					'i18n' => ['type', 'old', 'new'],
 					'piece' => $piece]);
 //* -------------------------------------------------------------------------------------------------------- */
 				$this->gamestate->nextState('retreat');
+//
+				break;
+//
+			case 'Advance':
+//
+				$location = Factions::getStatus($FACTION, 'attack')['location'];
+
+				$piece = Pieces::get($pieceID);
+//
+				$old_location = $piece['location'];
+				$piece ['location'] = $location;
+				Pieces::setLocation($pieceID, $location);
+//* -------------------------------------------------------------------------------------------------------- */
+				self::notifyAllPlayers('placePiece', clienttranslate('${faction} <B>${type}</B> advance from <B>${old}</B> to <B>${new} </B>'), [
+					'faction' => $piece['faction'], 'type' => $this->PIECES[$piece['type']],
+					'old' => $this->REGIONS[$old_location], 'new' => $this->REGIONS[$location],
+					'i18n' => ['type', 'old', 'new'],
+					'piece' => $piece]);
+//* -------------------------------------------------------------------------------------------------------- */
+				$this->gamestate->nextState('end');
 //
 				break;
 //
