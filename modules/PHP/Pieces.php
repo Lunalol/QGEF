@@ -65,24 +65,24 @@ class Pieces extends APP_GameClass
 		if ($status) return self::getObjectListFromDB("SELECT id,player,faction,type,location FROM pieces WHERE player = '$player' AND JSON_UNQUOTE(status->'$.$status') = '$value' ORDER BY faction,type");
 		return self::getObjectListFromDB("SELECT id,player,faction,type,location FROM pieces WHERE player = '$player' ORDER BY faction,type");
 	}
-	function get(int $id, bool $status = false)
+	function get(int $id, bool $status = false): array
 	{
 		if ($status) return self::getNonEmptyObjectFromDB("SELECT id,player,faction,type,location,status FROM pieces WHERE id = $id");
 		return self::getNonEmptyObjectFromDB("SELECT id,player,faction,type,location FROM pieces WHERE id = $id");
 	}
-	static function getAtLocation(int $location)
+	function getAtLocation(int $location)
 	{
 		return self::getCollectionFromDB("SELECT * FROM pieces WHERE location = $location ORDER BY faction,type");
 	}
-	static function setLocation(int $id, int $location): void
+	function setLocation(int $id, int $location): void
 	{
 		self::dbQuery("UPDATE pieces SET location = $location WHERE id = $id");
 	}
-	static function getStatus(int $id, string $status)
+	function getStatus(int $id, string $status)
 	{
 		return json_decode(self::getUniqueValueFromDB("SELECT JSON_UNQUOTE(status->'$.$status') FROM pieces WHERE id = $id"), JSON_OBJECT_AS_ARRAY);
 	}
-	static function setStatus(int $id, string $status, $value = null): void
+	function setStatus(int $id, string $status, $value = null): void
 	{
 		if (is_null($value)) $sql = "UPDATE pieces SET status = JSON_REMOVE(status,'$.$status')";
 		else $sql = "UPDATE pieces SET status = JSON_SET(status,'$.$status','$value')";

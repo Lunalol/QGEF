@@ -10,16 +10,27 @@ trait gameStateActions
 	function acPass(string $FACTION): void
 	{
 		$this->checkAction('pass');
-		if ($FACTION !== Factions::getActive()) throw new BgaVisibleSystemException("Invalid FACTION: $FACTION");
 //
-		Pieces::setStatus(Pieces::ALL, 'moved');
-//
-		if ($this->gamestate->state()['name'] === 'attackRoundAdvance')
+		if ($this->gamestate->state()['name'] === 'attackRoundSpecial')
 		{
+			if ($FACTION !== Factions::getInActive()) throw new BgaVisibleSystemException("Invalid FACTION: $FACTION");
+//
+			$this->gamestate->nextState('pass');
+		}
+		else if ($this->gamestate->state()['name'] === 'attackRoundAdvance')
+		{
+			if ($FACTION !== Factions::getActive()) throw new BgaVisibleSystemException("Invalid FACTION: $FACTION");
+//
 			$this->gamestate->nextState('end');
 			self::action();
 		}
-		else $this->gamestate->nextState('next');
+		else
+		{
+			if ($FACTION !== Factions::getActive()) throw new BgaVisibleSystemException("Invalid FACTION: $FACTION");
+//
+			Pieces::setStatus(Pieces::ALL, 'moved');
+			$this->gamestate->nextState('next');
+		}
 	}
 	function acCancel(string $FACTION): void
 	{
@@ -211,25 +222,13 @@ trait gameStateActions
 //* -------------------------------------------------------------------------------------------------------- */
 		$this->gamestate->nextState('attack');
 	}
-	function acRetreat(string $FACTION, int $location, int $id): void
-	{
-//
-// Check Retreat
-//
-		$this->checkAction('retreat');
-		if (!array_key_exists('retreat', $this->possible)) throw new BgaVisibleSystemException("Invalid possible: " . json_encode($this->possible));
-		if (!array_key_exists($id, $this->possible['retreat'])) throw new BgaVisibleSystemException("Invalid piece: $id");
-		if (!in_array($location, $this->possible['retreat'][$id])) throw new BgaVisibleSystemException("Invalid location: $location");
-//
-
-		die;
-	}
 	function acRemovePiece(string $FACTION, int $id, bool $exchange = false): void
 	{
 //
 // Check Remove Piece
 //
 		$this->checkAction('removePiece');
+//
 		switch ($this->gamestate->state()['name'])
 		{
 			case 'attackRoundDefender':
@@ -270,8 +269,13 @@ trait gameStateActions
 			'location' => $this->REGIONS[$piece['location']], 'i18n' => ['type', 'location'],
 			'piece' => $piece]);
 //* -------------------------------------------------------------------------------------------------------- */
-		if (!$exchange) $this->gamestate->nextState('continue');
-		else Factions::setStatus($FACTION, 'factionExchange', $piece['faction']);
+		if ($this->gamestate->state()['name'] === 'attackRoundExchange' && in_array($piece['type'], ['airplane', 'Fleet'])) $this->gamestate->nextState('special');
+		else if ($exchange)
+		{
+			Factions::setStatus($FACTION, 'factionExchange', $piece['faction']);
+			$this->gamestate->nextState('exchange');
+		}
+		else $this->gamestate->nextState('continue');
 	}
 	function acReaction(string $FACTION, int $cardID, $pieceID = null, $location = null): void
 	{
@@ -290,7 +294,7 @@ trait gameStateActions
 		if ($pieceID)
 		{
 			if (!in_array($pieceID, $this->possible['pieces'])) throw new BgaVisibleSystemException("Invalid piece: $pieceID");
-			if (Pieces::get($pieceID)['faction'] !== $class::DECK[$card['type_arg']]['faction']) throw new BgaVisibleSystemException("Invalid faction");
+			if (Pieces::get($pieceID)['faction'] !== $class::DECK[$card['type_arg']]['faction']) throw new BgaVisibleSystemException("Invalid FACTION");
 		}
 //
 		switch ($this->gamestate->state()['name'])
@@ -342,6 +346,18 @@ trait gameStateActions
 				}
 				break;
 //
+			case 'attackRoundSpecial':
+//
+				switch ($reaction)
+				{
+					case 'AntiAir':
+					case 'Naval':
+						break;
+					default:
+						throw new BgaVisibleSystemException("Invalid reaction for attacker: $reaction");
+				}
+				break;
+//
 			default:
 //
 				throw new BgaVisibleSystemException("Invalid game state for reaction: " . $this->gamestate->state()['name']);
@@ -361,7 +377,6 @@ trait gameStateActions
 			case 'Exchange':
 //
 				self::acRemovePiece($FACTION, $pieceID, true);
-				$this->gamestate->nextState('exchange');
 //
 				break;
 //
@@ -373,7 +388,7 @@ trait gameStateActions
 				$piece['location'] = $location;
 				Pieces::setLocation($pieceID, $location);
 //* -------------------------------------------------------------------------------------------------------- */
-				self::notifyAllPlayers('placePiece', clienttranslate('${faction} <B>${type}</B> retreat from <B>${old}</B> to <B>${new} </B>'), [
+				self::notifyAllPlayers('placePiece', clienttranslate('${faction} <B>${type}</B> retreats from <B>${old}</B> to <B>${new} </B>'), [
 					'faction' => $piece['faction'], 'type' => $this->PIECES[$piece['type']],
 					'old' => $this->REGIONS[$old_location], 'new' => $this->REGIONS[$location],
 					'i18n' => ['type', 'old', 'new'],
@@ -393,7 +408,7 @@ trait gameStateActions
 				$piece ['location'] = $location;
 				Pieces::setLocation($pieceID, $location);
 //* -------------------------------------------------------------------------------------------------------- */
-				self::notifyAllPlayers('placePiece', clienttranslate('${faction} <B>${type}</B> advance from <B>${old}</B> to <B>${new} </B>'), [
+				self::notifyAllPlayers('placePiece', clienttranslate('${faction} <B>${type}</B> advances from <B>${old}</B> to <B>${new} </B>'), [
 					'faction' => $piece['faction'], 'type' => $this->PIECES[$piece['type']],
 					'old' => $this->REGIONS[$old_location], 'new' => $this->REGIONS[$location],
 					'i18n' => ['type', 'old', 'new'],

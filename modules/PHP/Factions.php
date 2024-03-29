@@ -79,12 +79,12 @@ class Factions extends APP_GameClass
 		self::dbQuery("UPDATE factions SET VP = VP + $VP WHERE faction = '$FACTION'");
 		return self::getVP($FACTION);
 	}
-	function updateControl(): void
+	static function updateControl(): void
 	{
 		self::dbQuery("UPDATE control SET player = 'both' WHERE terrain = 'water'");
 		foreach (array_keys(self::FACTIONS) as $FACTION) self::dbQuery("UPDATE control SET player = '$FACTION' WHERE location IN (SELECT DISTINCT location FROM pieces WHERE player = '$FACTION')");
 	}
-	function getControl(string $FACTION): array
+	static function getControl(string $FACTION): array
 	{
 		return self::getObjectListFromDB("SELECT location FROM control WHERE player IN ('both', '$FACTION')", true);
 	}

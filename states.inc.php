@@ -135,17 +135,15 @@ $machinestates = [
 //
 	200 => [
 		'name' => 'attackRound',
-		'description' => clienttranslate('Attack round'),
 		'type' => 'game',
 		'action' => 'stAttackRound',
 		'transitions' => ['attackRoundDefender' => 210]
 	],
 	210 => [
 		'name' => 'attackRoundDefender',
-		'description' => clienttranslate('Defender attack round'),
 		'type' => 'game',
 		'action' => 'stAttackRoundDefender',
-		'transitions' => ['continue' => 215, 'advance' => 240]
+		'transitions' => ['continue' => 215, 'advance' => 250]
 	],
 	215 => [
 		'name' => 'attackRoundDefender',
@@ -158,10 +156,9 @@ $machinestates = [
 	],
 	220 => [
 		'name' => 'attackRoundAttacker',
-		'description' => clienttranslate('Attacker attack round'),
 		'type' => 'game',
 		'action' => 'stAttackRoundAttacker',
-		'transitions' => ['continue' => 225, 'advance' => 240]
+		'transitions' => ['continue' => 225, 'advance' => 250]
 	],
 	225 => [
 		'name' => 'attackRoundAttacker',
@@ -174,7 +171,6 @@ $machinestates = [
 	],
 	230 => [
 		'name' => 'attackRoundExchange',
-		'description' => clienttranslate('Exchange'),
 		'type' => 'game',
 		'action' => 'stAttackRoundExchange',
 		'transitions' => ['continue' => 235]
@@ -186,9 +182,24 @@ $machinestates = [
 		'type' => 'activeplayer',
 		'args' => 'argAttackRoundExchange',
 		'possibleactions' => ['removePiece'],
-		'transitions' => ['continue' => 220]
+		'transitions' => ['special' => 240, 'continue' => 220]
 	],
 	240 => [
+		'name' => 'attackRoundSpecial',
+		'type' => 'game',
+		'action' => 'stAttackRoundSpecial',
+		'transitions' => ['continue' => 245]
+	],
+	245 => [
+		'name' => 'attackRoundSpecial',
+		'description' => clienttranslate('${actplayer} can play an additional reaction'),
+		'descriptionmyturn' => clienttranslate('${you} can play an additional reaction'),
+		'type' => 'activeplayer',
+		'args' => 'argAttackRoundSpecial',
+		'possibleactions' => ['reaction', 'pass'],
+		'transitions' => ['continue' => 230, 'pass' => 220]
+	],
+	250 => [
 		'name' => 'attackRoundAdvance',
 		'description' => clienttranslate('${actplayer} can advance after combat'),
 		'descriptionmyturn' => clienttranslate('${you} can advance after combat'),

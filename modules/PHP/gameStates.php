@@ -236,4 +236,9 @@ trait gameStates
 		$this->gamestate->changeActivePlayer(Factions::getPlayerID(Factions::getActive()));
 		$this->gamestate->nextState('continue');
 	}
+	function stAttackRoundSpecial()
+	{
+		$this->gamestate->changeActivePlayer(Factions::getPlayerID(Factions::getInActive()));
+		$this->gamestate->nextState('continue');
+	}
 }

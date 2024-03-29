@@ -30,7 +30,7 @@ $this->REACTIONS = [
 // Wooden piece (4)
 //
 $this->PIECES = [
-	Pieces::INFANTRY => clienttranslate('Infantery'),
+	Pieces::INFANTRY => clienttranslate('Infantry'),
 	Pieces::TANK => clienttranslate('Tank'),
 	Pieces::AIRPLANE => clienttranslate('Airplane'),
 	Pieces::FLEET => clienttranslate('Fleet'),

@@ -181,8 +181,8 @@ define(["dojo", "dojo/_base/declare", "ebg/core/gamegui", "ebg/counter",
 //
 					break;
 //
-				case 'attackRoundExchange':
 				case 'attackRoundAttacker':
+				case 'attackRoundExchange':
 //
 					$(`QGEFregion-${state.args.location}`).setAttribute('class', 'QGEFregion QGEFselectable');
 //
@@ -192,6 +192,31 @@ define(["dojo", "dojo/_base/declare", "ebg/core/gamegui", "ebg/counter",
 						if (node)
 						{
 							dojo.addClass(node, 'QGEFselectable QGEFselected');
+							this.board.arrow(+node.dataset.location, state.args.location);
+						}
+					}
+					for (let piece of state.args.defender)
+					{
+						const node = $(`QGEFpiece-${piece}`);
+						if (node) dojo.addClass(node, 'QGEFselected');
+					}
+					if ('_private' in state.args && 'reactions' in state.args._private)
+					{
+						for (let card of state.args._private.reactions) dojo.addClass(`QGEFcardContainer-${card}`, 'QGEFselectable');
+					}
+//
+					break;
+//
+				case 'attackRoundSpecial':
+//
+					$(`QGEFregion-${state.args.location}`).setAttribute('class', 'QGEFregion QGEFselectable');
+//
+					for (let piece of state.args.attacker)
+					{
+						const node = $(`QGEFpiece-${piece}`);
+						if (node)
+						{
+							dojo.addClass(node, 'QGEFselected');
 							this.board.arrow(+node.dataset.location, state.args.location);
 						}
 					}
@@ -394,6 +419,32 @@ define(["dojo", "dojo/_base/declare", "ebg/core/gamegui", "ebg/counter",
 						});
 //
 						this.updateActionButtons();
+//
+						break;
+//
+					case 'attackRoundSpecial':
+//
+						this.board.centerMap(args.location);
+//
+						this.addActionButton('QGEFreaction', _('Reaction'), (event) => {
+							dojo.stopEvent(event);
+//
+							const cards = dojo.query('.QGEFcardContainer.QGEFselected', `QGEFhand-${this.FACTION}`);
+							if (cards.length === 1)
+							{
+								const card = cards[0];
+								const reaction = this.gamedatas.CARDS[args.FACTION][card.dataset.type_arg].reaction;
+								if (reaction === 'Exchange') return this.showMessage(_('Click on a piece to remove'), 'info');
+								this.confirm(dojo.string.substitute(_('Play a card for reaction: <B>${reaction}</B>'), {reaction: this.REACTIONS[reaction].toUpperCase()}), 'reaction', {FACTION: this.FACTION, card: card.dataset.id});
+							}
+						});
+//
+						this.updateActionButtons();
+//
+						this.addActionButton('QGEFpass', _('Pass'), (event) => {
+							dojo.stopEvent(event);
+							this.confirm(_('Do nothing'), 'pass', {FACTION: this.FACTION});
+						});
 //
 						break;
 //

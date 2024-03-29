@@ -32,11 +32,9 @@ class AlliesDeck extends APP_GameClass
 		48 => ['faction' => Factions::SOVIETUNION, 'reaction' => 'Advance'],
 	];
 //
-	static function init()
+	static function init($deck)
 	{
-		$deck = self::getNew("module.common.deck");
 		$deck->init("alliesDeck");
-//
 		return $deck;
 	}
 	static function setup($deck)

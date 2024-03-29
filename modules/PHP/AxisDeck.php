@@ -36,11 +36,9 @@ class AxisDeck extends APP_GameClass
 		33 => ['faction' => Factions::PACT, 'reaction' => 'SustainAttack'],
 	];
 //
-	static function init()
+	static function init($deck)
 	{
-		$deck = self::getNew("module.common.deck");
 		$deck->init("axisDeck");
-//
 		return $deck;
 	}
 	static function setup($deck)

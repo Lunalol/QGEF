@@ -47,8 +47,8 @@ class QuartermasterGeneralEastFront extends Table
 //
 // Initialize Decks
 //
-		$this->alliesDeck = AlliesDeck::init();
-		$this->axisDeck = AxisDeck::init();
+		$this->alliesDeck = AlliesDeck::init($this->getNew("module.common.deck"));
+		$this->axisDeck = AxisDeck::init($this->getNew("module.common.deck"));
 	}
 	protected function getGameName()
 	{
@@ -225,10 +225,6 @@ class QuartermasterGeneralEastFront extends Table
 				if (!in_array($to, $this->ADJACENCY[$from])) var_dump($to, $from);
 			}
 		}
-	}
-	function X()
-	{
-
 	}
 //
 // Debug functions
