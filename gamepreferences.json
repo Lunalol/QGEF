@@ -14,5 +14,18 @@
 				"name": "Fast"
 			}
 		]
+	},
+	"101": {
+		"name": "Confirm actions",
+		"needReload": false,
+		"default": 1,
+		"values": [
+			{
+				"name": "No"
+			},
+			{
+				"name": "Yes"
+			}
+		]
 	}
 }

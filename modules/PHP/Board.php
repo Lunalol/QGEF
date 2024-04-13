@@ -10,38 +10,45 @@ class Board extends APP_GameClass
 //
 // Regions (44)
 //
+	const ALL = [BULGARIA, YUGOSLAVIA, TRIESTE, ROMANIA, HUNGARY, VIENNA, WARSAW, BERLIN, EASTPRUSSIA, FINLAND, BESSARABIA, LWOW, BREST, BALTICSTATES, KARELIA, SEVASTOPOL, CAUCASUS, KIEV, ROSTOV, STALINGRAD, MOGILEV, KHARKOV, SMOLENSK, KURSK, VORONEZH, GORKI, NOVGOROD, MOSCOW, LENINGRAD, PETROZAVODSK, VOLOGDA];
+//
+	const W1939 = [BESSARABIA, LWOW, BREST, BALTICSTATES, KARELIA, BULGARIA, YUGOSLAVIA, TRIESTE, ROMANIA, HUNGARY, VIENNA, WARSAW, BERLIN, EASTPRUSSIA, FINLAND];
+	const E1939 = [SEVASTOPOL, CAUCASUS, KIEV, ROSTOV, STALINGRAD, MOGILEV, KHARKOV, SMOLENSK, KURSK, VORONEZH, GORKI, NOVGOROD, MOSCOW, LENINGRAD, PETROZAVODSK, VOLOGDA];
+	const W1941 = [BULGARIA, YUGOSLAVIA, TRIESTE, ROMANIA, HUNGARY, VIENNA, WARSAW, BERLIN, EASTPRUSSIA, FINLAND];
+	const E1941 = [BESSARABIA, LWOW, BREST, BALTICSTATES, KARELIA, SEVASTOPOL, CAUCASUS, KIEV, ROSTOV, STALINGRAD, MOGILEV, KHARKOV, SMOLENSK, KURSK, VORONEZH, GORKI, NOVGOROD, MOSCOW, LENINGRAD, PETROZAVODSK, VOLOGDA];
+//
 	const REGIONS = [
-		BULGARIA => ['type' => LAND, 1941],
+		BULGARIA => ['type' => LAND],
 		BOSPORUS => ['type' => WATER],
 		ADRIATICSEA => ['type' => WATER],
-		YUGOSLAVIA => ['type' => LAND, 'VP' => 1, 1941],
+		YUGOSLAVIA => ['type' => LAND, 'VP' => 1],
 		BLACKSEA => ['type' => WATER],
-		TRIESTE => ['type' => LAND, 1941],
-		ROMANIA => ['type' => LAND, 'VP' => 1, 1941],
+		TRIESTE => ['type' => LAND],
+		ROMANIA => ['type' => LAND, 'VP' => 1],
 		SEVASTOPOL => ['type' => LAND, 'VP' => 1],
-		HUNGARY => ['type' => LAND, 'VP' => 1, 1941],
-		BESSARABIA => ['type' => LAND, 1939],
+		HUNGARY => ['type' => LAND, 'VP' => 1],
+		BESSARABIA => ['type' => LAND],
 		SEAOFAZOV => ['type' => WATER],
-		VIENNA => ['type' => LAND, 1941],
+		VIENNA => ['type' => LAND],
 		CAUCASUS => ['type' => LAND, 'VP' => 1],
 		DNIEPRRIVER => ['type' => WATER],
 		KIEV => ['type' => LAND, 'VP' => 1],
-		LWOW => ['type' => LAND, 1939],
+		LWOW => ['type' => LAND],
 		VOLGARIVER => ['type' => WATER],
 		STALINGRAD => ['type' => LAND, 'VP' => 1],
 		ROSTOV => ['type' => LAND],
 		KHARKOV => ['type' => LAND],
 		MOGILEV => ['type' => LAND],
-		WARSAW => ['type' => LAND, 'VP' => 1, 1941],
-		BERLIN => ['type' => LAND, 'VP' => 1, 1941],
-		EASTPRUSSIA => ['type' => LAND, 'VP' => 1, 1941],
-		BREST => ['type' => LAND, 1939],
+		WARSAW => ['type' => LAND, 'VP' => 1],
+		BERLIN => ['type' => LAND, 'VP' => 1],
+		EASTPRUSSIA => ['type' => LAND, 'VP' => 1],
+		BREST => ['type' => LAND],
 		KURSK => ['type' => LAND],
 		WESTBALTICSEA => ['type' => WATER],
 		VORONEZH => ['type' => LAND, 'VP' => 1],
 		SMOLENSK => ['type' => LAND, 'VP' => 1],
 		LAKEPEIPUS => ['type' => WATER],
-		BALTICSTATES => ['type' => LAND, 1939],
+		BALTICSTATES => ['type' => LAND],
 		MOSCOW => ['type' => LAND, 'VP' => 2],
 		RYBINSKSEA => ['type' => WATER],
 		GULFOFFINLAND => ['type' => WATER],
@@ -52,8 +59,8 @@ class Board extends APP_GameClass
 		PETROZAVODSK => ['type' => LAND],
 		VOLOGDA => ['type' => LAND, 'VP' => 1],
 		LAKEONEGA => ['type' => WATER],
-		KARELIA => ['type' => LAND, 1939],
-		FINLAND => ['type' => LAND, 'VP' => 1, 1941],
+		KARELIA => ['type' => LAND],
+		FINLAND => ['type' => LAND, 'VP' => 1],
 		BALTICSEA => ['type' => WATER],
 	];
 //

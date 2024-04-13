@@ -74,6 +74,10 @@ class Pieces extends APP_GameClass
 	{
 		return self::getCollectionFromDB("SELECT * FROM pieces WHERE location = $location ORDER BY faction,type");
 	}
+	function getLocation(int $id): string
+	{
+		return self::getUniqueValueFromDB("SELECT location FROM pieces WHERE id = $id");
+	}
 	function setLocation(int $id, int $location): void
 	{
 		self::dbQuery("UPDATE pieces SET location = $location WHERE id = $id");
@@ -95,7 +99,7 @@ class Pieces extends APP_GameClass
 	}
 	function getSupply(string $FACTION)
 	{
-		return array_keys(board::REGIONS);
+		return array_keys(Board::REGIONS);
 	}
 	function getPossibleMoves(string $FACTION, array $pieces): array
 	{
@@ -254,10 +258,39 @@ class Pieces extends APP_GameClass
 				foreach (Board::ADJACENCY[$piece['location']] as $next_location)
 				{
 					# Infantry and tanks may only move to land spaces
-					if (Board::REGIONS[$next_location]['type'] === LAND && in_array($next_location, $ennemies)) $locations[] = $next_location;
+					if (Board::REGIONS[$next_location]['type'] === LAND)
+					{
+						if (in_array($next_location, $ennemies)) $locations[] = $next_location;
+						if (!self::getAtLocation($next_location)) $locations[] = $next_location;
+					}
 				}
 #
 				if ($locations) $possibles[$piece['id']] = $locations;
+			}
+		}
+#
+		return $possibles;
+	}
+	function getInRange(int $location, int $range, array $pieces)
+	{
+		$possibles = [];
+		foreach ($pieces as $piece)
+		{
+			if ($range >= 1)
+			{
+				$next_locations = Board::ADJACENCY[$location];
+				if (!in_array($piece['location'], $next_locations))
+				{
+					foreach (Board::ADJACENCY[$location] as $next_location)
+					{
+						if (in_array($piece['location'], Board::ADJACENCY[$next_location]))
+						{
+							$possibles[$piece['id']] = true;
+							break;
+						}
+					}
+				}
+				else $possibles[$piece['id']] = true;
 			}
 		}
 #

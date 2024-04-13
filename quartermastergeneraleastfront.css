@@ -1,3 +1,4 @@
+/* <editor-fold defaultstate="collapsed" desc="fonts"> */
 @font-face {
     font-family: 'CutrightWF';
     src: url('img/fonts/CutrightWF.otf') format('opentype');
@@ -22,6 +23,7 @@
 	size-adjust: 100%;
     ascent-override: 100%;
 }
+/* </editor-fold> */
 /* <editor-fold defaultstate="collapsed" desc="BGA UI"> */
 div,img {
 	user-select: none;
@@ -33,9 +35,9 @@ html {
 	display: none;
 }
 /* </editor-fold> */
-/**/
 /* <editor-fold defaultstate="collapsed" desc="Board"> */
 #QGEFplayArea {
+	z-index: 0;
 }
 #QGEFscrollArea {
     height: 70vh;
@@ -89,7 +91,6 @@ html {
 	fill: #ffffffE0;
 }
 /* </editor-fold> */
-/**/
 /* <editor-fold defaultstate="collapsed" desc="Logs"> */
 .QGEF-phase {
 	font-family: CutrightWF;
@@ -120,7 +121,6 @@ html {
 	background-image: url('img/allies.jpg');
 }
 /* </editor-fold> */
-/**/
 /* <editor-fold defaultstate="collapsed" desc="Cards"> */
 .QGEFcontingencyHolder {
 	display: flex;
@@ -290,7 +290,6 @@ html {
 	word-spacing: -1px;
 }
 /* </editor-fold> */
-/**/
 /* <editor-fold defaultstate="collapsed" desc="VP Track"> */
 .QGEFvpTrack {
 	position: absolute;
@@ -357,7 +356,27 @@ html {
 	color: white;
 }
 /* </editor-fold> */
-/**/
+/* </editor-fold> */
+/* <editor-fold defaultstate="collapsed" desc="Markers"> */
+.QGEFmarker {
+	background-image: url('img/markers.png');
+	position: absolute;
+	transition: left CALC(var(--DELAY) * 1ms), top CALC(var(--DELAY) * 1ms)
+}
+.QGEFmarker {
+	width: 137px;
+	height: 137px;
+}
+.QGEFmarker[data-type='axis'] {
+	transform: scale(50%);
+	border-radius: 10px;
+	background-position: -150px -153px;
+}
+.QGEFmarker[data-type='allies'] {
+	transform: scale(50%);
+	border-radius: 10px;
+	background-position: -481px -153px;
+}
 /* <editor-fold defaultstate="collapsed" desc="Pieces"> */
 .QGEFpiece {
 	background-image: url('img/pieces.png');
@@ -449,7 +468,6 @@ html {
 /* <editor-fold defaultstate="collapsed" desc="Pieces on Board"> */
 #QGEFboard .QGEFpiece {
 	position: absolute;
-	background-image: url('img/pieces.png');
 	transform: scale(50%);
 	transition: left CALC(var(--DELAY) * 1ms), top CALC(var(--DELAY) * 1ms), transform .25s;
 }
@@ -457,7 +475,7 @@ html {
 	visibility: hidden;
 }
 #QGEFboard .QGEFpiece:not(.QGEFselectable) {
-	filter: brightness(0.5);
+	opacity: 75%
 }
 #QGEFboard .QGEFpiece.QGEFselected
 {
@@ -501,7 +519,41 @@ html {
 	transition: transform .5s;
 }
 /* </editor-fold> */
+/* <editor-fold defaultstate="collapsed" desc="Player Panel"> */
+.QGEFcontainer{
+	display: flex;
+	flex-direction: column;
+}
+.mobile_version .QGEFcontainer{
+	flex-direction: row;
+}
+.QGEFplayer {
+	padding: 10px 5px;
+}
+.mobile_version .QGEFplayer {
+	padding: 5px 15px;
+}
 .QGEFplayer .QGEFpieceContainer{
 	width: 20px;
 	height: 20px;
+}
+.QGEFplayer .QGEFpieceContainer.QGEFdisabled{
+	opacity: 50%;
+}
+/* </editor-fold> */
+#QGEFflex {
+	position: relative;
+    display: flex;
+    flex-direction: column;
+    flex: 1 1 auto;
+	justify-content: start;
+}
+.gamestate_mulligan #QGEFflex {
+	flex-direction: column-reverse;
+}
+.gamestate_mulligan .QGEFhandHolder {
+	padding: 50px;
+}
+.gamestate_mulligan .QGEFhandHolder .QGEFcardContainer {
+	transform-origin: top;
 }

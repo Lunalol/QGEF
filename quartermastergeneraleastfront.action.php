@@ -20,6 +20,12 @@ class action_quartermastergeneraleastfront extends APP_GameAction
 			self::trace("Complete reinitialization of board game");
 		}
 	}
+	public function mulligan()
+	{
+		self::setAjaxMode();
+		$this->game->acMulligan(self::getArg("mulligan", AT_bool, true));
+		self::ajaxResponse("");
+	}
 	public function pass()
 	{
 		self::setAjaxMode();
@@ -30,6 +36,18 @@ class action_quartermastergeneraleastfront extends APP_GameAction
 	{
 		self::setAjaxMode();
 		$this->game->acCancel(self::getArg("FACTION", AT_alphanum, true));
+		self::ajaxResponse("");
+	}
+	public function play()
+	{
+		self::setAjaxMode();
+		$this->game->acPlay(self::getArg("FACTION", AT_alphanum, true), self::getArg("card", AT_int, true));
+		self::ajaxResponse("");
+	}
+	public function contingency()
+	{
+		self::setAjaxMode();
+		$this->game->acContingency(self::getArg("FACTION", AT_alphanum, true), self::getArg("card", AT_int, true));
 		self::ajaxResponse("");
 	}
 	public function conscription()

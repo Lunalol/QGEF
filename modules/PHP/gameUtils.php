@@ -7,38 +7,34 @@
  */
 trait gameUtils
 {
-	function discard()
+	function discard($cards)
 	{
 		$FACTION = Factions::getActive();
 //
-		$actions = Factions::getStatus($FACTION, 'action');
-		$action = array_pop($actions);
-//
-		foreach ($action['cards'] as $id)
+		foreach ($cards as $cardID)
 		{
-			$this->{$FACTION . 'Deck'
-			}->playCard($id);
 //* -------------------------------------------------------------------------------------------------------- */
-			self::notifyAllPlayers($FACTION . 'Discard', clienttranslate('${FACTION} Discard 1 card'), ['card' => ['id' => $id], 'FACTION' => $FACTION]);
+			self::notifyAllPlayers($FACTION . 'Discard', clienttranslate('${FACTION} Discard 1 card'), ['card' => ['id' => $cardID], 'FACTION' => $FACTION]);
 //* -------------------------------------------------------------------------------------------------------- */
+			$this->{$FACTION . 'Deck'}->playCard($cardID);
 		}
 	}
 	function action()
 	{
-		$FACTION = Factions::getActive();
-//
-		$actions = Factions::getStatus($FACTION, 'action');
-		array_pop($actions);
-//
-		if ($actions)
+		$id = Actions::action();
+		if ($id)
 		{
-			Factions::setStatus($FACTION, 'action', $actions);
-			$this->gamestate->nextState('action');
+			$action = Actions::get($id);
+			Actions::setStatus($id, 'done');
+//
+			if (!Actions::action())
+			{
+				self::discard($action['cards']);
+				Actions::clear();
+				$this->gamestate->nextState('next');
+			}
+			else $this->gamestate->nextState('action');
 		}
-		else
-		{
-			Factions::setStatus($FACTION, 'action');
-			$this->gamestate->nextState('next');
-		}
+		else $this->gamestate->nextState('continue');
 	}
 }

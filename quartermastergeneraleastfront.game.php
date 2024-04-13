@@ -7,8 +7,9 @@ require_once('modules/PHP/Factions.php');
 require_once('modules/PHP/AxisDeck.php');
 require_once('modules/PHP/AlliesDeck.php');
 require_once('modules/PHP/Board.php');
-require_once('modules/PHP/Counters.php');
+require_once('modules/PHP/Markers.php');
 require_once('modules/PHP/Pieces.php');
+require_once('modules/PHP/Actions.php');
 require_once('modules/PHP/gameStates.php');
 require_once('modules/PHP/gameStateArguments.php');
 require_once('modules/PHP/gameStateActions.php');
@@ -170,7 +171,7 @@ class QuartermasterGeneralEastFront extends Table
 			],
 //
 			'pieces' => Pieces::getAllDatas(),
-			'counters' => Counters::getAllDatas(),
+			'markers' => Markers::getAllDatas(),
 			'private' => [],
 //
 		];

@@ -42,7 +42,6 @@ define(["dojo", "dojo/_base/declare"], function (dojo, declare)
 		},
 		arrange: function (location, type)
 		{
-			const decal = {infantry: 0, tank: -0.5, airplane: 0.5, fleet: -0.5}[type];
 			const nodes = dojo.query(`.QGEFpiece[data-type='${type}'][data-location='${location}']`, 'QGEFboard');
 			for (let i = 0; i < nodes.length; i++)
 			{
@@ -68,56 +67,64 @@ define(["dojo", "dojo/_base/declare"], function (dojo, declare)
 					if (!dojo.hasClass(node, 'QGEFselected')) dojo.query(`.QGEFpiece.QGEFselectable`, 'QGEFboard').removeClass('QGEFselected');
 					dojo.toggleClass(node, 'QGEFselected');
 				}
-				else if (this.bgagame.gamedatas.gamestate.possibleactions.includes('desperateAttack'))
+				else if (this.bgagame.gamedatas.gamestate.possibleactions.includes('attack') || this.bgagame.gamedatas.gamestate.possibleactions.includes('desperateAttack'))
 				{
 					dojo.query(`.QGEFpiece.QGEFselectable`, 'QGEFboard').removeClass('QGEFselected');
 					dojo.query(`.QGEFpiece.QGEFselectable[data-faction='${node.dataset.faction}'][data-location='${node.dataset.location}']`, 'QGEFboard').toggleClass('QGEFselected');
 				}
 				else
 				{
+					dojo.query(`.QGEFpiece.QGEFselectable`).removeClass('QGEFselected');
 					if (event.detail === 1) dojo.toggleClass(node, 'QGEFselected');
 					else
 						dojo.query(`.QGEFpiece.QGEFselectable[data-type='${node.dataset.type}'][data-location='${node.dataset.location}']`, 'QGEFboard').toggleClass('QGEFselected', dojo.hasClass(node, 'QGEFselected'));
 				}
 //
+				this.bgagame.board.clearCanvas();
+				dojo.query('.QGEFregion', 'QGEFboard').forEach((node) => node.setAttribute('class', 'QGEFregion'));
+//
 				if (this.bgagame.gamedatas.gamestate.possibleactions.includes('move') || this.bgagame.gamedatas.gamestate.possibleactions.includes('forcedMarch'))
 				{
-					this.bgagame.board.clearCanvas();
-//
 					const pieces = dojo.query('.QGEFpiece.QGEFselected', 'QGEFboard');
 					dojo.query('.QGEFregion', 'QGEFboard').forEach((node) => {
 //
 						let possible = pieces.length > 0;
 						for (let piece of pieces)
 						{
-							if (!this.bgagame.gamedatas.gamestate.args.move[piece.dataset.id].includes(+node.dataset.location))
+							if ('move' in this.bgagame.gamedatas.gamestate.args && piece.dataset.id in this.bgagame.gamedatas.gamestate.args.move)
 							{
-								possible = false;
-								break;
+								if (!this.bgagame.gamedatas.gamestate.args.move[piece.dataset.id].includes(+node.dataset.location))
+								{
+									possible = false;
+									break;
+								}
 							}
+							else possible = false;
 						}
-						node.setAttribute('class', possible ? 'QGEFregion QGEFselectable' : 'QGEFregion');
+						if (possible) node.setAttribute('class', 'QGEFregion QGEFselectable');
 						if (possible) for (let piece of pieces) this.bgagame.board.arrow(+piece.dataset.location, +node.dataset.location, '#00FF0080');
 					});
 				}
 //
 				if (this.bgagame.gamedatas.gamestate.possibleactions.includes('attack') || this.bgagame.gamedatas.gamestate.possibleactions.includes('desperateAttack'))
 				{
-					this.bgagame.board.clearCanvas();
-//
 					const pieces = dojo.query('.QGEFpiece.QGEFselected', 'QGEFboard');
 					dojo.query('.QGEFregion', 'QGEFboard').forEach((node) => {
 //
 						let possible = pieces.length > 0;
 						for (let piece of pieces)
 						{
-							if (!this.bgagame.gamedatas.gamestate.args.attack[piece.dataset.id].includes(+node.dataset.location))
+							if ('attack' in this.bgagame.gamedatas.gamestate.args && piece.dataset.id in this.bgagame.gamedatas.gamestate.args.attack)
 							{
-								possible = false;
-								break;
+								if (!this.bgagame.gamedatas.gamestate.args.attack[piece.dataset.id].includes(+node.dataset.location))
+								{
+									possible = false;
+									break;
+								}
 							}
+							else possible = false;
 						}
-						node.setAttribute('class', possible ? 'QGEFregion QGEFselectable' : 'QGEFregion');
+						if (possible) node.setAttribute('class', 'QGEFregion QGEFselectable');
 						if (possible) for (let piece of pieces) this.bgagame.board.arrow(+piece.dataset.location, +node.dataset.location, '#FF000080');
 					});
 				}

@@ -11,14 +11,13 @@ $machinestates = [
 		'name' => 'gameSetup',
 		'type' => 'game',
 		'action' => 'stGameSetup',
-		'transitions' => ['startOfGame' => 10]
+		'transitions' => ['mulligan' => 5, 'startOfGame' => 10]
 	],
 	5 => [
 		'name' => 'mulligan',
 		'description' => clienttranslate('Players can take a mulligan'),
 		'descriptionmyturn' => clienttranslate('${you} can take a mulligan'),
 		'type' => 'multipleactiveplayer',
-		'args' => 'argMulligan',
 		'possibleactions' => ['mulligan'],
 		'transitions' => ['startOfGame' => 10]
 	],
@@ -54,7 +53,7 @@ $machinestates = [
 		'transitions' => ['next' => 110]
 	],
 	110 => [
-		'name' => 'firstMovementStep',
+		'name' => '_firstMovementStep',
 		'description' => clienttranslate('Players may move all of their pieces'),
 		'type' => 'game',
 		'action' => 'stFirstMovementStep',
@@ -66,11 +65,11 @@ $machinestates = [
 		'descriptionmyturn' => clienttranslate('${you} may move all of your pieces'),
 		'type' => 'activeplayer',
 		'args' => 'argMovementStep',
-		'possibleactions' => ['move', 'pass'],
-		'transitions' => ['continue' => 115, 'next' => 120]
+		'possibleactions' => ['cancel', 'move', 'pass'],
+		'transitions' => ['cancel' => 115, 'continue' => 115, 'next' => 120]
 	],
 	120 => [
-		'name' => 'actionStep',
+		'name' => '_actionStep',
 		'description' => clienttranslate('Players may take their action'),
 		'type' => 'game',
 		'action' => 'stActionStep',
@@ -82,20 +81,27 @@ $machinestates = [
 		'descriptionmyturn' => clienttranslate('${you} may take your ${action} action'),
 		'type' => 'activeplayer',
 		'args' => 'argActionStep',
-		'possibleactions' => ['conscription', 'forcedMarch', 'desperateAttack', 'productionInitiative', 'pass'],
+		'possibleactions' => ['play', 'conscription', 'forcedMarch', 'desperateAttack', 'productionInitiative', 'pass'],
 		'transitions' => ['action' => 130, 'next' => 120]
 	],
 	130 => [
+		'name' => '_action',
+		'description' => clienttranslate('A player is doing an action'),
+		'type' => 'game',
+		'action' => 'stAction',
+		'transitions' => ['continue' => 135, 'action' => 130, 'next' => 120]
+	],
+	135 => [
 		'name' => 'action',
 		'description' => clienttranslate('${actplayer} is doing an action'),
 		'descriptionmyturn' => clienttranslate('${you} are doing an action'),
 		'type' => 'activeplayer',
 		'args' => 'argAction',
-		'possibleactions' => ['deploy', 'move', 'attack', 'cancel'],
-		'transitions' => ['continue' => 130, 'cancel' => 125, 'action' => 125, 'attack' => 200, 'next' => 120]
+		'possibleactions' => ['deploy', 'move', 'attack', 'removePiece', 'cancel'],
+		'transitions' => ['action' => 130, 'cancel' => 130, 'attack' => 200, 'next' => 120]
 	],
 	140 => [
-		'name' => 'secondMovementStep',
+		'name' => '_secondMovementStep',
 		'description' => clienttranslate('Players may move their tanks and fleets'),
 		'type' => 'game',
 		'action' => 'stSecondMovementStep',
@@ -107,8 +113,8 @@ $machinestates = [
 		'descriptionmyturn' => clienttranslate('${you} may move your tanks and fleets'),
 		'type' => 'activeplayer',
 		'args' => 'argMovementStep',
-		'possibleactions' => ['move', 'pass'],
-		'transitions' => ['continue' => 145, 'next' => 150]
+		'possibleactions' => ['cancel', 'move', 'pass'],
+		'transitions' => ['cancel' => 145, 'continue' => 145, 'next' => 150]
 	],
 	150 => [
 		'name' => 'supplyStep',
@@ -140,7 +146,7 @@ $machinestates = [
 		'transitions' => ['attackRoundDefender' => 210]
 	],
 	210 => [
-		'name' => 'attackRoundDefender',
+		'name' => '_attackRoundDefender',
 		'type' => 'game',
 		'action' => 'stAttackRoundDefender',
 		'transitions' => ['continue' => 215, 'advance' => 250]
@@ -155,7 +161,7 @@ $machinestates = [
 		'transitions' => ['reaction' => 215, 'retreat' => 210, 'exchange' => 230, 'continue' => 220]
 	],
 	220 => [
-		'name' => 'attackRoundAttacker',
+		'name' => '_attackRoundAttacker',
 		'type' => 'game',
 		'action' => 'stAttackRoundAttacker',
 		'transitions' => ['continue' => 225, 'advance' => 250]
@@ -167,10 +173,10 @@ $machinestates = [
 		'type' => 'activeplayer',
 		'args' => 'argAttackRoundAttacker',
 		'possibleactions' => ['reaction', 'removePiece', 'pass'],
-		'transitions' => ['reaction' => 225, 'continue' => 210]
+		'transitions' => ['reaction' => 225, 'continue' => 210, 'endCombat' => 130]
 	],
 	230 => [
-		'name' => 'attackRoundExchange',
+		'name' => '_attackRoundExchange',
 		'type' => 'game',
 		'action' => 'stAttackRoundExchange',
 		'transitions' => ['continue' => 235]
@@ -185,7 +191,7 @@ $machinestates = [
 		'transitions' => ['special' => 240, 'continue' => 220]
 	],
 	240 => [
-		'name' => 'attackRoundSpecial',
+		'name' => '_attackRoundSpecial',
 		'type' => 'game',
 		'action' => 'stAttackRoundSpecial',
 		'transitions' => ['continue' => 245]
@@ -206,6 +212,6 @@ $machinestates = [
 		'type' => 'activeplayer',
 		'args' => 'argAttackRoundAdvance',
 		'possibleactions' => ['reaction', 'pass'],
-		'transitions' => ['end' => 125]
+		'transitions' => ['endCombat' => 130]
 	],
 ];

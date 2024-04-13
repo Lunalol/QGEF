@@ -18,14 +18,17 @@ CREATE TABLE IF NOT EXISTS `pieces` (
 	`location` INT(2), `status` JSON
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1;
 
-CREATE TABLE IF NOT EXISTS `counters` (
-	`id` INT(2) unsigned NOT NULL AUTO_INCREMENT PRIMARY KEY,
-	`type` ENUM('allies', 'axis', 'Gorki', 'scorchedEarth'), `location` INT(2)
+CREATE TABLE IF NOT EXISTS `markers` (
+	`type` ENUM('allies', 'axis', 'Gorki', 'scorchedEarth') PRIMARY KEY, `location` INT(2)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1;
 
 CREATE TABLE IF NOT EXISTS `control` (
 	`location` INT(2) PRIMARY KEY, `player` ENUM('both','allies', 'axis'), `terrain` ENUM('land', 'water')
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+CREATE TABLE IF NOT EXISTS `actions` (
+	`id` INT(2) unsigned NOT NULL AUTO_INCREMENT PRIMARY KEY, `status` ENUM ('done', 'pending'), `data` JSON
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1;
 
 CREATE TABLE IF NOT EXISTS `factions` (
 	`faction` ENUM ('allies', 'axis'), `player_id` INT, `activation` ENUM ('no', 'yes', 'done'),`VP` INT DEFAULT 0, `status` JSON

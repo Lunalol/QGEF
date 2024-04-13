@@ -1,8 +1,8 @@
 {OVERALL_GAME_HEADER}
 <div style='position:relative;display:flex;flex-direction:row;'>
 	<div id='QGEFcontingency-axis' class='QGEFcontingencyHolder' faction='Allies'></div>
-	<div id='QGEFflex' style='position:relative;display:flex;flex-direction:column;flex: 1 1 auto;'>
-		<div id='QGEFplayArea'>
+	<div id='QGEFflex' class='QGEFflex'>
+		<div id='QGEFplayArea' class='QGEFplayArea'>
 			<div style='position:relative;display:flex;flex-direction:row;justify-content:center;'>
 				<div id='QGEFzoom' class='QGEFzoom'>
 					<span id='QGEFzoomMinus' class='QGEFzoomIcon'>🔍</span>

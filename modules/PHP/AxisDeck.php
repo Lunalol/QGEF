@@ -8,13 +8,48 @@
 class AxisDeck extends APP_GameClass
 {
 	const DECK = [
-		1 => ['faction' => Factions::GERMANY, 'reaction' => 'SustainAttack'],
-		2 => ['faction' => Factions::GERMANY, 'reaction' => 'SustainAttack'],
-		3 => ['faction' => Factions::GERMANY, 'reaction' => 'SustainAttack'],
-		4 => ['faction' => Factions::GERMANY, 'reaction' => 'AntiAir'],
-		5 => ['faction' => Factions::GERMANY, 'reaction' => 'Advance'],
-		6 => ['faction' => Factions::GERMANY, 'reaction' => 'Advance'],
-		7 => ['faction' => Factions::PACT, 'reaction' => 'SustainAttack'],
+		1 => ['faction' => Factions::GERMANY, 'reaction' => 'SustainAttack',
+			FIRST_GAME => [
+				['name' => 'deploy', 'types' => [Pieces::INFANTRY], 'factions' => [Factions::GERMANY], 'locations' => [LWOW, ROMANIA, BESSARABIA, KIEV, MOGILEV, BREST, WARSAW, HUNGARY]],
+				['name' => 'move/attack', 'containing' => true]
+			]
+		],
+		2 => ['faction' => Factions::GERMANY, 'reaction' => 'SustainAttack',
+			FIRST_GAME => [
+				['name' => 'deploy', 'types' => [Pieces::INFANTRY], 'factions' => [Factions::GERMANY], 'locations' => [BREST, LWOW, MOGILEV, SMOLENSK, BALTICSTATES, EASTPRUSSIA, WARSAW]],
+				['name' => 'move/attack', 'containing' => true]
+			]
+		],
+		3 => ['faction' => Factions::GERMANY, 'reaction' => 'SustainAttack',
+			FIRST_GAME => [
+				['name' => 'deploy', 'types' => [Pieces::INFANTRY], 'factions' => [Factions::GERMANY], 'locations' => [EASTPRUSSIA, WARSAW, BREST, BALTICSTATES, BALTICSEA, WESTBALTICSEA]],
+				['name' => 'move/attack', 'containing' => true]
+			]
+		],
+		4 => ['faction' => Factions::GERMANY, 'reaction' => 'AntiAir',
+			FIRST_GAME => [
+				['name' => 'deploy', 'types' => [Pieces::AIRPLANE], 'factions' => [Factions::GERMANY], 'locations' => Board::W1941],
+				['name' => 'eliminate', 'types' => [Pieces::AIRPLANE], 'range' => 2]
+			]
+		],
+		5 => ['faction' => Factions::GERMANY, 'reaction' => 'Advance',
+			FIRST_GAME => [
+				['name' => 'attack', 'factions' => [Factions::GERMANY], 'locations' => Board::W1939],
+				['name' => 'action']
+			]
+		],
+		6 => ['faction' => Factions::GERMANY, 'reaction' => 'Advance',
+			FIRST_GAME => [
+				['name' => 'draw', 'count' => 2],
+				['name' => 'action']
+			]
+		],
+		7 => ['faction' => Factions::PACT, 'reaction' => 'SustainAttack',
+			FIRST_GAME => [
+				['name' => 'move', 'types' => [Pieces::TANK], 'factions' => [Factions::PACT]],
+				['name' => 'attack', 'containing' => true]
+			]
+		],
 		15 => ['faction' => Factions::GERMANY, 'reaction' => 'Advance'],
 		16 => ['faction' => Factions::GERMANY, 'reaction' => 'Advance'],
 		17 => ['faction' => Factions::GERMANY, 'reaction' => 'Advance'],
@@ -34,6 +69,45 @@ class AxisDeck extends APP_GameClass
 		31 => ['faction' => Factions::PACT, 'reaction' => 'Retreat'],
 		32 => ['faction' => Factions::PACT, 'reaction' => 'Retreat'],
 		33 => ['faction' => Factions::PACT, 'reaction' => 'SustainAttack'],
+//
+		101 => ['faction' => Factions::GERMANY,
+			INITIAL_SIDE => [
+				['name' => 'deploy', 'types' => [Pieces::TANK, Pieces::AIRPLANE], 'factions' => [Factions::GERMANY], 'locations' => Board::SUPPLY[Factions::GERMANY]],
+			],
+			SECOND_SIDE => [
+			],
+		],
+		102 => ['faction' => Factions::GERMANY,
+			INITIAL_SIDE => [
+				['name' => 'attack', 'factions' => [Factions::GERMANY], 'locations' => Board::E1941],
+			],
+			SECOND_SIDE => [
+			],
+		],
+		103 => ['faction' => Factions::GERMANY,
+			INITIAL_SIDE => [
+				['name' => 'deploy', 'types' => [Pieces::FLEET], 'factions' => [Factions::GERMANY], 'locations' => [WESTBALTICSEA]],
+				['name' => 'discard'],
+			],
+			SECOND_SIDE => [
+			],
+		],
+		104 => ['faction' => Factions::GERMANY,
+			INITIAL_SIDE => [
+				['name' => 'VP'],
+				['name' => 'draw', 'count' => 3],
+			],
+			SECOND_SIDE => [
+			],
+		],
+		105 => ['faction' => Factions::GERMANY,
+			INITIAL_SIDE => [
+				['name' => 'deploy', 'types' => [Pieces::INFANTRY], 'factions' => [Factions::PACT], 'locations' => Board::SUPPLY[Factions::PACT]],
+				['name' => 'deploy', 'types' => [Pieces::INFANTRY], 'factions' => [Factions::PACT], 'locations' => Board::SUPPLY[Factions::PACT]],
+			],
+			SECOND_SIDE => [
+			],
+		],
 	];
 //
 	static function init($deck)
