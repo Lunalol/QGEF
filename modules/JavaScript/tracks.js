@@ -1,6 +1,6 @@
 define(["dojo", "dojo/_base/declare"], function (dojo, declare)
 {
-	return declare("Track", null,
+	return declare("Tracks", null,
 	{
 //
 		constructor: function (bgagame)
@@ -37,7 +37,10 @@ define(["dojo", "dojo/_base/declare"], function (dojo, declare)
 //
 // Round Track
 //
-			const QGEFroundTrack = dojo.place(`<div id='QGEFroundTrack' class='QGEFroundTrack'>`, 'QGEFcontingency-allies', 'after');
+			const QGEFroundTrackContainer = dojo.place(`<div id='QGEFroundTrackContainer' class='QGEFroundTrackContainer'>`, 'QGEFcontingency-allies', 'after');
+			dojo.place("<div class='QGEFroundTrackElement QGEFroundTrackElement-gray' style='position:absolute;margin:10px;z-index:1;'></div>", QGEFroundTrackContainer);
+//
+			const QGEFroundTrack = dojo.place(`<div id='QGEFroundTrack' class='QGEFroundTrack'>`, QGEFroundTrackContainer);
 			dojo.place(this.bgagame.format_block('QGEFroundTrackGRAY'), QGEFroundTrack);
 			dojo.place(this.bgagame.format_block('QGEFroundTrackBLACK', {round: 1, season: this.translate.summer, year: 1941}), QGEFroundTrack);
 			dojo.place(this.bgagame.format_block('QGEFroundTrackBLACK', {round: 2, season: this.translate.fall, year: 1941}), QGEFroundTrack);
@@ -77,7 +80,11 @@ define(["dojo", "dojo/_base/declare"], function (dojo, declare)
 			dojo.place(`<img draggable='false' style='position:absolute;top:10px;left:-10px;width:30px;' src='${g_gamethemeurl}img/svg/forbidden.svg'>`, sprint1945);
 			dojo.place(this.bgagame.format_block('QGEFroundTrackYELLOW', {text: this.translate.scoring}), QGEFroundTrack);
 			dojo.place(this.bgagame.format_block('QGEFroundTrackGRAY'), QGEFroundTrack);
-			dojo.place(`<div style='height:10px'/>`, QGEFroundTrack);
+			dojo.place(`<div style='flex:0 0 100vh;'></div>`, QGEFroundTrack);
+		},
+		round: function (steps)
+		{
+			$('QGEFroundTrack').scrollTo({top: steps * 45, behavior: 'smooth'});
 		}
 	}
 	);

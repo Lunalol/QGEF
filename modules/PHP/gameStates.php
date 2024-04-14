@@ -77,8 +77,9 @@ trait gameStates
 	function stStartOfRound()
 	{
 		$round = intval(self::incGameStateValue('round', 1));
+		$steps = [1 => 0, 2 => 1, 3 => 2, 4 => 5, 5 => 6, 6 => 7, 7 => 8, 8 => 10, 9 => 11, 10 => 12, 11 => 13, 12 => 15, 13 => 16, 14 => 17, 15 => 18, 16 => 19][$round];
 //* -------------------------------------------------------------------------------------------------------- */
-		self::notifyAllPlayers('updateRound', '<span class="QGEF-phase">${LOG}${round}</span>', ['i18n' => ['LOG'], 'LOG' => clienttranslate('Start of round'), 'round' => $round]);
+		self::notifyAllPlayers('updateRound', '<span class="QGEF-phase">${LOG}${round}</span>', ['i18n' => ['LOG'], 'LOG' => clienttranslate('Start of round'), 'round' => $round, 'steps' => $steps]);
 //* -------------------------------------------------------------------------------------------------------- */
 		Factions::setActivation(Factions::AXIS, 'yes');
 //
@@ -89,9 +90,9 @@ trait gameStates
 		$FACTION = Factions::getActive();
 		$this->gamestate->changeActivePlayer(Factions::getPlayerID($FACTION));
 //* -------------------------------------------------------------------------------------------------------- */
-		self::notifyAllPlayers('updateRound', '<span class="QGEF-phase">${FACTION}${LOG}</span>', ['i18n' => ['LOG'], 'LOG' => clienttranslate('Start of turn'), 'FACTION' => $FACTION]);
+		self::notifyAllPlayers('msg', '<span class="QGEF-phase">${FACTION}${LOG}</span>', ['i18n' => ['LOG'], 'LOG' => clienttranslate('Start of turn'), 'FACTION' => $FACTION]);
 //* -------------------------------------------------------------------------------------------------------- */
-		self::setGameStateValue('action', 0);
+		self::setGameStateValue('action', 1);
 //
 		$this->gamestate->nextState('next');
 	}
@@ -100,7 +101,7 @@ trait gameStates
 		$FACTION = Factions::getActive();
 		Factions::updateControl();
 //* -------------------------------------------------------------------------------------------------------- */
-		self::notifyAllPlayers('updateRound', '<span class="QGEF-phase">${FACTION}${LOG}</span>', ['i18n' => ['LOG'], 'LOG' => clienttranslate('First Movement step'), 'FACTION' => $FACTION]);
+		self::notifyAllPlayers('msg', '<span class="QGEF-phase">${FACTION}${LOG}</span>', ['i18n' => ['LOG'], 'LOG' => clienttranslate('First Movement step'), 'FACTION' => $FACTION]);
 //* -------------------------------------------------------------------------------------------------------- */
 		foreach (Pieces::getAll($FACTION) as $piece) Pieces::setStatus($piece['id'], 'moved', 'no');
 		Actions::clear();
@@ -109,14 +110,14 @@ trait gameStates
 	}
 	function stActionStep()
 	{
-		$action = intval(self::incGameStateValue('action', 1));
+		$action = intval(self::getGameStateValue('action'));
 		if ($action > 2) return $this->gamestate->nextState('next');
 //
 		$FACTION = Factions::getActive();
 		Factions::updateControl();
 //* -------------------------------------------------------------------------------------------------------- */
-		if ($action === 1) self::notifyAllPlayers('updateRound', '<span class="QGEF-phase">${FACTION}${LOG}</span>', ['i18n' => ['LOG'], 'LOG' => clienttranslate('First Action step'), 'FACTION' => $FACTION]);
-		if ($action === 2) self::notifyAllPlayers('updateRound', '<span class="QGEF-phase">${FACTION}${LOG}</span>', ['i18n' => ['LOG'], 'LOG' => clienttranslate('Second Action step'), 'FACTION' => $FACTION]);
+		if ($action === 1) self::notifyAllPlayers('msg', '<span class="QGEF-phase">${FACTION}${LOG}</span>', ['i18n' => ['LOG'], 'LOG' => clienttranslate('First Action step'), 'FACTION' => $FACTION]);
+		if ($action === 2) self::notifyAllPlayers('msg', '<span class="QGEF-phase">${FACTION}${LOG}</span>', ['i18n' => ['LOG'], 'LOG' => clienttranslate('Second Action step'), 'FACTION' => $FACTION]);
 //* -------------------------------------------------------------------------------------------------------- */
 		Actions::clear();
 //
@@ -127,7 +128,7 @@ trait gameStates
 		$FACTION = Factions::getActive();
 		Factions::updateControl();
 //* -------------------------------------------------------------------------------------------------------- */
-		self::notifyAllPlayers('updateRound', '<span class="QGEF-phase">${FACTION}${LOG}</span>', ['i18n' => ['LOG'], 'LOG' => clienttranslate('Second Movement step'), 'FACTION' => $FACTION]);
+		self::notifyAllPlayers('msg', '<span class="QGEF-phase">${FACTION}${LOG}</span>', ['i18n' => ['LOG'], 'LOG' => clienttranslate('Second Movement step'), 'FACTION' => $FACTION]);
 //* -------------------------------------------------------------------------------------------------------- */
 		foreach (Pieces::getAll($FACTION) as $piece) if ($piece['type'] === 'tank' || $piece['type'] === 'fleet') Pieces::setStatus($piece['id'], 'moved', 'no');
 		Actions::clear();
@@ -139,7 +140,7 @@ trait gameStates
 		$FACTION = Factions::getActive();
 		Factions::updateControl();
 //* -------------------------------------------------------------------------------------------------------- */
-		self::notifyAllPlayers('updateRound', '<span class="QGEF-phase">${FACTION}${LOG}</span>', ['i18n' => ['LOG'], 'LOG' => clienttranslate('Supply step'), 'FACTION' => $FACTION]);
+		self::notifyAllPlayers('msg', '<span class="QGEF-phase">${FACTION}${LOG}</span>', ['i18n' => ['LOG'], 'LOG' => clienttranslate('Supply step'), 'FACTION' => $FACTION]);
 //* -------------------------------------------------------------------------------------------------------- */
 		$this->gamestate->nextState('next');
 	}
@@ -147,7 +148,7 @@ trait gameStates
 	{
 		$FACTION = Factions::getActive();
 //* -------------------------------------------------------------------------------------------------------- */
-		self::notifyAllPlayers('updateRound', '<span class="QGEF-phase">${FACTION}${LOG}</span>', ['i18n' => ['LOG'], 'LOG' => clienttranslate('Draw step'), 'FACTION' => $FACTION]);
+		self::notifyAllPlayers('msg', '<span class="QGEF-phase">${FACTION}${LOG}</span>', ['i18n' => ['LOG'], 'LOG' => clienttranslate('Draw step'), 'FACTION' => $FACTION]);
 //* -------------------------------------------------------------------------------------------------------- */
 		$toDraw = min(3, max(0, 5 - $this->{$FACTION . 'Deck'}->countCardInLocation('hand', $FACTION)));
 		for ($i = 0; $i < $toDraw; $i++)
@@ -165,7 +166,7 @@ trait gameStates
 		$FACTION = Factions::getActive();
 		Factions::setActivation($FACTION, 'done');
 //* -------------------------------------------------------------------------------------------------------- */
-		self::notifyAllPlayers('updateRound', '<span class="QGEF-phase">${FACTION}${LOG}</span>', ['i18n' => ['LOG'], 'LOG' => clienttranslate('End of turn'), 'FACTION' => $FACTION]);
+		self::notifyAllPlayers('msg', '<span class="QGEF-phase">${FACTION}${LOG}</span>', ['i18n' => ['LOG'], 'LOG' => clienttranslate('End of turn'), 'FACTION' => $FACTION]);
 //* -------------------------------------------------------------------------------------------------------- */
 		switch ($FACTION)
 		{
@@ -181,7 +182,7 @@ trait gameStates
 	{
 		$round = intval(self::getGameStateValue('round'));
 //* -------------------------------------------------------------------------------------------------------- */
-		self::notifyAllPlayers('updateRound', '<span class="QGEF-phase">${round}${LOG}</span>', ['i18n' => ['LOG'], 'LOG' => clienttranslate('End of round'), 'round' => $round]);
+		self::notifyAllPlayers('msg', '<span class="QGEF-phase">${round}${LOG}</span>', ['i18n' => ['LOG'], 'LOG' => clienttranslate('End of round'), 'round' => $round]);
 //* -------------------------------------------------------------------------------------------------------- */
 //
 // + Late Cards
@@ -192,6 +193,11 @@ trait gameStates
 //
 		if (in_array($round, [3, 7, 11, 16]))
 		{
+			$steps = [3 => 3, 7 => 9, 11 => 14, 16 => 20][$round];
+//* -------------------------------------------------------------------------------------------------------- */
+			self::notifyAllPlayers('updateRound', '<span class="QGEF-phase">${LOG}</span>', ['i18n' => ['LOG'], 'LOG' => clienttranslate('Scoring'), 'steps' => $steps]);
+//* -------------------------------------------------------------------------------------------------------- */
+
 			foreach (array_keys(Factions::FACTIONS) as $FACTION)
 			{
 				$VP = 0;
@@ -202,10 +208,11 @@ trait gameStates
 					Markers::setLocation($FACTION, Factions::incVP($FACTION, 1));
 //* -------------------------------------------------------------------------------------------------------- */
 					self::notifyAllPlayers('placeMarker', '', ['marker' => Markers::get($FACTION)]);
+					if (self::getPlayersNumber() === 2) self::notifyAllPlayers('updateScore', '', ['player_id' => Factions::getPlayerID($FACTION), 'VP' => Factions::getVP($FACTION)]);
 //* -------------------------------------------------------------------------------------------------------- */
 				}
 //* -------------------------------------------------------------------------------------------------------- */
-				self::notifyAllPlayers('msg', clienttranslate('${FACTION} gains ${VP} VP(s)'), ['VP' => $VP, 'FACTION' => $FACTION]);
+				self::notifyAllPlayers('msg', clienttranslate('${FACTION} Gains ${VP} VP(s)'), ['VP' => $VP, 'FACTION' => $FACTION]);
 //* -------------------------------------------------------------------------------------------------------- */
 			}
 			if (abs(Factions::getVP('allies') - Factions::getVP('axis')) >= 10) return $this->gamestate->nextState('endOfGame');
@@ -261,7 +268,7 @@ trait gameStates
 	{
 		$FACTION = Factions::getActive();
 //
-		$id = Actions::action();
+		$id = Actions::getNextAction();
 		if ($id)
 		{
 			$action = Actions::get($id);
@@ -282,23 +289,6 @@ trait gameStates
 //
 					break;
 //
-				case 'contingency':
-				case 'play':
-//
-					foreach ($action['cards'] as $cardID)
-					{
-						$card = $this->{$FACTION . 'Deck'}->getCard($cardID);
-						foreach (($FACTION . 'Deck')::DECK[$card['type_arg']][$card['type']] as $new)
-						{
-							$new['cards'] = $action['cards'];
-							Actions::add('pending', $new);
-						}
-					}
-//
-					self::action();
-//
-					break;
-//
 				case 'action':
 //
 					self::incGameStateValue('action', -1);
@@ -308,11 +298,16 @@ trait gameStates
 //
 				case 'VP':
 //
+					$otherFACTION = Factions::getInActive();
+//
 					$VP = 1;
-					Markers::setLocation($FACTION, Factions::incVP($FACTION, $VP));
+					Markers::setLocation($otherFACTION, Factions::incVP($otherFACTION, $VP));
 //* -------------------------------------------------------------------------------------------------------- */
-					self::notifyAllPlayers('placeMarker', clienttranslate('${FACTION} gains ${VP} VP(s)'), ['VP' => $VP, 'FACTION' => $FACTION,
-						'marker' => Markers::get($FACTION)]);
+					self::notifyAllPlayers('placeMarker', '', ['marker' => Markers::get($otherFACTION)]);
+//* -------------------------------------------------------------------------------------------------------- */
+					if (self::getPlayersNumber() === 2) self::notifyAllPlayers('updateScore', '', ['player_id' => Factions::getPlayerID($otherFACTION), 'VP' => Factions::getVP($otherFACTION)]);
+//* -------------------------------------------------------------------------------------------------------- */
+					self::notifyAllPlayers('msg', clienttranslate('${FACTION} Gains ${VP} VP(s)'), ['VP' => $VP, 'FACTION' => $otherFACTION]);
 //* -------------------------------------------------------------------------------------------------------- */
 					self::action();
 //

@@ -312,16 +312,19 @@ html {
 }
 /* </editor-fold> */
 /* <editor-fold defaultstate="collapsed" desc="Turn Track"> */
-.QGEFroundTrack {
-	/*	position: absolute;*/
-	padding: 10px;
+.QGEFroundTrackContainer {
 	top:-20px;
 	right:0px;
+}
+.QGEFroundTrack {
+	padding: 10px;
 	display:flex;
 	flex-direction:column;
-	overflow: visible clip;
+	overflow: hidden;
+	height: 1035px;
 }
 .QGEFroundTrackElement {
+	flex: 0 0 auto;
 	position: relative;
 	width: 80px;
 	height: 55px;
@@ -356,16 +359,18 @@ html {
 	color: white;
 }
 /* </editor-fold> */
-/* </editor-fold> */
 /* <editor-fold defaultstate="collapsed" desc="Markers"> */
 .QGEFmarker {
 	background-image: url('img/markers.png');
 	position: absolute;
-	transition: left CALC(var(--DELAY) * 1ms), top CALC(var(--DELAY) * 1ms)
+	transition: left CALC(var(--DELAY) * 1ms), top CALC(var(--DELAY) * 1ms), margin .5s
 }
 .QGEFmarker {
 	width: 137px;
 	height: 137px;
+}
+.QGEFmarker:hover {
+	z-index: 1;
 }
 .QGEFmarker[data-type='axis'] {
 	transform: scale(50%);
@@ -377,6 +382,7 @@ html {
 	border-radius: 10px;
 	background-position: -481px -153px;
 }
+/* </editor-fold> */
 /* <editor-fold defaultstate="collapsed" desc="Pieces"> */
 .QGEFpiece {
 	background-image: url('img/pieces.png');

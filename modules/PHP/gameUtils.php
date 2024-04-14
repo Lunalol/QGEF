@@ -21,16 +21,16 @@ trait gameUtils
 	}
 	function action()
 	{
-		$id = Actions::action();
+		$id = Actions::getNextAction();
 		if ($id)
 		{
 			$action = Actions::get($id);
 			Actions::setStatus($id, 'done');
 //
-			if (!Actions::action())
+			if (!Actions::getNextAction())
 			{
 				self::discard($action['cards']);
-				Actions::clear();
+				self::incGameStateValue('action', 1);
 				$this->gamestate->nextState('next');
 			}
 			else $this->gamestate->nextState('action');

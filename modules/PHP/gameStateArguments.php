@@ -24,7 +24,7 @@ trait gameStateArguments
 	{
 		$FACTION = Factions::getActive();
 //
-		$action = Actions::get(Actions::action());
+		$action = Actions::get(Actions::getNextAction());
 		switch ($action['name'])
 		{
 //
@@ -94,7 +94,7 @@ trait gameStateArguments
 //
 			case 'move/attack':
 //
-				$lastPiece = Actions::get(Actions::cancel())['piece'];
+				$lastPiece = Actions::get(Actions::getLastUndo())['piece'];
 				$this->possible['move'] = Pieces::getPossibleMoves($FACTION, [$lastPiece]);
 				if (array_key_exists('containing', $action))
 				{
@@ -113,9 +113,10 @@ trait gameStateArguments
 //
 				if (array_key_exists('containing', $action))
 				{
-					$lastPiece = Actions::get(Actions::cancel())['piece'];
+					$lastPiece = Actions::get(Actions::getLastUndo())['piece'];
 					$location = Pieces::getLocation($lastPiece['id']);
-					$this->possible['attack'] = Pieces::getPossibleAttacks($FACTION, array_filter(Pieces::getAll($FACTION), fn($piece) => $piece['location'] === $location && $piece['faction'] === $lastPiece['faction']));
+//					$this->possible['attack'] = Pieces::getPossibleAttacks($FACTION, array_filter(Pieces::getAll($FACTION), fn($piece) => $piece['location'] === $location && $piece['faction'] === $lastPiece['faction']));
+					$this->possible['attack'] = Pieces::getPossibleAttacks($FACTION, [$lastPiece]);
 				}
 				else $this->possible['attack'] = Pieces::getPossibleAttacks($FACTION, array_filter(Pieces::getAll($FACTION), fn($piece) => in_array($piece['location'], $action['locations']) && in_array($piece['faction'], $action['factions'])));
 //
@@ -123,7 +124,7 @@ trait gameStateArguments
 //
 			case 'eliminate':
 //
-				$lastPiece = Actions::get(Actions::cancel())['piece'];
+				$lastPiece = Actions::get(Actions::getLastUndo())['piece'];
 				$this->possible['pieces'] = Pieces::getInRange($lastPiece['location'], $action['range'], array_filter(Pieces::getAllDatas(), fn($piece) => in_array($piece['type'], $action['types']) && $piece['player'] !== $FACTION));
 				return ['FACTION' => $FACTION, 'cancel' => Actions::empty(), 'action' => $action, 'eliminate' => $this->possible['pieces']];
 //

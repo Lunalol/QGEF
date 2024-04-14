@@ -1,7 +1,7 @@
 define(["dojo", "dojo/_base/declare", "ebg/core/gamegui", "ebg/counter",
 	g_gamethemeurl + "modules/constants.js",
 	g_gamethemeurl + "modules/JavaScript/board.js",
-	g_gamethemeurl + "modules/JavaScript/track.js",
+	g_gamethemeurl + "modules/JavaScript/tracks.js",
 	g_gamethemeurl + "modules/JavaScript/panels.js",
 	g_gamethemeurl + "modules/JavaScript/contingency.js",
 	g_gamethemeurl + "modules/JavaScript/alliesDeck.js",
@@ -42,7 +42,7 @@ define(["dojo", "dojo/_base/declare", "ebg/core/gamegui", "ebg/counter",
 //
 // Animations Speed
 //
-			DELAY = 500 /*DELAYS[this.prefs[100].value]*/;
+			DELAY = DELAYS[this.prefs[100].value];
 			document.documentElement.style.setProperty('--DELAY', DELAY);
 			dojo.query('.preference_control').connect('onchange', this, 'updatePreference');
 //
@@ -57,7 +57,7 @@ define(["dojo", "dojo/_base/declare", "ebg/core/gamegui", "ebg/counter",
 //
 // Setup Turn Track
 //
-			this.track = new Track(this);
+			this.tracks = new Tracks(this);
 //
 // Place Markers
 //
@@ -425,7 +425,8 @@ define(["dojo", "dojo/_base/declare", "ebg/core/gamegui", "ebg/counter",
 //
 				case 'action':
 //
-					for (let card of args.action.cards) dojo.query(`.QGEFcardContainer[data-id='${card}']`, `QGEFhand-${args.FACTION}`).addClass('QGEFselected');
+//					for (let card of args.action.cards) dojo.query(`.QGEFcardContainer[data-id='${card}']`, `QGEFhand-${args.FACTION}`).addClass('QGEFselected');
+					for (let card of args.action.cards) dojo.query(`.QGEFcardContainer[data-id='${card}']`).addClass('QGEFselected');
 //
 					switch (args.action.name)
 					{
@@ -563,6 +564,8 @@ define(["dojo", "dojo/_base/declare", "ebg/core/gamegui", "ebg/counter",
 		{
 			console.log('notifications subscriptions setup');
 //
+			dojo.subscribe('updateScore', (notif) => this.scoreCtrl[notif.args.player_id].setValue(notif.args.VP));
+			dojo.subscribe('updateRound', (notif) => this.tracks.round(notif.args.steps));
 			dojo.subscribe('placeMarker', (notif) => this.markers.place(notif.args.marker));
 			dojo.subscribe('placePiece', (notif) => this.pieces.place(notif.args.piece));
 			dojo.subscribe('removePiece', (notif) => this.pieces.remove(notif.args.piece));

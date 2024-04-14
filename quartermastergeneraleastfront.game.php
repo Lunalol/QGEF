@@ -188,7 +188,6 @@ class QuartermasterGeneralEastFront extends Table
 	function dbSetScore(int $player_id, int $score, int $score_aux = 0): void
 	{
 		self::DbQuery("UPDATE player SET player_score = $score, player_score_aux = $score_aux WHERE player_id = $player_id");
-		self::notifyAllPlayers('updateScore', '', ['player_id' => $player_id, 'score' => $score]);
 	}
 	function dbIncScore(int $player_id, int $inc): void
 	{

@@ -57,6 +57,13 @@ trait gameStateActions
 			$this->gamestate->nextState('endCombat');
 			self::action();
 		}
+		if ($this->gamestate->state()['name'] === 'actionStep')
+		{
+			if ($FACTION !== Factions::getActive()) throw new BgaVisibleSystemException("Invalid FACTION: $FACTION");
+//
+			self::incGameStateValue('action', 1);
+			$this->gamestate->nextState('next');
+		}
 		else
 		{
 			if ($FACTION !== Factions::getActive()) throw new BgaVisibleSystemException("Invalid FACTION: $FACTION");
@@ -72,22 +79,13 @@ trait gameStateActions
 //* -------------------------------------------------------------------------------------------------------- */
 		self::notifyAllPlayers('msg', clienttranslate('${FACTION} Last action canceled'), ['FACTION' => $FACTION]);
 //* -------------------------------------------------------------------------------------------------------- */
-		$action = Actions::action();
-		if ($action) Actions::remove($action);
 //
-		$id = Actions::cancel();
-		if ($id)
+		$undo = Actions::getLastUndo();
+		if ($undo)
 		{
-			$action = Actions::get($id);
+			$action = Actions::get($undo);
 			switch ($action['name'])
 			{
-				case 'play':
-				case 'contingency':
-//
-					self::incGameStateValue('action', -1);
-					Actions::clear();
-					break;
-//
 				case 'move':
 //
 					Pieces::setLocation($action['piece']['id'], $action['piece']['location']);
@@ -97,9 +95,25 @@ trait gameStateActions
 //* -------------------------------------------------------------------------------------------------------- */
 					break;
 //
+				case 'deploy':
+//
+					Pieces::destroy($action['piece']['id']);
+//* -------------------------------------------------------------------------------------------------------- */
+					self::notifyAllPlayers('removePiece', '', ['piece' => $action['piece']]);
+//* -------------------------------------------------------------------------------------------------------- */
+					break;
+//
+				case 'remove':
+//* -------------------------------------------------------------------------------------------------------- */
+					self::notifyAllPlayers('placePiece', '', ['piece' => Pieces::get(Pieces::create($action['piece']['player'], $action['piece']['faction'], $action['piece']['type'], $action['piece']['location']))]);
+//* -------------------------------------------------------------------------------------------------------- */
 			}
-			Actions::remove($id);
+			Actions::remove($undo);
 		}
+//
+		$action = Actions::getLastAction();
+		if ($action) Actions::setStatus($action, 'pending');
+		else Actions::clear();
 //
 		$this->gamestate->nextState('cancel');
 	}
@@ -111,11 +125,16 @@ trait gameStateActions
 		$this->checkAction('play');
 		if ($FACTION !== Factions::getActive()) throw new BgaVisibleSystemException("Invalid FACTION: $FACTION");
 //
-		Actions::add('pending', ['name' => 'play', 'cards' => [$cardID]]);
 		$card = $this->{$FACTION . 'Deck'}->getCard($cardID);
 //* -------------------------------------------------------------------------------------------------------- */
 		self::notifyAllPlayers('msg', '${CARD}', ['CARD' => ['FACTION' => $FACTION, 'card' => $card]]);
 //* -------------------------------------------------------------------------------------------------------- */
+		foreach (($FACTION . 'Deck')::DECK[$card['type_arg']][$card['type']] as $new)
+		{
+			$new['cards'] = [$cardID];
+			Actions::add('pending', $new);
+		}
+//
 		$this->gamestate->nextState('action');
 	}
 	function acConscription(string $FACTION, array $cards): void
@@ -179,6 +198,8 @@ trait gameStateActions
 		self::notifyAllPlayers('msg', clienttranslate('${FACTION} Draw 1 card'), ['FACTION' => $FACTION]);
 		self::notifyPlayer(Factions::getPlayerID($FACTION), $FACTION . 'Deck', '', ['card' => $card]);
 //* -------------------------------------------------------------------------------------------------------- */
+		self::incGameStateValue('action', 1);
+//
 		$this->gamestate->nextState('next');
 	}
 	function acContingency(string $FACTION, int $cardID): void
@@ -189,11 +210,16 @@ trait gameStateActions
 		$this->checkAction('play');
 		if ($FACTION !== Factions::getActive()) throw new BgaVisibleSystemException("Invalid FACTION: $FACTION");
 //
-		Actions::add('pending', ['name' => 'contingency', 'cards' => [$cardID]]);
 		$card = $this->{$FACTION . 'Deck'}->getCard($cardID);
 //* -------------------------------------------------------------------------------------------------------- */
 		self::notifyAllPlayers('msg', '${CONTINGENCY}', ['CONTINGENCY' => ['FACTION' => $FACTION, 'card' => $card]]);
 //* -------------------------------------------------------------------------------------------------------- */
+		foreach (($FACTION . 'Deck')::DECK[$card['type_arg']][$card['type']] as $new)
+		{
+			$new['cards'] = [$cardID];
+			Actions::add('pending', $new);
+		}
+//
 		$this->gamestate->nextState('action');
 	}
 	function acDeploy(string $FACTION, string $location, string $faction, string $type): void
@@ -215,7 +241,7 @@ trait gameStateActions
 			'location' => $this->REGIONS[$location], 'i18n' => ['type', 'location'],
 			'piece' => $piece]);
 //* -------------------------------------------------------------------------------------------------------- */
-		Actions::add('done', ['name' => 'deploy', 'piece' => $piece]);
+		Actions::add('undo', ['name' => 'deploy', 'piece' => $piece]);
 //
 		self::action();
 	}
@@ -240,7 +266,7 @@ trait gameStateActions
 //
 			if ($piece['location'] !== $location) Pieces::setStatus($id, 'moved');
 //
-			Actions::add('done', ['name' => 'move', 'piece' => $piece]);
+			Actions::add('undo', ['name' => 'move', 'piece' => $piece]);
 //
 			$old_location = $piece['location'];
 			$piece['location'] = $location;
@@ -330,7 +356,7 @@ trait gameStateActions
 			'location' => $this->REGIONS[$piece['location']], 'i18n' => ['type', 'location'],
 			'piece' => $piece]);
 //* -------------------------------------------------------------------------------------------------------- */
-		Actions::add('done', ['name' => 'remove', 'piece' => $piece]);
+		Actions::add('undo', ['name' => 'remove', 'piece' => $piece]);
 //
 		if ($this->gamestate->state()['name'] === 'attackRoundExchange')
 		{

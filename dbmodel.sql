@@ -27,7 +27,7 @@ CREATE TABLE IF NOT EXISTS `control` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 CREATE TABLE IF NOT EXISTS `actions` (
-	`id` INT(2) unsigned NOT NULL AUTO_INCREMENT PRIMARY KEY, `status` ENUM ('done', 'pending'), `data` JSON
+	`id` INT(2) unsigned NOT NULL AUTO_INCREMENT PRIMARY KEY, `status` ENUM ('undo', 'done', 'pending'), `data` JSON
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1;
 
 CREATE TABLE IF NOT EXISTS `factions` (

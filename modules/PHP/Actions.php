@@ -37,11 +37,15 @@ class Actions extends APP_GameClass
 	{
 		return json_decode(self::getUniqueValueFromDB("SELECT data FROM actions WHERE id = $id"), JSON_OBJECT_AS_ARRAY);
 	}
-	static function cancel()
+	static function getLastUndo()
+	{
+		return self::getUniqueValueFromDB("SELECT id FROM actions WHERE status = 'undo' ORDER BY id DESC LIMIT 1");
+	}
+	static function getLastAction()
 	{
 		return self::getUniqueValueFromDB("SELECT id FROM actions WHERE status = 'done' ORDER BY id DESC LIMIT 1");
 	}
-	static function action()
+	static function getNextAction()
 	{
 		return self::getUniqueValueFromDB("SELECT id FROM actions WHERE status = 'pending' ORDER BY id ASC LIMIT 1");
 	}
