@@ -176,12 +176,21 @@ define(["dojo", "dojo/_base/declare"], function (dojo, declare)
 		},
 		play: function (card)
 		{
-			dojo.query(`.QGEFcardContainer[data-id='${card.id}']`, `QGEFhand-axis`).remove();
+			dojo.query(`.QGEFcardContainer[data-id='${card.id}']`).forEach((node) =>
+			{
+				dojo.addClass(node, 'QGEFselected');
+				this.bgagame.slideToObjectAndDestroy(node, `QGEFplayer-axis-${node.dataset.faction}`, DELAY);
+			});
 		},
 		discard: function (card)
 		{
-			dojo.query(`.QGEFcardContainer[data-id='${card.id}']`, `QGEFhand-axis`).remove();
-			dojo.query(`.QGEFcardContainer[data-id='${card.id}']`, `QGEFplayArea`).remove();
+			dojo.query(`.QGEFcardContainer[data-id='${card.id}']`).forEach((node) =>
+			{
+				dojo.addClass(node, 'QGEFselected');
+//				dojo.style(node, 'transition', 'none');
+//				dojo.style(node, 'display', '');
+				this.bgagame.slideToObjectAndDestroy(node, 'QGEFplayArea', DELAY);
+			});
 		},
 		click: function (event)
 		{

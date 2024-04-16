@@ -23,8 +23,8 @@ trait gameStates
 // ➤ Take the deck of cards for the sideyou’re playing, Axis or Allies, and separate the Mid War cards from the Late War cards, and set aside your Late War cards.
 // (The Axis-Soviet conflict started in the middle of World War 2)
 //
-		AlliesDeck::setup($this->alliesDeck);
-		AxisDeck::setup($this->axisDeck);
+		Decks::setupAllies($this->decks);
+		Decks::setupAxis($this->decks);
 //
 // ➤ Place your starting pieces on the board (see next page).
 // ➤ Set the rest of your pieces to the side — these are your available pieces.
@@ -36,21 +36,21 @@ trait gameStates
 //
 // ➤ Shuffle your Mid War cards and draw 7 cards.
 //
-		$this->alliesDeck->shuffle('deck');
-		$this->axisDeck->shuffle('deck');
+		$this->decks->shuffle(Factions::ALLIES);
+		$this->decks->shuffle(Factions::AXIS);
 //
 		if (!self::getGameStateValue('firstGame'))
 		{
-			$this->alliesDeck->pickCards(7, 'deck', Factions::ALLIES);
-			$this->axisDeck->pickCards(7, 'deck', Factions::AXIS);
+			$this->decks->pickCards(7, Factions::ALLIES, Factions::ALLIES);
+			$this->decks->pickCards(7, Factions::AXIS, Factions::AXIS);
 		}
 //
 // However, if this is your first game, you may want to select the 7 cards labeled “First Game” instead, and shuffle the rest.
 //
 		if (self::getGameStateValue('firstGame'))
 		{
-			$this->alliesDeck->moveCards(array_keys($this->alliesDeck->getCardsOfTypeInLocation(FIRST_GAME, null, 'deck')), 'hand', Factions::ALLIES);
-			$this->axisDeck->moveCards(array_keys($this->axisDeck->getCardsOfTypeInLocation(FIRST_GAME, null, 'deck')), 'hand', Factions::AXIS);
+			$this->decks->moveCards(array_keys($this->decks->getCardsOfTypeInLocation(Decks::FIRST_GAME, null, Factions::ALLIES)), 'hand', Factions::ALLIES);
+			$this->decks->moveCards(array_keys($this->decks->getCardsOfTypeInLocation(Decks::FIRST_GAME, null, Factions::AXIS)), 'hand', Factions::AXIS);
 		}
 //
 // At the beginning of the game,
@@ -67,7 +67,7 @@ trait gameStates
 //
 		Factions::setActivation();
 //
-		if (self::getPlayersNumber() === 2)
+		if (self::getPlayersNumber() === 2 && !self::getGameStateValue('firstGame'))
 		{
 			$this->gamestate->setAllPlayersMultiactive();
 			$this->gamestate->nextState('mulligan');
@@ -153,7 +153,7 @@ trait gameStates
 		$toDraw = min(3, max(0, 5 - $this->{$FACTION . 'Deck'}->countCardInLocation('hand', $FACTION)));
 		for ($i = 0; $i < $toDraw; $i++)
 		{
-			$card = $this->{$FACTION . 'Deck'}->pickCard('deck', $FACTION);
+			$card = $this->decks->pickCard($FACTION, $FACTION);
 //* -------------------------------------------------------------------------------------------------------- */
 			self::notifyAllPlayers('msg', '${FACTION} Draw 1 card', ['FACTION' => $FACTION]);
 			self::notifyPlayer(Factions::getPlayerID($FACTION), $FACTION . 'Deck', '', ['card' => $card]);
@@ -317,7 +317,7 @@ trait gameStates
 //
 					for ($i = 0; $i < $action['count']; $i++)
 					{
-						$card = $this->{$FACTION . 'Deck'}->pickCard('deck', $FACTION);
+						$card = $this->decks->pickCard($FACTION, $FACTION);
 //* -------------------------------------------------------------------------------------------------------- */
 						self::notifyAllPlayers('msg', '${FACTION} Draw 1 card', ['FACTION' => $FACTION]);
 						self::notifyPlayer(Factions::getPlayerID($FACTION), $FACTION . 'Deck', '', ['card' => $card]);

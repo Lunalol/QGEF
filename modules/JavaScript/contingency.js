@@ -16,7 +16,7 @@ define(["dojo", "dojo/_base/declare"], function (dojo, declare)
 //
 // Translate
 //
-			this.FACTIONS = {sovietUnion: _('Soviet Union'), germany: _('GERMANY'), pact: _('Pact')}
+			this.FACTIONS = {sovietUnion: _('Soviet Union'), germany: _('GERMANY'), pact: _('Pact')};
 //
 			this.cards = {
 //

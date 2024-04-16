@@ -1,6 +1,10 @@
 {OVERALL_GAME_HEADER}
-<div style='position:relative;display:flex;flex-direction:row;'>
-	<div id='QGEFcontingency-axis' class='QGEFcontingencyHolder' faction='Allies'></div>
+<div id='QGEF' style='position:relative;display:flex;flex-direction:row;'>
+	<div style='flex:0 0 auto;'>
+		<div id='QGEFcontingency-axis-arrow' class='QGEFdocker' faction='Axis' onclick='{dojo.toggleClass("QGEFcontingency-axis", "dock");gameui.board.resize();}'>🢀</div>
+		<div id='QGEFcontingency-axis' class='QGEFcontingencyHolder' faction='Allies'>
+		</div>
+	</div>
 	<div id='QGEFflex' class='QGEFflex'>
 		<div id='QGEFplayArea' class='QGEFplayArea'>
 			<div style='position:relative;display:flex;flex-direction:row;justify-content:center;'>
@@ -63,7 +67,11 @@
 			</div>
 		</div>
 	</div>
-	<div id='QGEFcontingency-allies' class='QGEFcontingencyHolder' faction='Axis'></div>
+	<div style='flex:0 0 auto;'>
+		<div id='QGEFcontingency-allies-arrow'class='QGEFdocker' faction='Allies' onclick='{dojo.toggleClass("QGEFcontingency-allies", "dock");gameui.board.resize();}'>🢂</div>
+		<div id='QGEFcontingency-allies' class='QGEFcontingencyHolder' faction='Allies'>
+		</div>
+	</div>
 </div>
 <div id='QGEFinvisible' style='display:none;'></div>
 <script type="text/javascript">

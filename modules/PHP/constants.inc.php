@@ -24,14 +24,6 @@ define('FIRSTGAME', 102);
 define('ROUND', 10);
 define('ACTION', 11);
 #
-# Card types
-#
-define('FIRST_GAME', 0);
-define('MID', 1);
-define('LATE', 2);
-define('INITIAL_SIDE', 3); # contingency
-define('SECOND_SIDE', 4);  # contingency
-#
 # Regions (44)
 #
 define('LAND', 1);

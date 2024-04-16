@@ -1,3 +1,5 @@
+/* global g_gamethemeurl */
+
 define(["dojo", "dojo/_base/declare"], function (dojo, declare)
 {
 	return declare("Panels", null,

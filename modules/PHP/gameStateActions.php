@@ -19,18 +19,17 @@ trait gameStateActions
 			{
 				if (Factions::getPlayerID($FACTION) === $player_id)
 				{
-					$deck = $this->{$FACTION . 'Deck'};
-					foreach ($deck->getCardsInLocation('hand', $FACTION) as $card)
+					foreach ($this->decks->getCardsInLocation('hand', $FACTION) as $card)
 					{
 						self::notifyAllPlayers($FACTION . 'Discard', '', ['card' => ['id' => $card['id']]]);
-						$deck->moveCard($card['id'], 'deck');
+						$this->decks->moveCard($card['id'], $FACTION);
 					}
 //
-					$this->{$FACTION . 'Deck'}->shuffle('deck');
+					$this->decks->shuffle($FACTION);
 //
 					for ($i = 0; $i < 7; $i++)
 					{
-						$card = $deck->pickCard('deck', $FACTION);
+						$card = $this->decks->pickCard($FACTION, $FACTION);
 //* -------------------------------------------------------------------------------------------------------- */
 						self::notifyPlayer($player_id, $FACTION . 'Deck', '', ['card' => $card]);
 					}
@@ -190,7 +189,7 @@ trait gameStateActions
 		$this->checkAction('productionInitiative');
 		if ($FACTION !== Factions::getActive()) throw new BgaVisibleSystemException("Invalid FACTION: $FACTION");
 //
-		$card = $this->{$FACTION . 'Deck'}->pickCard('deck', $FACTION);
+		$card = $this->decks->pickCard($FACTION, $FACTION);
 		if (!$card) throw new BgaUserException(self::_('Your deck is empty'));
 //* -------------------------------------------------------------------------------------------------------- */
 //* -------------------------------------------------------------------------------------------------------- */
@@ -457,7 +456,7 @@ trait gameStateActions
 //
 		}
 //
-		$this->{$FACTION . 'Deck'}->playCard($cardID);
+		$this->$decks->moveCard($cardID, 'discard', $FACTION);
 //* -------------------------------------------------------------------------------------------------------- */
 		self::notifyAllPlayers($FACTION . 'Play', clienttranslate('${FACTION} <B>${reaction}</B>${CARD} '), [
 			'card' => $card, 'CARD' => ['FACTION' => $FACTION, 'card' => $card], 'FACTION' => $FACTION, 'reaction' => $this->REACTIONS[$reaction], 'i18n' => ['reaction']]);

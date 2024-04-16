@@ -28,17 +28,7 @@ define(["dojo", "dojo/_base/declare"], function (dojo, declare)
 			dojo.query('.QGEFregion', this.board).connect('click', this, 'click');
 //
 			this.zoomLevel = dojo.byId('QGEFzoomLevel');
-			this.bgagame.onScreenWidthChange = () => {
-//
-// Slider setting for zoom
-//
-//				$('page-title').appendChild(dojo.byId('QGEFzoom'));
-				const zoomLevelMin = Math.floor(Math.log10(Math.max(this.playarea.clientWidth / this.boardWidth, this.playarea.clientHeight / this.boardHeight)) * 100.);
-				this.zoomLevel.min = zoomLevelMin;
-				this.zoomLevel.max = 100 + zoomLevelMin;
-				this.zoomLevel.value = this.zoomLevel.min;
-				this.setZoom(Math.pow(10., this.zoomLevel.value / 100), this.playarea.clientWidth / 2, this.playarea.clientHeight / 2);
-			};
+			this.bgagame.onScreenWidthChange = this.resize.bind(this);
 //
 // Flag to follow drag gestures
 //
@@ -100,6 +90,14 @@ define(["dojo", "dojo/_base/declare"], function (dojo, declare)
 			const zoom = parseFloat(this.board.scale);
 			this.playarea.scrollLeft = isNaN(scale) ? (this.boardWidth * zoom - this.playarea.clientWidth) / 2 : sX;
 			this.playarea.scrollTop = isNaN(scale) ? (this.boardHeight * zoom - this.playarea.clientHeight) / 2 : sY;
+		},
+		resize: function ()
+		{
+			const zoomLevelMin = Math.floor(Math.log10(Math.max(this.playarea.clientWidth / this.boardWidth, this.playarea.clientHeight / this.boardHeight)) * 100.);
+			this.zoomLevel.min = zoomLevelMin;
+			this.zoomLevel.max = 100 + zoomLevelMin;
+			this.zoomLevel.value = this.zoomLevel.min;
+			this.setZoom(Math.pow(10., this.zoomLevel.value / 100), this.playarea.clientWidth / 2, this.playarea.clientHeight / 2);
 		},
 		setZoom: function (scale, x, y)
 		{

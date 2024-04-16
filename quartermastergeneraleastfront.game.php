@@ -4,8 +4,7 @@ require_once( APP_GAMEMODULE_PATH . 'module/table/table.game.php' );
 require_once('modules/PHP/constants.inc.php');
 require_once('modules/PHP/Players.php');
 require_once('modules/PHP/Factions.php');
-require_once('modules/PHP/AxisDeck.php');
-require_once('modules/PHP/AlliesDeck.php');
+require_once('modules/PHP/Decks.php');
 require_once('modules/PHP/Board.php');
 require_once('modules/PHP/Markers.php');
 require_once('modules/PHP/Pieces.php');
@@ -48,8 +47,8 @@ class QuartermasterGeneralEastFront extends Table
 //
 // Initialize Decks
 //
-		$this->alliesDeck = AlliesDeck::init($this->getNew("module.common.deck"));
-		$this->axisDeck = AxisDeck::init($this->getNew("module.common.deck"));
+		$this->decks = $this->getNew("module.common.deck");
+		$this->decks->init("decks");
 	}
 	protected function getGameName()
 	{
@@ -147,27 +146,27 @@ class QuartermasterGeneralEastFront extends Table
 			'ADJACENCY' => Board::ADJACENCY,
 			'PIECES' => Pieces::PIECES,
 			'FACTIONS' => Factions::FACTIONS,
-			'CARDS' => [Factions::ALLIES => AlliesDeck::DECK, Factions::AXIS => AxisDeck::DECK],
+			'CARDS' => [Factions::ALLIES => Decks::alliesDECK, Factions::AXIS => Decks::axisDECK],
 //
 			'players' => self::getCollectionFromDb("SELECT player_id id, player_score score FROM player"),
 			'factions' => Factions::getAllDatas(),
 //
 			'contingency' => [
-				Factions::ALLIES => $this->alliesDeck->getCardsInLocation('contingency'),
-				Factions::AXIS => $this->axisDeck->getCardsInLocation('contingency'),
+				Factions::ALLIES => $this->decks->getCardsInLocation('contingency', Factions::ALLIES),
+				Factions::AXIS => $this->decks->getCardsInLocation('contingency', Factions::AXIS),
 			],
 //
 			'decks' => [
-				Factions::ALLIES => $this->alliesDeck->countCardInLocation('deck'),
-				Factions::AXIS => $this->axisDeck->countCardInLocation('deck'),
+				Factions::ALLIES => $this->decks->countCardInLocation(Factions::ALLIES),
+				Factions::AXIS => $this->decks->countCardInLocation(Factions::AXIS),
 			],
 			'discards' => [
-				Factions::ALLIES => $this->alliesDeck->countCardInLocation('discard'),
-				Factions::AXIS => $this->axisDeck->countCardInLocation('discard'),
+				Factions::ALLIES => $this->decks->countCardInLocation('discard', Factions::ALLIES),
+				Factions::AXIS => $this->decks->countCardInLocation('discard', Factions::AXIS),
 			],
 			'hands' => [
-				Factions::ALLIES => $this->alliesDeck->countCardInLocation('hand'),
-				Factions::AXIS => $this->axisDeck->countCardInLocation('hand'),
+				Factions::ALLIES => $this->decks->countCardInLocation('hand', Factions::ALLIES),
+				Factions::AXIS => $this->decks->countCardInLocation('hand', Factions::AXIS),
 			],
 //
 			'pieces' => Pieces::getAllDatas(),
@@ -176,8 +175,8 @@ class QuartermasterGeneralEastFront extends Table
 //
 		];
 //
-		if ($player_id === Factions::getPlayerID(Factions::ALLIES)) $result['private'][Factions::ALLIES] = $this->alliesDeck->getPlayerHand(Factions::ALLIES);
-		if ($player_id === Factions::getPlayerID(Factions::AXIS)) $result['private'][Factions::AXIS] = $this->axisDeck->getPlayerHand(Factions::AXIS);
+		if ($player_id === Factions::getPlayerID(Factions::ALLIES)) $result['private'][Factions::ALLIES] = $this->decks->getPlayerHand(Factions::ALLIES);
+		if ($player_id === Factions::getPlayerID(Factions::AXIS)) $result['private'][Factions::AXIS] = $this->decks->getPlayerHand(Factions::AXIS);
 //
 		return $result;
 	}

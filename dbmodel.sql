@@ -1,10 +1,4 @@
-CREATE TABLE IF NOT EXISTS `axisDeck` (
-	`card_id` INT(3) unsigned NOT NULL AUTO_INCREMENT PRIMARY KEY,
-	`card_type` INT(1) NOT NULL, `card_type_arg` INT(3) NOT NULL,
-	`card_location` VARCHAR(15) NOT NULL, `card_location_arg` VARCHAR(15) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1;
-
-CREATE TABLE IF NOT EXISTS `alliesDeck` (
+CREATE TABLE IF NOT EXISTS `decks` (
 	`card_id` INT(3) unsigned NOT NULL AUTO_INCREMENT PRIMARY KEY,
 	`card_type` INT(1) NOT NULL, `card_type_arg` INT(3) NOT NULL,
 	`card_location` VARCHAR(15) NOT NULL, `card_location_arg` VARCHAR(15) NOT NULL

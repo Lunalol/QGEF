@@ -1,3 +1,5 @@
+/* global g_gamethemeurl */
+
 define(["dojo", "dojo/_base/declare"], function (dojo, declare)
 {
 	return declare("Tracks", null,
@@ -37,7 +39,7 @@ define(["dojo", "dojo/_base/declare"], function (dojo, declare)
 //
 // Round Track
 //
-			const QGEFroundTrackContainer = dojo.place(`<div id='QGEFroundTrackContainer' class='QGEFroundTrackContainer'>`, 'QGEFcontingency-allies', 'after');
+			const QGEFroundTrackContainer = dojo.place(`<div id='QGEFroundTrackContainer' class='QGEFroundTrackContainer'>`, 'QGEF');
 			dojo.place("<div class='QGEFroundTrackElement QGEFroundTrackElement-gray' style='position:absolute;margin:10px;z-index:1;'></div>", QGEFroundTrackContainer);
 //
 			const QGEFroundTrack = dojo.place(`<div id='QGEFroundTrack' class='QGEFroundTrack'>`, QGEFroundTrackContainer);
