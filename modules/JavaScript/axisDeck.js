@@ -1,3 +1,5 @@
+/* global g_gamethemeurl */
+
 define(["dojo", "dojo/_base/declare"], function (dojo, declare)
 {
 	return declare("axisDeck", null,
@@ -17,7 +19,7 @@ define(["dojo", "dojo/_base/declare"], function (dojo, declare)
 //
 // Translate
 //
-			this.FACTIONS = {germany: _('GERMANY'), pact: _('Pact')};
+			this.FACTIONS = {germany: _('Germany'), pact: _('Pact')};
 //
 			this.cards = {
 //
@@ -70,79 +72,117 @@ define(["dojo", "dojo/_base/declare"], function (dojo, declare)
 //
 				15: {
 					type: 'command',
-					text: [_('Panzergrenadiers'), _('')]
+					text: [
+						_('Panzergrenadiers'),
+						_('Attack with a German force containing both an infantry and a tank; then, if it is not a Spring turn, you may move that tank and/or infantry into the attacked space.')]
 				},
 				16: {
 					type: 'ground',
-					text: [_('Motorized Corps'), _('')]
+					text: [
+						_('Motorized Corps'),
+						_('One at a time, move up to 3 different German infantry.')]
 				},
 				17: {
 					type: 'tank',
-					text: [_('Leichter Panzerspähwagen'), _('')]
+					text: [
+						_('Leichter Panzerspähwagen'),
+						_('May only be played if it is not a Spring turn. Move a German tank 1 or 2 times; then take another action.')]
 				},
 				18: {
 					type: 'command',
-					text: [_('Directive 21'), _('')]
+					text: [
+						_('Directive 21'),
+						_('Attack with a German force from a space east of the 1941 line; then take another action.')]
 				},
 				19: {
 					type: 'ground', reaction: _('Defending infantry'),
-					text: [_('Engineers'), _('')]
+					text: [
+						_('Engineers'),
+						_('Attack with a German force containing an infantry; then take another action.')]
 				},
 				20: {
 					type: 'sea',
-					text: [_('Marine Infantry'), _('')]
+					text: [
+						_('Marine Infantry'),
+						_('')]
 				},
 				21: {
 					type: 'air',
-					text: [_('Messerschmitts'), _('')]
+					text: [
+						_('Messerschmitts'),
+						_('Deploy a German airplane in each of 2 different spaces west of the 1941 line.')]
 				},
 				22: {
 					type: 'command',
-					text: [_('Sonderkraftfahrzeug'), _('')]
+					text: [
+						_('Sonderkraftfahrzeug'),
+						_('')]
 				},
 				23: {
 					type: 'ground',
-					text: [_('Flamethrowers'), _('')]
+					text: [
+						_('Flamethrowers'),
+						_('')]
 				},
 				24: {
 					type: 'command',
-					text: [_('Nebelwerfer Rocket Launcher'), _('')]
+					text: [
+						_('Nebelwerfer Rocket Launcher'),
+						_('')]
 				},
 				25: {
 					type: 'command',
-					text: [_('Gyorshadtest “Rapid Corps”'), _('')]
+					text: [
+						_('Gyorshadtest “Rapid Corps”'),
+						_('')]
 				},
 				26: {
 					type: 'ground',
-					text: [_('The Continuation War'), _('')]
+					text: [
+						_('The Continuation War'),
+						_('')]
 				},
 				27: {
 					type: 'command',
-					text: [_('Corpo di Spedizione Italiano in Russia'), _('')]
+					text: [
+						_('Corpo di Spedizione Italiano in Russia'),
+						_('May only be played if it is not a Spring turn. Move a Pact tank or infantry; then attack with a force containing that piece.')]
 				},
 				28: {
 					type: 'ground',
-					text: [_('Finnish Ski Troops'), _('')]
+					text: [
+						_('Finnish Ski Troops'),
+						_('')]
 				},
 				29: {
 					type: 'air',
-					text: [_('Corpo Aereo Spedizione in Russia'), _('')]
+					text: [
+						_('Corpo Aereo Spedizione in Russia'),
+						_('Deploy a Pact airplane east of the 1941 line; then take another action.')]
 				},
 				30: {
 					type: 'command',
-					text: [_('Romanian 3rd Army'), _('')]
+					text: [
+						_('Romanian 3rd Army'),
+						_('Deploy a Pact infantry in or adjacent to Romania; then move that infantry or attack with a force containing that infantry.')]
 				},
 				31: {
 					type: 'ground',
-					text: [_('Romanian 4th Army'), _('')]
+					text: [
+						_('Romanian 4th Army'),
+						_('Deploy a Pact infantry in or adjacent to Romania; then move that infantry or attack with a force containing that infantry.')]
 				},
 				32: {
 					type: 'ground',
-					text: [_('Hungarian 2nd Army'), _('')]
+					text: [
+						_('Hungarian 2nd Army'),
+						_('Deploy a Pact infantry in or adjacent to Hungary; then move that infantry or attack with a force containing that infantry.')]
 				},
 				33: {
 					type: 'ground',
-					text: [_('Armata Italiana in Russia'), _('')]
+					text: [
+						_('Armata Italiana in Russia'),
+						_('Deploy a Pact infantry east of the 1941 line; then take another action.')]
 				}
 //
 // Late game (49-71)
@@ -151,10 +191,16 @@ define(["dojo", "dojo/_base/declare"], function (dojo, declare)
 		},
 		place: function (card, location = 'QGEFhand-axis')
 		{
-			const node = dojo.place(this.card(card), location);
-			dojo.connect(node, 'click', this, 'click');
+			const parent = $(location);
 //
+			const node = dojo.place(this.card(card), parent);
+			dojo.connect(node, 'click', this, 'click');
 			this.bgagame.addTooltip(node.id, this.cards[card.type_arg].text[0], this.cards[card.type_arg].text[1], 1000);
+//
+			Array.from(dojo.query('.QGEFcardContainer', parent)).sort((a, b) => {
+				return a.dataset.type_arg - b.dataset.type_arg;
+			}).forEach((child) => parent.appendChild(child));
+//
 			return node;
 		},
 		card: function (card)

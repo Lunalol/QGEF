@@ -1,5 +1,9 @@
 <?php
-//
+/**
+ *
+ * @author Lunalol - PERRIN Jean-Luc
+ *
+ */
 require_once( APP_GAMEMODULE_PATH . 'module/table/table.game.php' );
 require_once('modules/PHP/constants.inc.php');
 require_once('modules/PHP/Players.php');
@@ -14,11 +18,6 @@ require_once('modules/PHP/gameStateArguments.php');
 require_once('modules/PHP/gameStateActions.php');
 require_once('modules/PHP/gameUtils.php');
 
-/**
- *
- * @author Lunalol - PERRIN Jean-Luc
- *
- */
 class QuartermasterGeneralEastFront extends Table
 {
 	use gameStates;
@@ -49,6 +48,14 @@ class QuartermasterGeneralEastFront extends Table
 //
 		$this->decks = $this->getNew("module.common.deck");
 		$this->decks->init("decks");
+//
+		Players::$table = $this;
+		Factions::$table = $this;
+		Decks::$table = $this;
+		Board::$table = $this;
+		Markers::$table = $this;
+		Pieces::$table = $this;
+		Actions::$table = $this;
 	}
 	protected function getGameName()
 	{
@@ -146,7 +153,7 @@ class QuartermasterGeneralEastFront extends Table
 			'ADJACENCY' => Board::ADJACENCY,
 			'PIECES' => Pieces::PIECES,
 			'FACTIONS' => Factions::FACTIONS,
-			'CARDS' => [Factions::ALLIES => Decks::alliesDECK, Factions::AXIS => Decks::axisDECK],
+			'CARDS' => Decks::DECKS,
 //
 			'players' => self::getCollectionFromDb("SELECT player_id id, player_score score FROM player"),
 			'factions' => Factions::getAllDatas(),
@@ -171,12 +178,19 @@ class QuartermasterGeneralEastFront extends Table
 //
 			'pieces' => Pieces::getAllDatas(),
 			'markers' => Markers::getAllDatas(),
+//
 			'private' => [],
 //
 		];
 //
 		if ($player_id === Factions::getPlayerID(Factions::ALLIES)) $result['private'][Factions::ALLIES] = $this->decks->getPlayerHand(Factions::ALLIES);
 		if ($player_id === Factions::getPlayerID(Factions::AXIS)) $result['private'][Factions::AXIS] = $this->decks->getPlayerHand(Factions::AXIS);
+//
+		$result['factions'][Factions::ALLIES]['control'] = Board::getControl(Factions::ALLIES);
+		$result['factions'][Factions::AXIS]['control'] = Board::getControl(Factions::AXIS);
+//
+		$result['factions'][Factions::ALLIES]['supply'] = Board::getSupplyLines(Factions::ALLIES);
+		$result['factions'][Factions::AXIS]['supply'] = Board::getSupplyLines(Factions::AXIS);
 //
 		return $result;
 	}

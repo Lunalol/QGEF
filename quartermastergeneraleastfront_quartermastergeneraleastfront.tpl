@@ -86,11 +86,17 @@
 	var QGEFroundTrackRED =
 			"<div class='QGEFroundTrackElement QGEFroundTrackElement-red'><div style='padding-top:25px;'>${text}</div></div>";
 	var QGEFcontingency = "\
-<div id='QGEFcardContainer-${id}' class='QGEFcardContainer' data-faction='${FACTION}' data-type='${type}' data-type_arg='${type_arg}' data-id='${id}'>\n\
-	<div id='QGEFcard-${id}' class='QGEFcard' data-faction='${FACTION}' data-type='${type}'>\n\
+<div id='QGEFcardContainer-${id}' class='QGEFcardContainer ${flip}' data-faction='${FACTION}' data-type='${type}' data-type_arg='${type_arg}' data-id='${id}'>\n\
+	<div id='QGEFcard-${id}' class='QGEFcard' data-faction='${FACTION}' data-side='${side}' data-type='${type}'>\n\
+		<div id='QGEFflipButton-${id}' class='QGEFflipButton'>🔄</div>\n\
 		<div class='QGEFfactionName'>${faction}</div>\n\
 		<div class='QGEFtitle'>${title}</div>\n\
 		<div class='QGEFtext'>${text}</div>\n\
+		<div id='QGEFcard-back-${id}' class='QGEFcard QGEFback' data-faction='${FACTION}' data-type='${type}'>\n\
+			<div class='QGEFfactionName'>${faction}</div>\n\
+			<div class='QGEFtitle'>${back_title}</div>\n\
+			<div class='QGEFtext'>${back_text}</div>\n\
+		</div>\n\
 	</div>\n\
 </div>";
 	var QGEFcard = "\

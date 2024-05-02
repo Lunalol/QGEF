@@ -188,12 +188,12 @@ define(["dojo", "dojo/_base/declare"], function (dojo, declare)
 			{
 				dojo.stopEvent(event);
 //
+				if (this.bgagame.gamedatas.gamestate.possibleactions.includes('move')) return this.bgagame.QGEFmoveAttack(+node.dataset.location);
+				if (this.bgagame.gamedatas.gamestate.possibleactions.includes('attack')) return this.bgagame.QGEFmoveAttack(+node.dataset.location);
+				if (this.bgagame.gamedatas.gamestate.possibleactions.includes('desperateAttack')) return this.bgagame.QGEFmoveAttack(+node.dataset.location);
 				if (this.bgagame.gamedatas.gamestate.possibleactions.includes('deploy')) return this.bgagame.QGEFdeploy(+node.dataset.location);
-				if (this.bgagame.gamedatas.gamestate.possibleactions.includes('desperateAttack')) return this.bgagame.QGEFattack(+node.dataset.location);
-				if (this.bgagame.gamedatas.gamestate.possibleactions.includes('attack')) return this.bgagame.QGEFattack(+node.dataset.location);
 				if (this.bgagame.gamedatas.gamestate.possibleactions.includes('retreat')) return this.bgagame.QGEFretreat(+node.dataset.location);
-				if (this.bgagame.gamedatas.gamestate.possibleactions.includes('forcedMarch')) return this.bgagame.QGEFmovement(+node.dataset.location);
-				if (this.bgagame.gamedatas.gamestate.possibleactions.includes('move')) return this.bgagame.QGEFmovement(+node.dataset.location);
+				if (this.bgagame.gamedatas.gamestate.possibleactions.includes('forcedMarch')) return this.bgagame.QGEFmoveAttack(+node.dataset.location);
 			}
 		},
 		clearCanvas()
@@ -239,6 +239,35 @@ define(["dojo", "dojo/_base/declare"], function (dojo, declare)
 			ctx.stroke();
 //
 			ctx.restore();
+		},
+		supplyLines(lines, color)
+		{
+			console.log(lines);
+			const ctx = this.canvas.getContext('2d');
+//
+			ctx.save();
+//
+			ctx.strokeStyle = color;
+			ctx.lineWidth = 20;
+			ctx.lineCap = 'round';
+//
+			for (let from = 0; from < lines.length; from++)
+			{
+				for (let to = from + 1; to < lines.length; to++)
+				{
+					if (this.bgagame.gamedatas.ADJACENCY[lines[from]].includes(lines[to]))
+					{
+						console.log(from, to);
+						ctx.beginPath();
+						ctx.moveTo(REGIONS[lines[from]].x, REGIONS[lines[from]].y);
+						ctx.lineTo(REGIONS[lines[to]].x, REGIONS[lines[to]].y);
+						ctx.stroke();
+					}
+				}
+			}
+//
+			ctx.restore();
+
 		}
 	}
 	);

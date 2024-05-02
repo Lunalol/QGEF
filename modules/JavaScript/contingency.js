@@ -1,3 +1,6 @@
+const INITIAL_SIDE = 3;
+const SECOND_SIDE = 4;
+//
 define(["dojo", "dojo/_base/declare"], function (dojo, declare)
 {
 	return declare("Contingency", null,
@@ -7,8 +10,6 @@ define(["dojo", "dojo/_base/declare"], function (dojo, declare)
 		{
 			console.log('Contingency constructor');
 //
-			const INITIAL_SIDE = 3;
-			const SECOND_SIDE = 4;
 //
 // Reference to BGA game
 //
@@ -77,24 +78,60 @@ define(["dojo", "dojo/_base/declare"], function (dojo, declare)
 				}
 			};
 		},
-		card: function (card)
+		card: function (card, clone)
 		{
 			return this.bgagame.format_block('QGEFcontingency', {
-				id: card.id,
+				id: (clone ? 'clone-' : '') + card.id,
 				FACTION: this.cards[card.type_arg].faction,
 				faction: this.FACTIONS[this.cards[card.type_arg].faction],
 				type: this.cards[card.type_arg].type, type_arg: card.type_arg,
-				title: this.cards[card.type_arg][card.type][0],
-				text: this.cards[card.type_arg][card.type][1]
+				title: this.cards[card.type_arg][INITIAL_SIDE][0],
+				text: this.cards[card.type_arg][INITIAL_SIDE][1],
+				back_title: this.cards[card.type_arg][SECOND_SIDE][0],
+				back_text: this.cards[card.type_arg][SECOND_SIDE][1],
+				side: +card.type,
+				flip: +card.type === SECOND_SIDE ? 'QGEFflip' : ''
 			});
 		},
 		place: function (faction, card)
 		{
-			const node = dojo.place(this.card(card), `QGEFcontingency-${faction}`);
+			const parent = $(`QGEFcontingency-${faction}`);
 //
+			const node = dojo.place(this.card(card), parent);
 			dojo.connect(node, 'click', this, 'click');
+			dojo.connect(node, 'mouseleave', this, () => {
+				dojo.removeClass(node, 'QGEFlookBack')
+			});
+			dojo.connect(node.firstElementChild.firstElementChild, 'click', (event) =>
+			{
+				dojo.stopEvent(event);
+				dojo.toggleClass(node, 'QGEFlookBack');
+			});
+			this.bgagame.addTooltip(node.id,
+					'<BR>' + '<BR>'
+					+ _('FIRST SIDE:') + '<B>' + this.cards[card.type_arg][INITIAL_SIDE][0] + '</B><BR>'
+					+ _('SECOND SIDE:') + '<B>' + this.cards[card.type_arg][SECOND_SIDE][0] + '</B>',
+					'<BR>' + '<BR>'
+					+ _('FIRST SIDE:') + this.cards[card.type_arg][INITIAL_SIDE][1] + '<BR>'
+					+ _('SECOND SIDE:') + this.cards[card.type_arg][SECOND_SIDE][1],
+					1000);
 //
-			this.bgagame.addTooltip(node.id, this.cards[card.type_arg][card.type][0], this.cards[card.type_arg][card.type][1], 1000);
+			Array.from(dojo.query('.QGEFcardContainer', parent)).sort((a, b) => {
+				return a.dataset.type_arg - b.dataset.type_arg;
+			}).forEach((child) => parent.appendChild(child));
+		},
+		flip: function (card)
+		{
+			dojo.addClass(`QGEFcardContainer-${card.id}`, 'QGEFflip');
+			dojo.setAttr(`QGEFcardContainer-${card.id}`, 'side', SECOND_SIDE);
+		},
+		discard: function (card)
+		{
+			dojo.query(`.QGEFcardContainer[data-id='${card.id}']`).forEach((node) =>
+			{
+				dojo.addClass(node, 'QGEFselected');
+				this.bgagame.slideToObjectAndDestroy(node, 'QGEFplayArea', DELAY);
+			});
 		},
 		click: function (event)
 		{

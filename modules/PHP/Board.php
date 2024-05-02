@@ -10,8 +10,7 @@ class Board extends APP_GameClass
 //
 // Regions (44)
 //
-	const ALL = [BULGARIA, YUGOSLAVIA, TRIESTE, ROMANIA, HUNGARY, VIENNA, WARSAW, BERLIN, EASTPRUSSIA, FINLAND, BESSARABIA, LWOW, BREST, BALTICSTATES, KARELIA, SEVASTOPOL, CAUCASUS, KIEV, ROSTOV, STALINGRAD, MOGILEV, KHARKOV, SMOLENSK, KURSK, VORONEZH, GORKI, NOVGOROD, MOSCOW, LENINGRAD, PETROZAVODSK, VOLOGDA];
-//
+	const ALL = [BULGARIA, BOSPORUS, ADRIATICSEA, YUGOSLAVIA, BLACKSEA, TRIESTE, ROMANIA, SEVASTOPOL, HUNGARY, BESSARABIA, SEAOFAZOV, VIENNA, CAUCASUS, DNIEPRRIVER, KIEV, LWOW, VOLGARIVER, STALINGRAD, ROSTOV, KHARKOV, MOGILEV, WARSAW, BERLIN, EASTPRUSSIA, BREST, KURSK, WESTBALTICSEA, VORONEZH, SMOLENSK, LAKEPEIPUS, BALTICSTATES, MOSCOW, RYBINSKSEA, GULFOFFINLAND, NOVGOROD, GORKI, LENINGRAD, LAKELADOGA, KARELIA, FINLAND, BALTICSEA];
 	const W1939 = [BESSARABIA, LWOW, BREST, BALTICSTATES, KARELIA, BULGARIA, YUGOSLAVIA, TRIESTE, ROMANIA, HUNGARY, VIENNA, WARSAW, BERLIN, EASTPRUSSIA, FINLAND];
 	const E1939 = [SEVASTOPOL, CAUCASUS, KIEV, ROSTOV, STALINGRAD, MOGILEV, KHARKOV, SMOLENSK, KURSK, VORONEZH, GORKI, NOVGOROD, MOSCOW, LENINGRAD, PETROZAVODSK, VOLOGDA];
 	const W1941 = [BULGARIA, YUGOSLAVIA, TRIESTE, ROMANIA, HUNGARY, VIENNA, WARSAW, BERLIN, EASTPRUSSIA, FINLAND];
@@ -81,11 +80,11 @@ class Board extends APP_GameClass
 		VIENNA => [TRIESTE, YUGOSLAVIA, HUNGARY, BERLIN],
 		CAUCASUS => [STALINGRAD, ROSTOV, SEAOFAZOV],
 		DNIEPRRIVER => [ROSTOV, KHARKOV, KIEV],
-		KIEV => [SEVASTOPOL, DNIEPRRIVER, KHARKOV, MOGILEV, LWOW, BESSARABIA],
+		KIEV => [SEVASTOPOL, ROSTOV, DNIEPRRIVER, KHARKOV, MOGILEV, LWOW, BESSARABIA],
 		LWOW => [ROMANIA, BESSARABIA, KIEV, MOGILEV, BREST, WARSAW, HUNGARY],
 		VOLGARIVER => [STALINGRAD, GORKI, ROSTOV],
 		STALINGRAD => [CAUCASUS, GORKI, VOLGARIVER, ROSTOV],
-		ROSTOV => [SEAOFAZOV, CAUCASUS, STALINGRAD, VOLGARIVER, GORKI, VORONEZH, KHARKOV, DNIEPRRIVER, SEVASTOPOL],
+		ROSTOV => [SEAOFAZOV, CAUCASUS, KIEV, STALINGRAD, VOLGARIVER, GORKI, VORONEZH, KHARKOV, DNIEPRRIVER, SEVASTOPOL],
 		KHARKOV => [DNIEPRRIVER, ROSTOV, VORONEZH, KURSK, MOGILEV, KIEV],
 		MOGILEV => [KIEV, KHARKOV, KURSK, SMOLENSK, BREST, LWOW],
 		WARSAW => [HUNGARY, LWOW, BREST, EASTPRUSSIA, WESTBALTICSEA, BERLIN],
@@ -120,4 +119,74 @@ class Board extends APP_GameClass
 		Factions::GERMANY => [BERLIN, VIENNA],
 		Factions::PACT => [FINLAND, BERLIN, TRIESTE, HUNGARY, ROMANIA],
 	];
+//
+	static $table = null;
+	static function updateControl(bool $startOfRound = false): void
+	{
+		self::$table->DbQuery("UPDATE control SET current = 'both' WHERE terrain = 'water'");
+		foreach (array_keys(Factions::FACTIONS) as $FACTION) self::$table->DbQuery("UPDATE control SET current = '$FACTION' WHERE location IN (SELECT DISTINCT location FROM pieces WHERE player = '$FACTION')");
+//
+		if ($startOfRound) self::$table->DbQuery("UPDATE control SET startOfRound = current");
+	}
+	static function getControl(string $FACTION, bool $startOfRound = false): array
+	{
+		if ($startOfRound) return self::$table->getObjectListFromDB("SELECT location FROM control WHERE startOfRound IN ('both', '$FACTION')", true);
+		return self::$table->getObjectListFromDB("SELECT location FROM control WHERE current IN ('both', '$FACTION')", true);
+	}
+	static function getSupplyLines($FACTION)
+	{
+		$ennemies = Pieces::getEnnemyControled($FACTION);
+		$control = self::getControl($FACTION);
+//
+		foreach (Factions::FACTIONS[$FACTION] as $faction)
+		{
+			$visited = [];
+			$supplyLines[$faction] = [];
+//
+			$locations = Board::SUPPLY[$faction];
+			while ($locations)
+			{
+				$location = array_pop($locations);
+				$visited[] = $location;
+//
+				$supplied = true;
+//
+// Can only include spaces controlled by that side (Germany and Pact share control)
+//
+				if (!in_array($location, $control)) $supplied = false;
+				if (in_array($location, $ennemies)) $supplied = false;
+//
+// Can include unoccupied spaces, as long as they are not adjacent to an enemy piece that is able to interdict supply in that space
+// This includes the space with the Supply Flag itself
+//
+				if ($supplied && !Pieces::getAtLocation($location))
+				{
+					foreach (Board::ADJACENCY[$location] as $next_location)
+					{
+						if (in_array($next_location, $ennemies))
+						{
+							foreach (Pieces::getAtLocation($next_location) as $piece)
+							{
+//
+// Infantry, tanks, and airplanes can interdict supply in adjacent land spaces
+//
+								if (Board::REGIONS[$location]['type'] === LAND && in_array($piece['type'], [Pieces::INFANTRY, Pieces::TANK, Pieces::AIRPLANE])) $supplied = false;
+//
+// Fleets and airplanes can interdict supply in adjacent water spaces
+//
+								if (Board::REGIONS[$location]['type'] === WATER && in_array($piece['type'], [Pieces::AIRPLANE, Pieces::FLEET])) $supplied = false;
+							}
+						}
+					}
+				}
+//
+				if ($supplied)
+				{
+					if (!in_array($location, $supplyLines[$faction])) $supplyLines[$faction][] = $location;
+					foreach (Board::ADJACENCY[$location] as $next_location) if (!in_array($next_location, $visited)) $locations[] = $next_location;
+				}
+			}
+		}
+		return $supplyLines;
+	}
 }

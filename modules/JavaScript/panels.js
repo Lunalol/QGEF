@@ -7,12 +7,25 @@ define(["dojo", "dojo/_base/declare"], function (dojo, declare)
 //
 		constructor: function (bgagame, players)
 		{
+			console.log('Panels constructor');
 //
 // Reference to BGA game
 //
 			this.bgagame = bgagame;
 //
 			for (let player_id in players) dojo.place(`<div id='QGEFplayer-${player_id}' class='QGEFcontainer'></div>`, `player_board_${player_id}`);
+//
+			dojo.connect(dojo.byId('player_boards'), 'mouseenter', () =>
+				dojo.query('.QGEFregion', 'QGEFboard').forEach((node) => {
+					const region = node.dataset.location;
+					const allies = this.bgagame.gamedatas.factions.allies.control.includes(region);
+					const axis = this.bgagame.gamedatas.factions.axis.control.includes(region);
+					if (!axis && allies) node.setAttribute('fill', '#be1e1e80');
+					if (axis && !allies) node.setAttribute('fill', '#4d514d80');
+				})
+			);
+			dojo.connect(dojo.byId('player_boards'), 'mouseleave', () => dojo.query('.QGEFregion', 'QGEFboard').forEach((node) => node.setAttribute('fill', 'transparent')));
+//
 		},
 		place: function (FACTION, factions, player_id)
 		{
@@ -21,7 +34,9 @@ define(["dojo", "dojo/_base/declare"], function (dojo, declare)
 			for (let faction of factions)
 			{
 				const container = dojo.place(`<div id='QGEFplayer-${FACTION}-${faction}' class='QGEFplayer' style='display:grid;grid-template-columns: 30px repeat(4, 40px);'></div>`, player);
-				dojo.place(`<img style='width:25px;' src='${g_gamethemeurl}img/flag_${faction}.jpg'>`, container);
+				const flag = dojo.place(`<img style='width:25px;' src='${g_gamethemeurl}img/flag_${faction}.jpg'>`, container);
+//
+				dojo.connect(flag, 'click', () => this.bgagame.board.supplyLines(this.bgagame.gamedatas.factions[FACTION].supply[faction], '#ffffff40'));
 //
 				for (let type of ['infantry', 'tank', 'airplane', 'fleet'])
 				{

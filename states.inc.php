@@ -89,7 +89,7 @@ $machinestates = [
 		'description' => clienttranslate('A player is doing an action'),
 		'type' => 'game',
 		'action' => 'stAction',
-		'transitions' => ['continue' => 135, 'action' => 130, 'next' => 120]
+		'transitions' => ['continue' => 135, 'interrupt' => 300, 'action' => 130, 'next' => 120]
 	],
 	135 => [
 		'name' => 'action',
@@ -97,7 +97,7 @@ $machinestates = [
 		'descriptionmyturn' => clienttranslate('${you} are doing an action'),
 		'type' => 'activeplayer',
 		'args' => 'argAction',
-		'possibleactions' => ['deploy', 'move', 'attack', 'removePiece', 'cancel'],
+		'possibleactions' => ['deploy', 'move', 'attack', 'removePiece', 'discard', 'pass', 'cancel'],
 		'transitions' => ['action' => 130, 'cancel' => 130, 'attack' => 200, 'next' => 120]
 	],
 	140 => [
@@ -137,7 +137,7 @@ $machinestates = [
 		'transitions' => ['startOfFactionRound' => 100, 'endOfRound' => 20]
 	],
 //
-// Action
+// Combat
 //
 	200 => [
 		'name' => 'attackRound',
@@ -164,7 +164,7 @@ $machinestates = [
 		'name' => '_attackRoundAttacker',
 		'type' => 'game',
 		'action' => 'stAttackRoundAttacker',
-		'transitions' => ['continue' => 225, 'advance' => 250]
+		'transitions' => ['continue' => 225, 'advance' => 250, 'endCombat' => 260]
 	],
 	225 => [
 		'name' => 'attackRoundAttacker',
@@ -173,7 +173,7 @@ $machinestates = [
 		'type' => 'activeplayer',
 		'args' => 'argAttackRoundAttacker',
 		'possibleactions' => ['reaction', 'removePiece', 'pass'],
-		'transitions' => ['reaction' => 225, 'continue' => 210, 'endCombat' => 130]
+		'transitions' => ['reaction' => 225, 'continue' => 210, 'endCombat' => 260]
 	],
 	230 => [
 		'name' => '_attackRoundExchange',
@@ -212,6 +212,30 @@ $machinestates = [
 		'type' => 'activeplayer',
 		'args' => 'argAttackRoundAdvance',
 		'possibleactions' => ['reaction', 'pass'],
-		'transitions' => ['endCombat' => 130]
+		'transitions' => ['endCombat' => 260]
+	],
+	260 => [
+		'name' => 'endCosmbat',
+		'type' => 'game',
+		'action' => 'action',
+		'transitions' => ['continue' => 135, 'action' => 130, 'next' => 120]
+	],
+//
+// Other player interuption
+//
+	300 => [
+		'name' => 'interrupt',
+		'type' => 'game',
+		'action' => 'stInterrupt',
+		'transitions' => ['continue' => 310, 'action' => 130, 'next' => 120]
+	],
+	310 => [
+		'name' => 'action',
+		'description' => clienttranslate('${actplayer} is doing an action'),
+		'descriptionmyturn' => clienttranslate('${you} are doing an action'),
+		'type' => 'activeplayer',
+		'args' => 'argAction',
+		'possibleactions' => ['removePiece'],
+		'transitions' => ['action' => 130, 'next' => 120]
 	],
 ];

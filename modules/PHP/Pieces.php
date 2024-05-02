@@ -46,65 +46,68 @@ class Pieces extends APP_GameClass
 			],
 		],
 	];
-	function create(string $player, string $FACTION, string $TYPE, int $location, $status = [])
+	static $table = null;
+	static function create(string $player, string $FACTION, string $TYPE, int $location, $status = [])
 	{
-		$json = self::escapeStringForDB(json_encode($status, JSON_FORCE_OBJECT));
-		self::DbQuery("INSERT INTO pieces (player,faction,type,location,status) VALUES ('$player','$FACTION','$TYPE',$location,'$json')");
-		return self::DbGetLastId();
+//		$json = self::$table->escapeStringForDB(json_encode($status, JSON_FORCE_OBJECT));
+		$json = json_encode($status, JSON_FORCE_OBJECT);
+		self::$table->DbQuery("INSERT INTO pieces (player,faction,type,location,status) VALUES ('$player','$FACTION','$TYPE',$location,'$json')");
+		return self::$table->DbGetLastId();
 	}
-	function destroy(int $id): void
+	static function destroy(int $id): void
 	{
-		self::DbQuery("DELETE FROM pieces WHERE id = $id");
+		self::$table->DbQuery("DELETE FROM pieces WHERE id = $id");
 	}
-	function getAllDatas(): array
+	static function getAllDatas(): array
 	{
-		return self::getObjectListFromDB("SELECT id,player,faction,type,location FROM pieces ORDER BY player,faction,type");
+		return self::$table->getObjectListFromDB("SELECT id,player,faction,type,location FROM pieces ORDER BY player,faction,type");
 	}
-	function getAll(string $player, string $status = null, string $value = null): array
+	static function getAll(string $player, string $status = null, string $value = null): array
 	{
-		if ($status) return self::getObjectListFromDB("SELECT id,player,faction,type,location FROM pieces WHERE player = '$player' AND JSON_UNQUOTE(status->'$.$status') = '$value' ORDER BY faction,type");
-		return self::getObjectListFromDB("SELECT id,player,faction,type,location FROM pieces WHERE player = '$player' ORDER BY faction,type");
+		if ($status) return self::$table->getObjectListFromDB("SELECT id,player,faction,type,location FROM pieces WHERE player = '$player' AND JSON_UNQUOTE(status->'$.$status') = '$value' ORDER BY faction,type");
+		return self::$table->getObjectListFromDB("SELECT id,player,faction,type,location FROM pieces WHERE player = '$player' ORDER BY faction,type");
 	}
-	function get(int $id, bool $status = false): array
+	static function get(int $id, bool $status = false): array
 	{
-		if ($status) return self::getNonEmptyObjectFromDB("SELECT id,player,faction,type,location,status FROM pieces WHERE id = $id");
-		return self::getNonEmptyObjectFromDB("SELECT id,player,faction,type,location FROM pieces WHERE id = $id");
+		if ($status) return self::$table->getNonEmptyObjectFromDB("SELECT id,player,faction,type,location,status FROM pieces WHERE id = $id");
+		return self::$table->getNonEmptyObjectFromDB("SELECT id,player,faction,type,location FROM pieces WHERE id = $id");
 	}
-	function getAtLocation(int $location)
+	static function getAtLocation(int $location, string $faction = ''): array
 	{
-		return self::getCollectionFromDB("SELECT * FROM pieces WHERE location = $location ORDER BY faction,type");
+		if ($faction) return self::$table->getCollectionFromDB("SELECT * FROM pieces WHERE location = $location AND faction = '$faction' ORDER BY type");
+		return self::$table->getCollectionFromDB("SELECT * FROM pieces WHERE location = $location ORDER BY faction,type");
 	}
-	function getLocation(int $id): string
+	static function getLocation(int $id): string
 	{
-		return self::getUniqueValueFromDB("SELECT location FROM pieces WHERE id = $id");
+		return self::$table->getUniqueValueFromDB("SELECT location FROM pieces WHERE id = $id");
 	}
-	function setLocation(int $id, int $location): void
+	static function setLocation(int $id, int $location): void
 	{
-		self::dbQuery("UPDATE pieces SET location = $location WHERE id = $id");
+		self::$table->dbQuery("UPDATE pieces SET location = $location WHERE id = $id");
 	}
-	function getStatus(int $id, string $status)
+	static function getStatus(int $id, string $status)
 	{
-		return json_decode(self::getUniqueValueFromDB("SELECT JSON_UNQUOTE(status->'$.$status') FROM pieces WHERE id = $id"), JSON_OBJECT_AS_ARRAY);
+		return json_decode(self::$table->getUniqueValueFromDB("SELECT JSON_UNQUOTE(status->'$.$status') FROM pieces WHERE id = $id"), JSON_OBJECT_AS_ARRAY);
 	}
-	function setStatus(int $id, string $status, $value = null): void
+	static function setStatus(int $id, string $status, $value = null): void
 	{
 		if (is_null($value)) $sql = "UPDATE pieces SET status = JSON_REMOVE(status,'$.$status')";
 		else $sql = "UPDATE pieces SET status = JSON_SET(status,'$.$status','$value')";
 		if ($id !== self::ALL) $sql .= " WHERE id = $id";
-		self::dbQuery($sql);
+		self::$table->dbQuery($sql);
 	}
-	function getEnnemyControled(string $player): array
+	static function getEnnemyControled(string $player): array
 	{
-		return self::getObjectListFromDB("SELECT DISTINCT location FROM pieces WHERE player <> '$player'", true);
+		return self::$table->getObjectListFromDB("SELECT DISTINCT location FROM pieces WHERE player <> '$player'", true);
 	}
-	function getSupply(string $FACTION)
+	static function getSupply(string $FACTION)
 	{
 		return array_keys(Board::REGIONS);
 	}
-	function getPossibleMoves(string $FACTION, array $pieces): array
+	static function getPossibleMoves(string $FACTION, array $pieces): array
 	{
 		$ennemies = self::getEnnemyControled($FACTION);
-		$control = Factions::getControl($FACTION);
+		$control = Board::getControl($FACTION, true);
 #
 		$supply = [];
 		foreach (Factions::FACTIONS[$FACTION] as $faction) $supply[$faction] = self::getSupply($faction);
@@ -198,10 +201,10 @@ class Pieces extends APP_GameClass
 #
 		return $possibles;
 	}
-	function getPossibleRetreats(string $FACTION, array $pieces): array
+	static function getPossibleRetreats(string $FACTION, array $pieces): array
 	{
 		$ennemies = self::getEnnemyControled($FACTION);
-		$control = Factions::getControl($FACTION);
+		$control = Board::getControl($FACTION);
 #
 		$supply = [];
 		foreach (Factions::FACTIONS[$FACTION] as $faction) $supply[$faction] = self::getSupply($faction);
@@ -245,9 +248,10 @@ class Pieces extends APP_GameClass
 #
 		return $possibles;
 	}
-	function getPossibleAttacks(string $FACTION, array $pieces): array
+	static function getPossibleAttacks(string $FACTION, array $pieces): array
 	{
 		$ennemies = self::getEnnemyControled($FACTION);
+		$control = Board::getControl($FACTION);
 #
 		$possibles = [];
 		foreach ($pieces as $piece)
@@ -261,7 +265,7 @@ class Pieces extends APP_GameClass
 					if (Board::REGIONS[$next_location]['type'] === LAND)
 					{
 						if (in_array($next_location, $ennemies)) $locations[] = $next_location;
-						if (!self::getAtLocation($next_location)) $locations[] = $next_location;
+						if (!self::getAtLocation($next_location) && !in_array($next_location, $control)) $locations[] = $next_location;
 					}
 				}
 #
@@ -271,7 +275,7 @@ class Pieces extends APP_GameClass
 #
 		return $possibles;
 	}
-	function getInRange(int $location, int $range, array $pieces)
+	static function getInRange(int $location, int $range, array $pieces)
 	{
 		$possibles = [];
 		foreach ($pieces as $piece)
@@ -279,18 +283,18 @@ class Pieces extends APP_GameClass
 			if ($range >= 1)
 			{
 				$next_locations = Board::ADJACENCY[$location];
-				if (!in_array($piece['location'], $next_locations))
+				if (!in_array($piece['location'], $next_locations) & $range >= 2)
 				{
 					foreach (Board::ADJACENCY[$location] as $next_location)
 					{
 						if (in_array($piece['location'], Board::ADJACENCY[$next_location]))
 						{
-							$possibles[$piece['id']] = true;
+							$possibles[] = $piece['id'];
 							break;
 						}
 					}
 				}
-				else $possibles[$piece['id']] = true;
+				else $possibles[] = $piece['id'];
 			}
 		}
 #

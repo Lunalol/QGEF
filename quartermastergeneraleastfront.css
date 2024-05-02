@@ -141,12 +141,21 @@ html {
 	display: flex;
 	flex-direction: column;
 	justify-content: start;
-	padding:10px;
+	padding: 10px 10px 85px 10px;
 	border: 1px solid black;
 	border-radius: 10px;
 }
 .QGEFcontingencyHolder.dock {
 	display: none;
+}
+.QGEFcardContainer::after {
+	position: absolute;
+	top: 0px;
+	right: 0px;
+	margin: 5px;
+	content: attr(data-type_arg);
+	color: black;
+	font-size: xx-large;
 }
 .QGEFhandHolder {
 	display:flex;
@@ -170,6 +179,22 @@ html {
 	border-radius: 5px;
 	border: white solid 2px;
 	box-sizing: border-box;
+	backface-visibility: hidden;
+	transform-style: preserve-3d;
+	transition: transform 1s;
+}
+.QGEFflip>.QGEFcard {
+	transform: rotateY(180deg);
+	transition: transform 1s;
+}
+.QGEFlookBack>.QGEFcard {
+	transform: rotateY(180deg);
+	transition: transform 1s;
+}
+.QGEFcard.QGEFback {
+	position: absolute;
+	top: 0px;
+	transform: rotateY(180deg);
 }
 .QGEFcardContainer.QGEFselected
 {
@@ -260,6 +285,17 @@ html {
 {
 	background-position-x: 100%;
 }
+.QGEFflipButton {
+	display: none;
+	position: absolute;
+	bottom: 0px;
+	right: 0px;
+	z-index: 1;
+}
+.QGEFcontingencyHolder .QGEFflipButton {
+	display: block;
+}
+
 .QGEFfactionName {
 	position: absolute;
 	top: 0px;
@@ -325,7 +361,7 @@ html {
 	text-align: center;
 	opacity: 75%;
 }
-.QGEFvpTrackElement:after {
+.QGEFvpTrackElement::after {
 	content: attr(VP);
 	display: block;
 }

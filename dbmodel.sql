@@ -17,7 +17,7 @@ CREATE TABLE IF NOT EXISTS `markers` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1;
 
 CREATE TABLE IF NOT EXISTS `control` (
-	`location` INT(2) PRIMARY KEY, `player` ENUM('both','allies', 'axis'), `terrain` ENUM('land', 'water')
+	`location` INT(2) PRIMARY KEY, `startOfRound` ENUM('both','allies', 'axis'), `current` ENUM('both','allies', 'axis'), `terrain` ENUM('land', 'water')
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 CREATE TABLE IF NOT EXISTS `actions` (

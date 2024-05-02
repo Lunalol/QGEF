@@ -7,24 +7,25 @@
  */
 class Markers extends APP_GameClass
 {
+	static $table = null;
 	static function create(string $type, int $location)
 	{
-		self::DbQuery("INSERT INTO markers (type,location) VALUES ('$type',$location)");
+		self::$table->DbQuery("INSERT INTO markers (type,location) VALUES ('$type',$location)");
 	}
 	static function getAllDatas(): array
 	{
-		return self::getObjectListFromDB("SELECT * FROM markers ORDER BY type");
+		return self::$table->getObjectListFromDB("SELECT * FROM markers ORDER BY type");
 	}
-	function get(string $type): array
+	static function get(string $type): array
 	{
-		return self::getNonEmptyObjectFromDB("SELECT * FROM markers WHERE type = '$type'");
+		return self::$table->getNonEmptyObjectFromDB("SELECT * FROM markers WHERE type = '$type'");
 	}
-	function getLocation(string $type): string
+	static function getLocation(string $type): string
 	{
-		return self::getUniqueValueFromDB("SELECT location FROM markers WHERE type = '$type'");
+		return self::$table->getUniqueValueFromDB("SELECT location FROM markers WHERE type = '$type'");
 	}
-	function setLocation(string $type, int $location): void
+	static function setLocation(string $type, int $location): void
 	{
-		self::dbQuery("UPDATE markers SET location = $location WHERE type = '$type'");
+		self::$table->dbQuery("UPDATE markers SET location = $location WHERE type = '$type'");
 	}
 }

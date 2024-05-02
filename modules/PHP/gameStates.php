@@ -50,16 +50,18 @@ trait gameStates
 		if (self::getGameStateValue('firstGame'))
 		{
 			$this->decks->moveCards(array_keys($this->decks->getCardsOfTypeInLocation(Decks::FIRST_GAME, null, Factions::ALLIES)), 'hand', Factions::ALLIES);
+			$this->decks->moveCards(array_keys($this->decks->getCardsOfTypeInLocation(Decks::MID, null, Factions::ALLIES)), 'hand', Factions::ALLIES);
 			$this->decks->moveCards(array_keys($this->decks->getCardsOfTypeInLocation(Decks::FIRST_GAME, null, Factions::AXIS)), 'hand', Factions::AXIS);
+			$this->decks->moveCards(array_keys($this->decks->getCardsOfTypeInLocation(Decks::MID, null, Factions::AXIS)), 'hand', Factions::AXIS);
 		}
 //
 // At the beginning of the game,
 // the Axis control all land spaces west of the 1941 line,
 // and the Allies control all land spaces east of that line.
 //
-		foreach (Board::REGIONS as $location => $regions) if ($regions['type'] === WATER) self::DbQuery("INSERT INTO control VALUES ($location, 'both', 'water')");
-		foreach (Board::W1941 as $location) if (Board::REGIONS[$location]['type'] === LAND) self::DbQuery("INSERT INTO control VALUES ($location, '" . Factions::AXIS . "', 'land')");
-		foreach (Board::E1941 as $location) if (Board::REGIONS[$location]['type'] === LAND) self::DbQuery("INSERT INTO control VALUES ($location, '" . Factions::ALLIES . "', 'land')");
+		foreach (Board::REGIONS as $location => $regions) if ($regions['type'] === WATER) self::DbQuery("INSERT INTO control VALUES ($location, 'both','both', 'water')");
+		foreach (Board::W1941 as $location) if (Board::REGIONS[$location]['type'] === LAND) self::DbQuery("INSERT INTO control VALUES ($location, '" . Factions::AXIS . "', '" . Factions::AXIS . "', 'land')");
+		foreach (Board::E1941 as $location) if (Board::REGIONS[$location]['type'] === LAND) self::DbQuery("INSERT INTO control VALUES ($location, '" . Factions::ALLIES . "', '" . Factions::ALLIES . "', 'land')");
 //
 // If the score is tied, the Axis player wins
 //
@@ -99,7 +101,10 @@ trait gameStates
 	function stFirstMovementStep()
 	{
 		$FACTION = Factions::getActive();
-		Factions::updateControl();
+		Board::updateControl(true);
+//* -------------------------------------------------------------------------------------------------------- */
+		self::notifyAllPlayers('updateControl', '', [Factions::ALLIES => Board::getControl(Factions::ALLIES), Factions::AXIS => Board::getControl(Factions::AXIS)]);
+		self::notifyAllPlayers('updateSupply', '', [Factions::ALLIES => Board::getSupplyLines(Factions::ALLIES), Factions::AXIS => Board::getSupplyLines(Factions::AXIS)]);
 //* -------------------------------------------------------------------------------------------------------- */
 		self::notifyAllPlayers('msg', '<span class="QGEF-phase">${FACTION}${LOG}</span>', ['i18n' => ['LOG'], 'LOG' => clienttranslate('First Movement step'), 'FACTION' => $FACTION]);
 //* -------------------------------------------------------------------------------------------------------- */
@@ -114,7 +119,13 @@ trait gameStates
 		if ($action > 2) return $this->gamestate->nextState('next');
 //
 		$FACTION = Factions::getActive();
-		Factions::updateControl();
+		$this->gamestate->changeActivePlayer(Factions::getPlayerID($FACTION));
+//
+		Board::updateControl(true);
+//* -------------------------------------------------------------------------------------------------------- */
+		self::notifyAllPlayers('updateControl', '', [Factions::ALLIES => Board::getControl(Factions::ALLIES), Factions::AXIS => Board::getControl(Factions::AXIS)]);
+		self::notifyAllPlayers('updateSupply', '', [Factions::ALLIES => Board::getSupplyLines(Factions::ALLIES), Factions::AXIS => Board::getSupplyLines(Factions::AXIS)]);
+//* -------------------------------------------------------------------------------------------------------- */
 //* -------------------------------------------------------------------------------------------------------- */
 		if ($action === 1) self::notifyAllPlayers('msg', '<span class="QGEF-phase">${FACTION}${LOG}</span>', ['i18n' => ['LOG'], 'LOG' => clienttranslate('First Action step'), 'FACTION' => $FACTION]);
 		if ($action === 2) self::notifyAllPlayers('msg', '<span class="QGEF-phase">${FACTION}${LOG}</span>', ['i18n' => ['LOG'], 'LOG' => clienttranslate('Second Action step'), 'FACTION' => $FACTION]);
@@ -126,7 +137,10 @@ trait gameStates
 	function stSecondMovementStep()
 	{
 		$FACTION = Factions::getActive();
-		Factions::updateControl();
+		Board::updateControl(true);
+//* -------------------------------------------------------------------------------------------------------- */
+		self::notifyAllPlayers('updateControl', '', [Factions::ALLIES => Board::getControl(Factions::ALLIES), Factions::AXIS => Board::getControl(Factions::AXIS)]);
+		self::notifyAllPlayers('updateSupply', '', [Factions::ALLIES => Board::getSupplyLines(Factions::ALLIES), Factions::AXIS => Board::getSupplyLines(Factions::AXIS)]);
 //* -------------------------------------------------------------------------------------------------------- */
 		self::notifyAllPlayers('msg', '<span class="QGEF-phase">${FACTION}${LOG}</span>', ['i18n' => ['LOG'], 'LOG' => clienttranslate('Second Movement step'), 'FACTION' => $FACTION]);
 //* -------------------------------------------------------------------------------------------------------- */
@@ -138,9 +152,24 @@ trait gameStates
 	function stSupplyStep()
 	{
 		$FACTION = Factions::getActive();
-		Factions::updateControl();
+		Board::updateControl(true);
 //* -------------------------------------------------------------------------------------------------------- */
 		self::notifyAllPlayers('msg', '<span class="QGEF-phase">${FACTION}${LOG}</span>', ['i18n' => ['LOG'], 'LOG' => clienttranslate('Supply step'), 'FACTION' => $FACTION]);
+//* -------------------------------------------------------------------------------------------------------- */
+		$supplyLines = Board::getSupplyLines($FACTION);
+		foreach (array_filter(Pieces::getAll($FACTION), fn($piece) => !in_array($piece['location'], $supplyLines[$piece['faction']])) as $piece)
+		{
+			Pieces::destroy($piece['id']);
+//* -------------------------------------------------------------------------------------------------------- */
+			self::notifyAllPlayers('removePiece', clienttranslate('${faction} <B>${type}</B> is removed at <B>${location}</B>'), [
+				'faction' => $piece['faction'], 'type' => $this->PIECES[$piece['type']],
+				'location' => $this->REGIONS[$piece['location']], 'i18n' => ['type', 'location'],
+				'piece' => $piece]);
+//* -------------------------------------------------------------------------------------------------------- */
+		}
+//* -------------------------------------------------------------------------------------------------------- */
+		self::notifyAllPlayers('updateControl', '', [Factions::ALLIES => Board::getControl(Factions::ALLIES), Factions::AXIS => Board::getControl(Factions::AXIS)]);
+		self::notifyAllPlayers('updateSupply', '', [Factions::ALLIES => Board::getSupplyLines(Factions::ALLIES), Factions::AXIS => Board::getSupplyLines(Factions::AXIS)]);
 //* -------------------------------------------------------------------------------------------------------- */
 		$this->gamestate->nextState('next');
 	}
@@ -150,10 +179,17 @@ trait gameStates
 //* -------------------------------------------------------------------------------------------------------- */
 		self::notifyAllPlayers('msg', '<span class="QGEF-phase">${FACTION}${LOG}</span>', ['i18n' => ['LOG'], 'LOG' => clienttranslate('Draw step'), 'FACTION' => $FACTION]);
 //* -------------------------------------------------------------------------------------------------------- */
-		$toDraw = min(3, max(0, 5 - $this->{$FACTION . 'Deck'}->countCardInLocation('hand', $FACTION)));
+		$toDraw = min(3, max(0, 5 - $this->decks->countCardInLocation('hand', $FACTION)));
 		for ($i = 0; $i < $toDraw; $i++)
 		{
 			$card = $this->decks->pickCard($FACTION, $FACTION);
+			if (!$card)
+			{
+//* -------------------------------------------------------------------------------------------------------- */
+				self::notifyPlayer(Factions::getPlayerID($FACTION), 'msg', _('Your deck is empty'), []);
+//* -------------------------------------------------------------------------------------------------------- */
+				break;
+			}
 //* -------------------------------------------------------------------------------------------------------- */
 			self::notifyAllPlayers('msg', '${FACTION} Draw 1 card', ['FACTION' => $FACTION]);
 			self::notifyPlayer(Factions::getPlayerID($FACTION), $FACTION . 'Deck', '', ['card' => $card]);
@@ -201,7 +237,7 @@ trait gameStates
 			foreach (array_keys(Factions::FACTIONS) as $FACTION)
 			{
 				$VP = 0;
-				foreach (Factions::getControl($FACTION) as $location) if (array_key_exists('VP', Board::REGIONS[$location])) $VP += Board::REGIONS[$location]['VP'];
+				foreach (Board::getControl($FACTION) as $location) if (array_key_exists('VP', Board::REGIONS[$location])) $VP += Board::REGIONS[$location]['VP'];
 //
 				for ($i = 0; $i < $VP; $i++)
 				{
@@ -243,7 +279,12 @@ trait gameStates
 	function stAttackRoundAttacker()
 	{
 		$args = self::argAttackRoundAttacker();
-		if (sizeof($args['defender']) === 0 || sizeof($args['attacker']) <= 1)
+		if (sizeof($args['attacker']) === 0)
+		{
+			$this->gamestate->changeActivePlayer(Factions::getPlayerID(Factions::getActive()));
+			$this->gamestate->nextState('endCombat');
+		}
+		else if (sizeof($args['defender']) === 0)
 		{
 			$this->gamestate->changeActivePlayer(Factions::getPlayerID(Factions::getActive()));
 			$this->gamestate->nextState('advance');
@@ -267,6 +308,7 @@ trait gameStates
 	function stAction()
 	{
 		$FACTION = Factions::getActive();
+		$this->gamestate->changeActivePlayer(Factions::getPlayerID($FACTION));
 //
 		$id = Actions::getNextAction();
 		if ($id)
@@ -284,8 +326,15 @@ trait gameStates
 				case 'move':
 				case 'attack':
 				case 'eliminate':
+				case 'discard':
 //
 					$this->gamestate->nextState('continue');
+//
+					break;
+//
+				case 'eliminateVS':
+//
+					$this->gamestate->nextState('interrupt');
 //
 					break;
 //
@@ -318,6 +367,13 @@ trait gameStates
 					for ($i = 0; $i < $action['count']; $i++)
 					{
 						$card = $this->decks->pickCard($FACTION, $FACTION);
+						if (!$card)
+						{
+//* -------------------------------------------------------------------------------------------------------- */
+							self::notifyPlayer(Factions::getPlayerID($FACTION), 'msg', _('Your deck is empty'), []);
+//* -------------------------------------------------------------------------------------------------------- */
+							break;
+						}
 //* -------------------------------------------------------------------------------------------------------- */
 						self::notifyAllPlayers('msg', '${FACTION} Draw 1 card', ['FACTION' => $FACTION]);
 						self::notifyPlayer(Factions::getPlayerID($FACTION), $FACTION . 'Deck', '', ['card' => $card]);
@@ -334,5 +390,20 @@ trait gameStates
 			}
 		}
 		else $this->gamestate->nextState('next');
+	}
+	function stInterrupt()
+	{
+		$FACTION = Factions::getInActive();
+		$this->gamestate->changeActivePlayer(Factions::getPlayerID($FACTION));
+//
+		if (!self::argAction()['eliminate'])
+		{
+//* -------------------------------------------------------------------------------------------------------- */
+			self::notifyPlayer(Factions::getPlayerID(Factions::getActive()), 'msg', _('Nothing to do'), []);
+			return self::action();
+//* -------------------------------------------------------------------------------------------------------- */
+		}
+//
+		$this->gamestate->nextState('continue');
 	}
 }
