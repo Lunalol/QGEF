@@ -94,6 +94,12 @@ trait gameStates
 //* -------------------------------------------------------------------------------------------------------- */
 		self::notifyAllPlayers('msg', '<span class="QGEF-phase">${FACTION}${LOG}</span>', ['i18n' => ['LOG'], 'LOG' => clienttranslate('Start of turn'), 'FACTION' => $FACTION]);
 //* -------------------------------------------------------------------------------------------------------- */
+		if (Factions::getStatus($FACTION, 'mud'))
+		{
+//* -------------------------------------------------------------------------------------------------------- */
+			self::notifyAllPlayers('msg', clienttranslate('<B>General Mud</B>: the Axis cannot use Advance! reactions and must skip the Second Movement step'), []);
+//* -------------------------------------------------------------------------------------------------------- */
+		}
 		self::setGameStateValue('action', 1);
 //
 		$this->gamestate->nextState('next');
@@ -147,6 +153,14 @@ trait gameStates
 		foreach (Pieces::getAll($FACTION) as $piece) if ($piece['type'] === 'tank' || $piece['type'] === 'fleet') Pieces::setStatus($piece['id'], 'moved', 'no');
 		Actions::clear();
 //
+		if (Factions::getStatus($FACTION, 'mud'))
+		{
+//* -------------------------------------------------------------------------------------------------------- */
+			self::notifyAllPlayers('msg', clienttranslate('<B>General Mud</B>: the Axis must skip the Second Movement step'), []);
+//* -------------------------------------------------------------------------------------------------------- */
+			Factions::setStatus($FACTION, 'mud');
+			$this->gamestate->nextState('next');
+		}
 		$this->gamestate->nextState('next');
 	}
 	function stSupplyStep()
@@ -233,11 +247,16 @@ trait gameStates
 //* -------------------------------------------------------------------------------------------------------- */
 			self::notifyAllPlayers('updateRound', '<span class="QGEF-phase">${LOG}</span>', ['i18n' => ['LOG'], 'LOG' => clienttranslate('Scoring'), 'steps' => $steps]);
 //* -------------------------------------------------------------------------------------------------------- */
-
+			$scorchedEarth = Markers::get('scorchedEarth');
 			foreach (array_keys(Factions::FACTIONS) as $FACTION)
 			{
 				$VP = 0;
-				foreach (Board::getControl($FACTION) as $location) if (array_key_exists('VP', Board::REGIONS[$location])) $VP += Board::REGIONS[$location]['VP'];
+				foreach (Board::getControl($FACTION) as $location)
+				{
+					if ($scorchedEarth && $scorchedEarth['location'] === $location) continue;
+					if (array_key_exists('VP', Board::REGIONS[$location])) $VP += Board::REGIONS[$location]['VP'];
+				}
+
 //
 				for ($i = 0; $i < $VP; $i++)
 				{
@@ -260,6 +279,7 @@ trait gameStates
 	}
 	function stAttackRound()
 	{
+//
 		$this->gamestate->nextState('attackRoundDefender');
 	}
 	function stAttackRoundDefender()
@@ -322,11 +342,14 @@ trait gameStates
 				case 'forcedMarch':
 				case 'desperateAttack':
 				case 'deploy':
+				case 'recruit':
 				case 'move/attack':
 				case 'move':
 				case 'attack':
 				case 'eliminate':
 				case 'discard':
+				case 'discard':
+				case 'scorched':
 //
 					$this->gamestate->nextState('continue');
 //
@@ -345,9 +368,16 @@ trait gameStates
 //
 					break;
 //
+				case 'mud':
+//
+					Factions::setStatus(Factions::getInactive(), 'mud', true);
+					self::action();
+//
+					break;
+//
 				case 'VP':
 //
-					$otherFACTION = Factions::getInActive();
+					$otherFACTION = $action['FACTION'];
 //
 					$VP = 1;
 					Markers::setLocation($otherFACTION, Factions::incVP($otherFACTION, $VP));

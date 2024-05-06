@@ -60,7 +60,8 @@ class Decks extends APP_GameClass
 //TODO//
 			15 => ['faction' => Factions::GERMANY, 'reaction' => 'Advance',
 				self::MID => [
-					['name' => 'attack', 'types' => [Pieces::INFANTRY, Pieces::TANK], 'factions' => [Factions::GERMANY], 'special' => 15, 'advance' => true],
+					['name' => 'attack', 'types' => [Pieces::INFANTRY, Pieces::TANK], 'factions' => [Factions::GERMANY],
+						'special' => 15, 'advance' => [Pieces::INFANTRY, Pieces::TANK], 'requirement' => 'noSpringTurn'],
 				]
 			],
 			16 => ['faction' => Factions::GERMANY, 'reaction' => 'Advance',
@@ -90,10 +91,9 @@ class Decks extends APP_GameClass
 					['name' => 'action']
 				]
 			],
-//TODO//
 			20 => ['faction' => Factions::GERMANY, 'reaction' => 'Exchange',
 				self::MID => [
-					['name' => 'recruit', 'types' => [Pieces::INFANTRY], 'factions' => [Factions::GERMANY], 'adjacent' => [Pieces::FLEET]],
+					['name' => 'recruit', 'types' => [Pieces::INFANTRY], 'factions' => [Factions::GERMANY], 'locations' => [], 'adjacent' => [Pieces::FLEET]],
 					['name' => 'move/attack', 'containing' => true]
 				]
 			],
@@ -112,26 +112,23 @@ class Decks extends APP_GameClass
 			],
 			23 => ['faction' => Factions::GERMANY, 'reaction' => 'Exchange',
 				self::MID => [
-					['name' => 'eliminate', 'types' => [Pieces::INFANTRY], 'factions' => [Factions::SOVIETUNION], 'adjacent' => [Pieces::INFANTRY]]
+					['name' => 'eliminate', 'types' => [Pieces::INFANTRY, Pieces::TANK], 'factions' => [Factions::SOVIETUNION], 'locations' => [], 'adjacent' => [Pieces::INFANTRY]]
 				]
 			],
-//TODO//
 			24 => ['faction' => Factions::GERMANY, 'reaction' => 'SustainAttack',
 				self::MID => [
-					['name' => 'eliminate', 'types' => [Pieces::INFANTRY], 'factions' => [Factions::SOVIETUNION], 'adjacent' => [Pieces::INFANTRY]],
-					['name' => 'attack', 'containing' => true]
+					['name' => 'eliminate', 'types' => [Pieces::INFANTRY], 'factions' => [Factions::SOVIETUNION], 'locations' => [], 'adjacent' => [Pieces::INFANTRY], 'mandatory' => true],
+					['name' => 'attack', 'into' => true]
 				]
 			],
 			25 => ['faction' => Factions::PACT, 'reaction' => 'SustainAttack',
 				self::MID => [
-					['name' => 'attack', 'factions' => [Factions::PACT]],
-					['name' => 'advance', 'factions' => [Factions::PACT], 'type' => [Pieces::INFANTRY], 'requirement' => 'noSpringTurn'],
+					['name' => 'attack', 'factions' => [Factions::PACT], 'locations' => Board::ALL, 'advance' => [Pieces::INFANTRY, Pieces::TANK], 'requirement' => 'noSpringTurn'],
 				]
 			],
 			26 => ['faction' => Factions::PACT, 'reaction' => 'SustainAttack',
 				self::MID => [
-					['name' => 'attack', 'factions' => [Factions::PACT], 'locations' => [KARELIA, PETROZAVODSK], 'contain' => [Pieces::INFANTRY]],
-					['name' => 'advance', 'factions' => [Factions::PACT], 'type' => [Pieces::INFANTRY]],
+					['name' => 'attack', 'factions' => [Factions::PACT], 'into' => [KARELIA, PETROZAVODSK], 'contain' => [Pieces::INFANTRY], 'advance' => [Pieces::INFANTRY]],
 				]
 			],
 			27 => ['faction' => Factions::PACT, 'reaction' => 'Advance', 'requirement' => 'noSpringTurn',
@@ -142,7 +139,7 @@ class Decks extends APP_GameClass
 			],
 			28 => ['faction' => Factions::PACT, 'reaction' => 'Exchange',
 				self::MID => [
-					['name' => 'eliminate', 'types' => [Pieces::INFANTRY, Pieces::TANK], 'factions' => [Factions::PACT], 'locations' => [FINLAND, KARELIA]],
+					['name' => 'eliminate', 'types' => [Pieces::INFANTRY, Pieces::TANK], 'factions' => [Factions::SOVIETUNION], 'locations' => [FINLAND, KARELIA]],
 					['name' => 'recruit', 'types' => [Pieces::INFANTRY], 'factions' => [Factions::PACT], 'locations' => [FINLAND]],
 				]
 			],
@@ -184,7 +181,7 @@ class Decks extends APP_GameClass
 				self::SECOND_SIDE => [
 					['name' => 'deploy', 'types' => [Pieces::INFANTRY], 'factions' => [Factions::GERMANY], 'locations' => [BERLIN]],
 					['name' => 'deploy', 'types' => [Pieces::INFANTRY], 'factions' => [Factions::GERMANY], 'locations' => [BERLIN]],
-					['name' => 'VP']
+					['name' => 'VP', 'FACTION' => Factions::ALLIES]
 				],
 			],
 			102 => ['faction' => Factions::GERMANY,
@@ -206,12 +203,12 @@ class Decks extends APP_GameClass
 			104 => ['faction' => Factions::GERMANY,
 				self::INITIAL_SIDE => [
 					['name' => 'draw', 'count' => 3],
-					['name' => 'VP']
+					['name' => 'VP', 'FACTION' => Factions::ALLIES]
 				],
 				self::SECOND_SIDE => [
 					['name' => 'move', 'types' => [Pieces::INFANTRY], 'factions' => [Factions::GERMANY]],
 					['name' => 'action'],
-					['name' => 'VP']
+					['name' => 'VP', 'FACTION' => Factions::ALLIES]
 				],
 			],
 			105 => ['faction' => Factions::GERMANY,
@@ -284,13 +281,12 @@ class Decks extends APP_GameClass
 					['name' => 'deploy', 'types' => [Pieces::FLEET], 'factions' => [Factions::SOVIETUNION], 'locations' => [GULFOFFINLAND]],
 				]
 			],
-//TODO//
 			37 => ['faction' => Factions::SOVIETUNION, 'reaction' => 'Exchange',
 				self::MID => [
-					['name' => 'scorschdEarth', 'locations' => [KIEV, SEVASTOPOL, CAUCASUS, STALINGRAD, SMOLENSK, VORONEZH, MOSCOW, LENINGRAD, VOLOGDA]],
+					['name' => 'scorched', 'locations' => [KIEV, SEVASTOPOL, CAUCASUS, STALINGRAD, SMOLENSK, VORONEZH, MOSCOW, LENINGRAD, VOLOGDA]],
+					['name' => 'VP', 'FACTION' => Factions::ALLIES]
 				]
 			],
-//TODO//
 			38 => ['faction' => Factions::SOVIETUNION, 'reaction' => 'Exchange', 'requirement' => 'winterTurn',
 				self::MID => [
 					['name' => 'draw', 'count' => 1],
@@ -331,7 +327,7 @@ class Decks extends APP_GameClass
 			],
 			44 => ['faction' => Factions::SOVIETUNION, 'reaction' => 'SustainAttack',
 				self::MID => [
-					['name' => 'eliminate', 'types' => [Pieces::INFANTRY, Pieces::TANK], 'factions' => [Factions::GERMANY, Factions::PACT], 'adjacent' => [Pieces::INFANTRY]]
+					['name' => 'eliminate', 'types' => [Pieces::INFANTRY, Pieces::TANK], 'factions' => [Factions::GERMANY, Factions::PACT], 'locations' => [], 'adjacent' => [Pieces::INFANTRY]]
 				]
 			],
 			45 => ['faction' => Factions::SOVIETUNION, 'reaction' => 'Advance',
@@ -347,16 +343,15 @@ class Decks extends APP_GameClass
 					['name' => 'deploy', 'types' => [Pieces::INFANTRY], 'factions' => [Factions::SOVIETUNION], 'locations' => [KIEV, SEVASTOPOL, CAUCASUS, STALINGRAD, SMOLENSK, VORONEZH, MOSCOW, LENINGRAD, VOLOGDA], 'different' => true],
 				]
 			],
-//TODO//
 			47 => ['faction' => Factions::SOVIETUNION, 'reaction' => 'Exchange',
 				self::MID => [
+					['name' => 'mud'],
 				]
 			],
-//TODO//
 			48 => ['faction' => Factions::SOVIETUNION, 'reaction' => 'Advance', 'requirement' => '<=3',
 				self::MID => [
 					['name' => 'draw', 'count' => 3],
-					['name' => 'VP']
+					['name' => 'VP', 'FACTION' => Factions::AXIS]
 				]
 			],
 //
@@ -366,7 +361,7 @@ class Decks extends APP_GameClass
 				],
 				self::SECOND_SIDE => [
 					['name' => 'deploy', 'types' => [Pieces::TANK, Pieces::AIRPLANE], 'factions' => [Factions::SOVIETUNION], 'locations' => [GORKI, STALINGRAD, VOLOGDA, MOSCOW, VORONEZH, ROSTOV]],
-					['name' => 'VP'],
+					['name' => 'VP', 'FACTION' => Factions::AXIS]
 				],
 			],
 			107 => ['faction' => Factions::GERMANY,
@@ -391,11 +386,10 @@ class Decks extends APP_GameClass
 			109 => ['faction' => Factions::GERMANY,
 				self::INITIAL_SIDE => [
 					['name' => 'draw', 'count' => 3],
-					['name' => 'VP']
+					['name' => 'VP', 'FACTION' => Factions::AXIS]
 				],
-//TODO//
 				self::SECOND_SIDE => [
-					['name' => 'draw', 'count' => 3],
+					['name' => 'draw', 'count' => 2],
 					['name' => 'discard', 'count' => 1],
 					['name' => 'action'],
 				],

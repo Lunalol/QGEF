@@ -114,7 +114,7 @@ define(["dojo", "dojo/_base/declare", "ebg/core/gamegui", "ebg/counter",
 //
 				case 'mulligan':
 //
-					dojo.query('.QGEFhandHolder>.QGEFcardContainer').addClass('QGEFselectable');
+					if (this.isCurrentPlayerActive()) dojo.query('.QGEFhandHolder>.QGEFcardContainer').addClass('QGEFselectable');
 //
 					break;
 //
@@ -123,8 +123,11 @@ define(["dojo", "dojo/_base/declare", "ebg/core/gamegui", "ebg/counter",
 					dojo.query('.QGEFhandHolder .QGEFselected').removeClass('QGEFselected');
 					dojo.query('.QGEFcontingencyHolder .QGEFselected').removeClass('QGEFselected');
 //
-					dojo.query('.QGEFcardContainer', `QGEFhand-${state.args.FACTION}`).addClass('QGEFselectable');
-					dojo.query('.QGEFcardContainer', `QGEFcontingency-${state.args.FACTION}`).addClass('QGEFselectable');
+					if (this.isCurrentPlayerActive())
+					{
+						dojo.query('.QGEFcardContainer', `QGEFhand-${state.args.FACTION}`).addClass('QGEFselectable');
+						dojo.query('.QGEFcardContainer', `QGEFcontingency-${state.args.FACTION}`).addClass('QGEFselectable');
+					}
 //
 					break;
 //
@@ -132,6 +135,10 @@ define(["dojo", "dojo/_base/declare", "ebg/core/gamegui", "ebg/counter",
 //
 					switch (state.args.action.name)
 					{
+						case 'scorched':
+							this.gamedatas.gamestate.descriptionmyturn = _('Place Scorched Earth marker');
+							this.gamedatas.gamestate.possibleactions = ['scorched'];
+							break;
 						case 'discard':
 							this.gamedatas.gamestate.descriptionmyturn = _('Discard a card');
 							this.gamedatas.gamestate.possibleactions = ['discard'];
@@ -139,6 +146,10 @@ define(["dojo", "dojo/_base/declare", "ebg/core/gamegui", "ebg/counter",
 						case 'deploy':
 							this.gamedatas.gamestate.descriptionmyturn = _('Deploy an unit');
 							this.gamedatas.gamestate.possibleactions = ['deploy'];
+							break;
+						case 'recruit':
+							this.gamedatas.gamestate.descriptionmyturn = _('Recruit an unit');
+							this.gamedatas.gamestate.possibleactions = ['recruit'];
 							break;
 						case 'move/attack':
 							this.gamedatas.gamestate.descriptionmyturn = _('Move deployed unit or attack with a force containing that unit');
@@ -176,6 +187,7 @@ define(["dojo", "dojo/_base/declare", "ebg/core/gamegui", "ebg/counter",
 //
 				case 'attackRoundDefender':
 //
+					for (let card of state.args.action.cards) dojo.query(`.QGEFcardContainer[data-id='${card}']`, 'QGEF').addClass('QGEFselected QGEFused');
 					$(`QGEFregion-${state.args.location}`).setAttribute('class', 'QGEFregion QGEFselectable');
 //
 					for (let piece of state.args.attacker)
@@ -190,11 +202,16 @@ define(["dojo", "dojo/_base/declare", "ebg/core/gamegui", "ebg/counter",
 					for (let piece of state.args.defender)
 					{
 						const node = $(`QGEFpiece-${piece}`);
-						if (node) dojo.addClass(node, 'QGEFselectable QGEFselected');
+						if (node)
+						{
+							dojo.addClass(node, 'QGEFselected');
+							if (this.isCurrentPlayerActive()) dojo.addClass(node, 'QGEFselectable');
+						}
+
 					}
-					if ('_private' in state.args && 'reactions' in state.args._private)
+					if (this.isCurrentPlayerActive() && '_private' in state.args && 'reactions' in state.args._private)
 					{
-						for (let card of state.args._private.reactions) dojo.addClass(`QGEFcardContainer-${card}`, 'QGEFselectable');
+						for (let card of state.args._private.reactions) if (card) dojo.addClass(`QGEFcardContainer-${card}`, 'QGEFselectable');
 					}
 //
 					break;
@@ -202,6 +219,7 @@ define(["dojo", "dojo/_base/declare", "ebg/core/gamegui", "ebg/counter",
 				case 'attackRoundAttacker':
 				case 'attackRoundExchange':
 //
+					for (let card of state.args.action.cards) dojo.query(`.QGEFcardContainer[data-id='${card}']`, 'QGEF').addClass('QGEFselected QGEFused');
 					$(`QGEFregion-${state.args.location}`).setAttribute('class', 'QGEFregion QGEFselectable');
 //
 					for (let piece of state.args.attacker)
@@ -209,7 +227,8 @@ define(["dojo", "dojo/_base/declare", "ebg/core/gamegui", "ebg/counter",
 						const node = $(`QGEFpiece-${piece}`);
 						if (node)
 						{
-							dojo.addClass(node, 'QGEFselectable QGEFselected');
+							dojo.addClass(node, 'QGEFselected');
+							if (this.isCurrentPlayerActive()) dojo.addClass(node, 'QGEFselectable');
 							this.board.arrow(+node.dataset.location, state.args.location);
 						}
 					}
@@ -218,15 +237,16 @@ define(["dojo", "dojo/_base/declare", "ebg/core/gamegui", "ebg/counter",
 						const node = $(`QGEFpiece-${piece}`);
 						if (node) dojo.addClass(node, 'QGEFselected');
 					}
-					if ('_private' in state.args && 'reactions' in state.args._private)
+					if (this.isCurrentPlayerActive() && '_private' in state.args && 'reactions' in state.args._private)
 					{
-						for (let card of state.args._private.reactions) dojo.addClass(`QGEFcardContainer-${card}`, 'QGEFselectable');
+						for (let card of state.args._private.reactions) if (card) dojo.addClass(`QGEFcardContainer-${card}`, 'QGEFselectable');
 					}
 //
 					break;
 //
 				case 'attackRoundSpecial':
 //
+					for (let card of state.args.action.cards) dojo.query(`.QGEFcardContainer[data-id='${card}']`, 'QGEF').addClass('QGEFselected QGEFused');
 					$(`QGEFregion-${state.args.location}`).setAttribute('class', 'QGEFregion QGEFselectable');
 //
 					for (let piece of state.args.attacker)
@@ -243,14 +263,16 @@ define(["dojo", "dojo/_base/declare", "ebg/core/gamegui", "ebg/counter",
 						const node = $(`QGEFpiece-${piece}`);
 						if (node) dojo.addClass(node, 'QGEFselected');
 					}
-					if ('_private' in state.args && 'reactions' in state.args._private)
+					if (this.isCurrentPlayerActive() && '_private' in state.args && 'reactions' in state.args._private)
 					{
-						for (let card of state.args._private.reactions) dojo.addClass(`QGEFcardContainer-${card}`, 'QGEFselectable');
+						for (let card of state.args._private.reactions) if (card) dojo.addClass(`QGEFcardContainer-${card}`, 'QGEFselectable');
 					}
 //
 					break;
 //
 				case 'retreat':
+//
+					for (let card of state.args.action.cards) dojo.query(`.QGEFcardContainer[data-id='${card}']`, 'QGEF').addClass('QGEFselected QGEFused');
 //
 					const piece = $(`QGEFpiece-${state.args.piece}`);
 					dojo.addClass(piece, 'QGEFselected');
@@ -266,6 +288,7 @@ define(["dojo", "dojo/_base/declare", "ebg/core/gamegui", "ebg/counter",
 //
 				case 'attackRoundAdvance':
 //
+					for (let card of state.args.action.cards) dojo.query(`.QGEFcardContainer[data-id='${card}']`, 'QGEF').addClass('QGEFselected QGEFused');
 					$(`QGEFregion-${state.args.location}`).setAttribute('class', 'QGEFregion QGEFselectable');
 //
 					for (let piece of state.args.attacker)
@@ -275,21 +298,27 @@ define(["dojo", "dojo/_base/declare", "ebg/core/gamegui", "ebg/counter",
 						{
 							if (node.dataset.type === 'infantry' || node.dataset.type === 'tank')
 							{
-								dojo.addClass(node, 'QGEFselected QGEFselectable');
+								dojo.addClass(node, 'QGEFselected');
+								if (this.isCurrentPlayerActive() && state.args._private.pieces.includes(piece)) dojo.addClass(node, 'QGEFselectable');
 								this.board.arrow(+node.dataset.location, state.args.location);
 							}
 						}
 					}
-					if ('_private' in state.args && 'reactions' in state.args._private)
+					if (this.isCurrentPlayerActive() && '_private' in state.args && 'reactions' in state.args._private)
 					{
-						for (let card of state.args._private.reactions) dojo.addClass(`QGEFcardContainer-${card}`, 'QGEFselectable');
+						for (let card of state.args._private.reactions) if (card) dojo.addClass(`QGEFcardContainer-${card}`, 'QGEFselectable');
 					}
 //
 					break;
 //
 			}
 //
-			if (state.args && 'move' in state.args)
+			if (this.isCurrentPlayerActive() && state.args && 'scorched' in state.args)
+			{
+				for (let region of state.args.scorched) $(`QGEFregion-${region}`).setAttribute('class', 'QGEFregion QGEFselectable');
+			}
+//
+			if (this.isCurrentPlayerActive() && state.args && 'move' in state.args)
 			{
 				const pieces = Object.entries(state.args.move);
 				for (let [piece, locations] of pieces)
@@ -298,8 +327,8 @@ define(["dojo", "dojo/_base/declare", "ebg/core/gamegui", "ebg/counter",
 				}
 				if (pieces.length === 1) $(`QGEFpiece-${pieces[0][0]}`).click();
 			}
-
-			if (state.args && 'attack' in state.args)
+//
+			if (this.isCurrentPlayerActive() && state.args && 'attack' in state.args)
 			{
 				const pieces = Object.entries(state.args.attack);
 				for (let [piece, locations] of pieces)
@@ -311,7 +340,7 @@ define(["dojo", "dojo/_base/declare", "ebg/core/gamegui", "ebg/counter",
 				if (pieces.length === 1) $(`QGEFpiece-${pieces[0][0]}`).click();
 			}
 //
-			if (state.args && 'eliminate' in state.args)
+			if (this.isCurrentPlayerActive() && state.args && 'eliminate' in state.args)
 			{
 				for (let piece of state.args.eliminate)
 				{
@@ -382,25 +411,25 @@ define(["dojo", "dojo/_base/declare", "ebg/core/gamegui", "ebg/counter",
 //
 					this.addActionButton('QGEFplay', _('Play'), (event) => {
 						dojo.stopEvent(event);
-						const cards = dojo.query('.QGEFcardContainer.QGEFselected', `QGEFhand-${this.FACTION}`);
+						const cards = dojo.query('.QGEFcardContainer.QGEFselectable.QGEFselected', `QGEFhand-${this.FACTION}`);
 						if (cards.length === 1)
 							this.confirm(_(this[this.FACTION + 'Deck'].cards[cards[0].dataset.type_arg].text[0]), 'play', {FACTION: this.FACTION, card: cards[0].dataset.id});
 					});
 					this.addActionButton('QGEFconscription', _('Conscription'), (event) => {
 						dojo.stopEvent(event);
-						const cards = dojo.query('.QGEFcardContainer.QGEFselected', `QGEFhand-${this.FACTION}`).reduce((L, node) => [...L, +node.dataset.id], []);
+						const cards = dojo.query('.QGEFcardContainer.QGEFselectable.QGEFselected', `QGEFhand-${this.FACTION}`).reduce((L, node) => [...L, +node.dataset.id], []);
 						if (cards.length === 1 || cards.length === 2)
 							this.confirm(_('Discard 1 card to deploy an infantry, or 2 cards to deploy a tank, airplane, or fleet'), 'conscription', {FACTION: this.FACTION, cards: JSON.stringify(cards)});
 					});
 					this.addActionButton('QGEforcedMarch', _('Forced March'), (event) => {
 						dojo.stopEvent(event);
-						const cards = dojo.query('.QGEFcardContainer.QGEFselected', `QGEFhand-${this.FACTION}`).reduce((L, node) => [...L, +node.dataset.id], []);
+						const cards = dojo.query('.QGEFcardContainer.QGEFselectable.QGEFselected', `QGEFhand-${this.FACTION}`).reduce((L, node) => [...L, +node.dataset.id], []);
 						if (cards.length === 1)
 							this.confirm(_('Discard 1 card to move 1 piece'), 'forcedMarch', {FACTION: this.FACTION, cards: JSON.stringify(cards)});
 					});
 					this.addActionButton('QGEFdesperateAttack', _('Desperate Attack'), (event) => {
 						dojo.stopEvent(event);
-						const cards = dojo.query('.QGEFcardContainer.QGEFselected', `QGEFhand-${this.FACTION}`).reduce((L, node) => [...L, +node.dataset.id], []);
+						const cards = dojo.query('.QGEFcardContainer.QGEFselectable.QGEFselected', `QGEFhand-${this.FACTION}`).reduce((L, node) => [...L, +node.dataset.id], []);
 						if (cards.length === 2)
 							this.confirm(_('Discard 2 cards and then attack a land space'), 'desperateAttack', {FACTION: this.FACTION, cards: JSON.stringify(cards)});
 					});
@@ -410,7 +439,7 @@ define(["dojo", "dojo/_base/declare", "ebg/core/gamegui", "ebg/counter",
 					});
 					this.addActionButton('QGEFcontingency', _('Contingency'), (event) => {
 						dojo.stopEvent(event);
-						const cards = dojo.query('.QGEFcardContainer.QGEFselected', `QGEFcontingency-${this.FACTION}`);
+						const cards = dojo.query('.QGEFcardContainer.QGEFselectable.QGEFselected', `QGEFcontingency-${this.FACTION}`);
 						this.confirm(_('Use one of your 5 Contingency cards'), 'contingency', {FACTION: this.FACTION, card: cards[0].dataset.id});
 					});
 					this.addActionButton('QGEFpass', _('Pass'), (event) => {
@@ -442,7 +471,7 @@ define(["dojo", "dojo/_base/declare", "ebg/core/gamegui", "ebg/counter",
 //
 							this.addActionButton('QGEFdiscard', _('Discard'), (event) => {
 								dojo.stopEvent(event);
-								const cards = dojo.query('.QGEFcardContainer.QGEFselected', `QGEFhand-${this.FACTION}`);
+								const cards = dojo.query('.QGEFcardContainer.QGEFselectable.QGEFselected', `QGEFhand-${this.FACTION}`);
 								if (cards.length === 1) this.confirm(_('Discard 1 card'), 'discard', {FACTION: this.FACTION, card: cards[0].dataset.id});
 							}, null, false, 'red');
 //
@@ -474,11 +503,12 @@ define(["dojo", "dojo/_base/declare", "ebg/core/gamegui", "ebg/counter",
 //
 							break;
 //
+						case 'recruit':
 						case 'deploy':
 //
 							if (!('mandatory' in args.action))
 							{
-								this.addActionButton('QGEFpass', _('No deployment'), (event) => {
+								this.addActionButton('QGEFpass', _('No deployment/recruitment'), (event) => {
 									dojo.stopEvent(event);
 									this.confirm(_('Do nothing'), 'pass', {FACTION: this.FACTION});
 								}, null, false, 'red');
@@ -517,12 +547,14 @@ define(["dojo", "dojo/_base/declare", "ebg/core/gamegui", "ebg/counter",
 //
 				case 'attackRoundDefender':
 //
+					for (let card of args.action.cards) dojo.query(`.QGEFcardContainer[data-id='${card}']`, 'QGEF').addClass('QGEFselected');
+//
 					this.board.centerMap(args.location);
 //
 					this.addActionButton('QGEFreaction', _('Reaction'), (event) => {
 						dojo.stopEvent(event);
 //
-						const cards = dojo.query('.QGEFcardContainer.QGEFselected', `QGEFhand-${this.FACTION}`);
+						const cards = dojo.query('.QGEFcardContainer.QGEFselectable.QGEFselected', `QGEFhand-${this.FACTION}`);
 						if (cards.length === 1)
 						{
 							const card = cards[0];
@@ -538,12 +570,14 @@ define(["dojo", "dojo/_base/declare", "ebg/core/gamegui", "ebg/counter",
 //
 				case 'attackRoundSpecial':
 //
+					for (let card of args.action.cards) dojo.query(`.QGEFcardContainer[data-id='${card}']`, 'QGEF').addClass('QGEFselected');
+//
 					this.board.centerMap(args.location);
 //
 					this.addActionButton('QGEFreaction', _('Reaction'), (event) => {
 						dojo.stopEvent(event);
 //
-						const cards = dojo.query('.QGEFcardContainer.QGEFselected', `QGEFhand-${this.FACTION}`);
+						const cards = dojo.query('.QGEFcardContainer.QGEFselectable.QGEFselected', `QGEFhand-${this.FACTION}`);
 						if (cards.length === 1)
 						{
 							const card = cards[0];
@@ -569,7 +603,7 @@ define(["dojo", "dojo/_base/declare", "ebg/core/gamegui", "ebg/counter",
 					this.addActionButton('QGEFreaction', _('Reaction'), (event) => {
 						dojo.stopEvent(event);
 //
-						const cards = dojo.query('.QGEFcardContainer.QGEFselected', `QGEFhand-${this.FACTION}`);
+						const cards = dojo.query('.QGEFcardContainer.QGEFselectable.QGEFselected', `QGEFhand-${this.FACTION}`);
 						if (cards.length === 1)
 						{
 							const card = cards[0];
@@ -589,11 +623,21 @@ define(["dojo", "dojo/_base/declare", "ebg/core/gamegui", "ebg/counter",
 //
 				case 'retreat':
 //
+					for (let card of args.action.cards) dojo.query(`.QGEFcardContainer[data-id='${card}']`, 'QGEF').addClass('QGEFselected');
+//
 					dojo.addClass(`QGEFcardContainer-${args.card}`, 'QGEFselected');
 //
 					break;
 //
 				case 'attackRoundAdvance':
+//
+					for (let card of args.action.cards) dojo.query(`.QGEFcardContainer[data-id='${card}']`, 'QGEF').addClass('QGEFselected');
+//
+					if (args._private.reactions.includes(0))
+					{
+						this.gamedatas.gamestate.descriptionmyturn = _('${you} can advance after combat for free');
+//						this.updatePageTitle();
+					}
 //
 					this.board.centerMap(args.location);
 //
@@ -658,14 +702,14 @@ define(["dojo", "dojo/_base/declare", "ebg/core/gamegui", "ebg/counter",
 			{
 				const FACTION = this.gamedatas.gamestate.args.FACTION;
 //
-				const cards = dojo.query('.QGEFcardContainer.QGEFselected', `QGEFhand-${FACTION}`).length;
+				const cards = dojo.query('.QGEFcardContainer.QGEFselectable.QGEFselected', `QGEFhand-${FACTION}`).length;
 				if ($('QGEFreaction')) dojo.toggleClass('QGEFreaction', 'disabled', cards !== 1);
 				if ($('QGEFplay')) dojo.toggleClass('QGEFplay', 'disabled', cards !== 1);
 				if ($('QGEFconscription')) dojo.style('QGEFconscription', 'display', (cards === 1 || cards === 2) ? '' : 'none');
 				if ($('QGEforcedMarch')) dojo.style('QGEforcedMarch', 'display', (cards === 1) ? '' : 'none');
 				if ($('QGEFdesperateAttack')) dojo.style('QGEFdesperateAttack', 'display', (cards === 2) ? '' : 'none');
 //
-				const contingency = dojo.query('.QGEFcardContainer.QGEFselected', `QGEFcontingency-${FACTION}`).length;
+				const contingency = dojo.query('.QGEFcardContainer.QGEFselectable.QGEFselected', `QGEFcontingency-${FACTION}`).length;
 				if ($('QGEFcontingency')) dojo.style('QGEFcontingency', 'display', (contingency === 1) ? '' : 'none');
 //
 				if ($('QGEFpass')) dojo.toggleClass('QGEFpass', 'disabled', cards + contingency !== 0);
@@ -674,10 +718,19 @@ define(["dojo", "dojo/_base/declare", "ebg/core/gamegui", "ebg/counter",
 				if ($('QGEFdiscard')) dojo.toggleClass('QGEFdiscard', 'disabled', cards !== 1);
 			}
 		},
+		QGEFscorched: function (location)
+		{
+			if (this.isCurrentPlayerActive()) this.action('scorched', {FACTION: this.FACTION, location: location});
+		},
 		QGEFdeploy: function (location)
 		{
 			const node = $('generalactions').querySelector('.QGEFpieceContainer.QGEFselected>.QGEFpiece');
 			if (node && this.isCurrentPlayerActive()) this.action('deploy', {FACTION: this.FACTION, location: location, faction: node.dataset.faction, type: node.dataset.type});
+		},
+		QGEFrecruit: function (location)
+		{
+			const node = $('generalactions').querySelector('.QGEFpieceContainer.QGEFselected>.QGEFpiece');
+			if (node && this.isCurrentPlayerActive()) this.action('recruit', {FACTION: this.FACTION, location: location, faction: node.dataset.faction, type: node.dataset.type});
 		},
 		QGEFmoveAttack: function (location)
 		{
@@ -701,45 +754,51 @@ define(["dojo", "dojo/_base/declare", "ebg/core/gamegui", "ebg/counter",
 		QGEFretreat: function (location)
 		{
 			const node = $(`QGEFpiece-${this.gamedatas.gamestate.args.piece}`);
-			this.confirm(`Retreat to <B>${_(this.gamedatas.REGIONS[location])}<B>: ${node.outerHTML}`, 'reaction', {FACTION: this.FACTION, card: this.gamedatas.gamestate.args.card, piece: this.gamedatas.gamestate.args.piece, location: location});
+			if (node && this.isCurrentPlayerActive())
+				this.confirm(`Retreat to <B>${_(this.gamedatas.REGIONS[location])}<B>: ${node.outerHTML}`, 'reaction', {FACTION: this.FACTION, card: this.gamedatas.gamestate.args.card, piece: this.gamedatas.gamestate.args.piece, location: location});
 		},
 		QGEFreaction: function (piece)
 		{
 			const node = $(`QGEFpiece-${piece}`);
 //
-			if (this.gamedatas.gamestate.name === 'attackRoundDefender')
+			if (node && this.isCurrentPlayerActive())
 			{
-				const cards = dojo.query('.QGEFcardContainer.QGEFselected', `QGEFhand-${this.FACTION}`);
-				if (cards.length === 1)
+				if (this.gamedatas.gamestate.name === 'attackRoundDefender')
 				{
-					const card = cards[0];
-					const reaction = this.gamedatas.CARDS[this.FACTION][card.dataset.type_arg].reaction;
-					switch (reaction)
+					const cards = dojo.query('.QGEFcardContainer.QGEFselectable.QGEFselected', `QGEFhand-${this.FACTION}`);
+					if (cards.length === 1)
 					{
-						case 'Exchange':
-							return this.confirm(dojo.string.substitute(_(`Play a card for reaction: <B>${reaction}</B>${node.outerHTML}`), {reaction: this.REACTIONS[reaction].toUpperCase()}), 'reaction', {FACTION: this.FACTION, card: card.dataset.id, piece: piece});
-						case 'Retreat':
-							this.gamedatas.gamestate.args['card'] = card.dataset.id;
-							this.gamedatas.gamestate.args['piece'] = piece;
-							return this.setClientState('retreat', {possibleactions: ['retreat'], descriptionmyturn: _('${you} may move one piece out of the attacked space')});
-						default:
-							return this.showMessage(_('Deselect reaction first'), 'info');
+						const card = cards[0];
+						const reaction = this.gamedatas.CARDS[this.FACTION][card.dataset.type_arg].reaction;
+						switch (reaction)
+						{
+							case 'Exchange':
+								return this.confirm(dojo.string.substitute(_(`Play a card for reaction: <B>${reaction}</B>${node.outerHTML}`), {reaction: this.REACTIONS[reaction].toUpperCase()}), 'reaction', {FACTION: this.FACTION, card: card.dataset.id, piece: piece});
+							case 'Retreat':
+								this.gamedatas.gamestate.args['card'] = card.dataset.id;
+								this.gamedatas.gamestate.args['piece'] = piece;
+								return this.setClientState('retreat', {possibleactions: ['retreat'], descriptionmyturn: _('${you} may move one piece out of the attacked space')});
+							default:
+								return this.showMessage(_('Deselect reaction first'), 'info');
+						}
 					}
 				}
-			}
-			if (this.gamedatas.gamestate.name === 'attackRoundAdvance')
-			{
-				const cards = dojo.query('.QGEFcardContainer.QGEFselected', `QGEFhand-${this.FACTION}`);
-				if (cards.length === 1)
+				else if (this.gamedatas.gamestate.name === 'attackRoundAdvance')
 				{
-					const card = cards[0];
-					const reaction = this.gamedatas.CARDS[this.FACTION][card.dataset.type_arg].reaction;
-					if (reaction === 'Advance')
-						return this.confirm(dojo.string.substitute(_(`Play a card for reaction: <B>${reaction}</B>${node.outerHTML}`), {reaction: this.REACTIONS[reaction].toUpperCase()}), 'reaction', {FACTION: this.FACTION, card: card.dataset.id, piece: piece});
+					const cards = dojo.query('.QGEFcardContainer.QGEFselectable.QGEFselected', `QGEFhand-${this.FACTION}`);
+					if (cards.length === 0 && this.gamedatas.gamestate.args._private.reactions.includes(0))
+						return this.confirm(_(`Advance after combat${node.outerHTML}`), 'reaction', {FACTION: this.FACTION, card: 0, piece: piece});
+					else if (cards.length === 1)
+					{
+						const card = cards[0];
+						const reaction = this.gamedatas.CARDS[this.FACTION][card.dataset.type_arg].reaction;
+						if (reaction === 'Advance')
+							return this.confirm(dojo.string.substitute(_(`Play a card for reaction: <B>${reaction}</B>${node.outerHTML}`), {reaction: this.REACTIONS[reaction].toUpperCase()}), 'reaction', {FACTION: this.FACTION, card: card.dataset.id, piece: piece});
+					}
+					else return this.showMessage(_('Advance reaction only'), 'info');
 				}
-				return this.showMessage(_('Advance reaction only'), 'info');
+				this.confirm(`Remove from <B>${_(this.gamedatas.REGIONS[node.dataset.location])}<B>:${node.outerHTML}`, 'removePiece', {FACTION: this.FACTION, piece: piece});
 			}
-			this.confirm(`Remove from <B>${_(this.gamedatas.REGIONS[node.dataset.location])}<B>:${node.outerHTML}`, 'removePiece', {FACTION: this.FACTION, piece: piece});
 		},
 		updatePreference: function (event)
 		{

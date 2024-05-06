@@ -93,6 +93,40 @@ trait gameStateArguments
 				}
 				return ['FACTION' => $FACTION, 'cancel' => Actions::empty() && !array_key_exists('noundo', $action), 'action' => $action, 'deploy' => $this->possible];
 //
+			case 'recruit':
+//
+				$ennemies = Pieces::getEnnemyControled($FACTION);
+//
+				$this->possible = [];
+				foreach ($action['factions'] as $faction)
+				{
+					foreach ($action['types'] as $type)
+					{
+						if (array_key_exists('contain', $action)) foreach (Pieces::getAll($FACTION) as $piece) if (in_array($piece['type'], $action['contain'])) $action['locations'][] = intval($piece['location']);
+						if (array_key_exists('adjacent', $action))
+						{
+							foreach (Pieces::getAll($FACTION) as $piece)
+							{
+								if (in_array($piece['type'], $action['adjacent']))
+								{
+									foreach (Board::ADJACENCY[$piece['location']] as $next_location) $action['locations'][] = $next_location;
+								}
+							}
+						}
+//
+						$locations = [];
+						foreach ($action['locations'] as $location)
+						{
+							if (array_key_exists('different', $action) && in_array($location, $playedLocations)) continue;
+							if (array_key_exists('same', $action) && !in_array($location, $playedLocations)) continue;
+							if (!in_array($location, $ennemies) && Board::REGIONS[$location]['type'] === WATER && $type === Pieces::FLEET) $locations[] = $location;
+							if (!in_array($location, $ennemies) && Board::REGIONS[$location]['type'] === LAND && $type !== Pieces::FLEET) $locations[] = $location;
+						}
+						$this->possible[$faction][$type] = array_values(array_unique($locations));
+					}
+				}
+				return ['FACTION' => $FACTION, 'cancel' => Actions::empty() && !array_key_exists('noundo', $action), 'action' => $action, 'deploy' => $this->possible];
+//
 			case 'move/attack':
 //
 				$this->possible['move'] = Pieces::getPossibleMoves($FACTION, $playedPieces);
@@ -103,7 +137,7 @@ trait gameStateArguments
 			case 'move':
 //
 				if (array_key_exists('different', $action)) $this->possible['move'] = Pieces::getPossibleMoves($FACTION, array_filter(Pieces::getAll($FACTION), fn($piece) => !array_key_exists($piece['id'], $playedPieces) && in_array($piece['type'], $action['types']) && in_array($piece['faction'], $action['factions'])));
-				if (array_key_exists('same', $action)) $this->possible['move'] = Pieces::getPossibleMoves($FACTION, array_filter(Pieces::getAll($FACTION), fn($piece) => array_key_exists($piece['id'], $playedPieces) && in_array($piece['type'], $action['types']) && in_array($piece['faction'], $action['factions'])));
+				else if (array_key_exists('same', $action)) $this->possible['move'] = Pieces::getPossibleMoves($FACTION, array_filter(Pieces::getAll($FACTION), fn($piece) => array_key_exists($piece['id'], $playedPieces) && in_array($piece['type'], $action['types']) && in_array($piece['faction'], $action['factions'])));
 				else $this->possible['move'] = Pieces::getPossibleMoves($FACTION, array_filter(Pieces::getAll($FACTION), fn($piece) => in_array($piece['type'], $action['types']) && in_array($piece['faction'], $action['factions'])));
 				return ['FACTION' => $FACTION, 'cancel' => Actions::empty() && !array_key_exists('noundo', $action), 'action' => $action, 'move' => $this->possible['move']];
 //
@@ -111,6 +145,12 @@ trait gameStateArguments
 //
 				if (array_key_exists('containing', $action)) $this->possible['attack'] = Pieces::getPossibleAttacks($FACTION, $playedPieces);
 				if (array_key_exists('locations', $action)) $this->possible['attack'] = Pieces::getPossibleAttacks($FACTION, array_filter(Pieces::getAll($FACTION), fn($piece) => in_array($piece['location'], $action['locations']) && in_array($piece['faction'], $action['factions'])));
+				if (array_key_exists('into', $action))
+				{
+					if ($action['into'] === true) $this->possible['attack'] = Pieces::getPossibleAttacks($FACTION, Pieces::getAll($FACTION), $playedLocations);
+					else $this->possible['attack'] = Pieces::getPossibleAttacks($FACTION, Pieces::getAll($FACTION), $action['into']);
+				}
+
 				if (array_key_exists('special', $action)) $this->possible['attack'] = Decks::special($action);
 //
 				return ['FACTION' => $FACTION, 'cancel' => Actions::empty() && !array_key_exists('noundo', $action), 'action' => $action, 'attack' => $this->possible['attack']];
@@ -118,6 +158,16 @@ trait gameStateArguments
 			case 'eliminate':
 //
 				$this->possible['pieces'] = [];
+				if (array_key_exists('adjacent', $action))
+				{
+					foreach (Pieces::getAll($FACTION) as $piece)
+					{
+						if (in_array($piece['type'], $action['adjacent']))
+						{
+							foreach (Board::ADJACENCY[$piece['location']] as $next_location) $action['locations'][] = $next_location;
+						}
+					}
+				}
 				if (array_key_exists('range', $action) && $playedLocations) $this->possible['pieces'] = Pieces::getInRange($playedLocations[0], $action['range'], array_filter(Pieces::getAllDatas(), fn($piece) => in_array($piece['type'], $action['types']) && in_array($piece['faction'], $action['factions'])));
 				if (array_key_exists('locations', $action)) foreach (Pieces::getAllDatas() as $piece) if (in_array($piece['location'], $action['locations']) && in_array($piece['type'], $action['types']) && in_array($piece['faction'], $action['factions'])) $this->possible['pieces'][] = $piece['id'];
 				if (array_key_exists('special', $action)) $this->possible['pieces'] = Decks::special($action);
@@ -135,6 +185,12 @@ trait gameStateArguments
 				if (array_key_exists('special', $action)) $this->possible['pieces'] = Decks::special($action);
 //
 				return ['FACTION' => $FACTION, 'cancel' => false, 'action' => $action, 'eliminate' => $this->possible['pieces']];
+//
+			case 'scorched':
+//
+				$this->possible['scorched'] = $action['locations'];
+//
+				return ['FACTION' => $FACTION, 'cancel' => Actions::empty() && !array_key_exists('noundo', $action), 'action' => $action, 'scorched' => $this->possible['scorched']];
 //
 			default :
 //
@@ -181,7 +237,8 @@ trait gameStateArguments
 		$this->possible['retreat'] = Pieces::getPossibleRetreats($defenderFACTION, $pieces);
 //
 		return ['FACTION' => $defenderFACTION, '_private' => [Factions::getPlayerID($defenderFACTION) => $this->possible],
-			'location' => $location, 'attacker' => $attacker, 'defender' => $defender];
+			'location' => $location, 'attacker' => $attacker, 'defender' => $defender,
+			'action' => Actions::get(Actions::getNextAction())];
 	}
 	function argAttackRoundAttacker()
 	{
@@ -217,9 +274,11 @@ trait gameStateArguments
 //
 		$this->possible = ['reactions' => [], 'pieces' => $attacker];
 //
+		$action = Actions::get(Actions::getNextAction());
 		$removedPiece = Factions::getStatus($defenderFACTION, 'removedPiece');
 		foreach ($this->decks->getPlayerHand($attackerFACTION) as $card)
 		{
+			if (in_array($card['id'], $action['cards'])) continue;
 			if (Decks::DECKS[$attackerFACTION][$card['type_arg']]['faction'] !== $attackerfaction) continue;
 			if (Decks::DECKS[$attackerFACTION][$card['type_arg']]['reaction'] === 'SustainAttack') $this->possible['reactions'][] = +$card['id'];
 			if (Decks::DECKS[$attackerFACTION][$card['type_arg']]['reaction'] === 'AntiAir' && $removedPiece && $removedPiece['type'] === 'airplane') $this->possible['reactions'][] = +$card['id'];
@@ -227,7 +286,7 @@ trait gameStateArguments
 		}
 //
 		return ['FACTION' => $attackerFACTION, '_private' => [Factions::getPlayerID($attackerFACTION) => $this->possible],
-			'location' => $location, 'attacker' => $attacker, 'defender' => $defender];
+			'location' => $location, 'attacker' => $attacker, 'defender' => $defender, 'action' => $action];
 	}
 	function argAttackRoundExchange()
 	{
@@ -256,7 +315,8 @@ trait gameStateArguments
 		$this->possible = ['reactions' => [], 'pieces' => $attacker];
 //
 		return ['FACTION' => $attackerFACTION, '_private' => [Factions::getPlayerID($attackerFACTION) => $this->possible],
-			'location' => $location, 'attacker' => $attacker, 'defender' => $defender];
+			'location' => $location, 'attacker' => $attacker, 'defender' => $defender,
+			'action' => Actions::get(Actions::getNextAction())];
 	}
 	function argAttackRoundSpecial()
 	{
@@ -293,7 +353,7 @@ trait gameStateArguments
 		}
 //
 		return ['FACTION' => $defenderFACTION, '_private' => [Factions::getPlayerID($defenderFACTION) => $this->possible],
-			'location' => $location, 'attacker' => $attacker, 'defender' => $defender];
+			'location' => $location, 'attacker' => $attacker, 'defender' => $defender, 'action' => Actions::get(Actions::getNextAction())];
 	}
 	function argAttackRoundAdvance()
 	{
@@ -302,15 +362,31 @@ trait gameStateArguments
 		['location' => $location, 'faction' => $attackerfaction, 'from' => $from] = Factions::getStatus($attackerFACTION, 'attack');
 //
 		$attacker = array_keys(Pieces::getAtLocation($from, $attackerfaction));
-		$this->possible = ['pieces' => $attacker];
+		$this->possible = ['reactions' => [], 'pieces' => $attacker];
 //
-		foreach ($this->decks->getPlayerHand($attackerFACTION) as $card)
+		$action = Actions::get(Actions::getNextAction());
+//
+		$free = array_key_exists('advance', $action);
+		if (array_key_exists('requirement', $action) && $action['requirement'] === 'noSprintTurn') $free = $free && intval(self::getGameStateValue('round')) % 4 !== 0;
+		if (!$free)
 		{
-			if (Decks::DECKS[$attackerFACTION][$card['type_arg']]['faction'] !== $attackerfaction) continue;
-			if (Decks::DECKS[$attackerFACTION][$card['type_arg']]['reaction'] === 'Advance') $this->possible['reactions'][] = +$card['id'];
+			if (!Factions::getStatus($attackerFACTION, 'mud'))
+			{
+				foreach ($this->decks->getPlayerHand($attackerFACTION) as $card)
+				{
+					if (in_array($card['id'], $action['cards'])) continue;
+					if (Decks::DECKS[$attackerFACTION][$card['type_arg']]['faction'] !== $attackerfaction) continue;
+					if (Decks::DECKS[$attackerFACTION][$card['type_arg']]['reaction'] === 'Advance') $this->possible['reactions'][] = +$card['id'];
+				}
+			}
+		}
+		else
+		{
+			$this->possible['reactions'][] = 0;
+			$this->possible['pieces'] = array_keys(array_filter(Pieces::getAtLocation($from, $attackerfaction), fn($piece) => in_array($piece['type'], $action['advance'])));
 		}
 //
 		return ['FACTION' => $attackerFACTION, '_private' => [Factions::getPlayerID($attackerFACTION) => $this->possible],
-			'location' => $location, 'attacker' => $attacker];
+			'location' => $location, 'attacker' => $attacker, 'action' => $action];
 	}
 }

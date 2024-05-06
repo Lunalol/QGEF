@@ -104,7 +104,7 @@ define(["dojo", "dojo/_base/declare"], function (dojo, declare)
 					type: 'sea',
 					text: [
 						_('Marine Infantry'),
-						_('')]
+						_('Recruit a German infantry adjacent to a German fleet; then move that infantry or attack with a force containing that infantry.')]
 				},
 				21: {
 					type: 'air',
@@ -116,31 +116,31 @@ define(["dojo", "dojo/_base/declare"], function (dojo, declare)
 					type: 'command',
 					text: [
 						_('Sonderkraftfahrzeug'),
-						_('')]
+						_('May only be played if it is not a Spring turn. Move both a German infantry and a German tank together; then you may attack with a force containing both pieces.')]
 				},
 				23: {
 					type: 'ground',
 					text: [
 						_('Flamethrowers'),
-						_('')]
+						_('Eliminate an Allies infantry or tank adjacent to a German infantry.')]
 				},
 				24: {
 					type: 'command',
 					text: [
 						_('Nebelwerfer Rocket Launcher'),
-						_('')]
+						_('Eliminate an Allies infantry adjacent to a German force; then you may attack the space from which the infantry was eliminated.')]
 				},
 				25: {
 					type: 'command',
 					text: [
 						_('Gyorshadtest “Rapid Corps”'),
-						_('')]
+						_('Attack with a Pact force; then, if it is not a Spring turn, you may move 1 piece from the attacking force into the attacked space.')]
 				},
 				26: {
 					type: 'ground',
 					text: [
 						_('The Continuation War'),
-						_('')]
+						_('Attack into Karelia or Petrozavodsk with a force containing a Pact infantry; then you may move that infantry into the attacked space')]
 				},
 				27: {
 					type: 'command',
@@ -152,7 +152,7 @@ define(["dojo", "dojo/_base/declare"], function (dojo, declare)
 					type: 'ground',
 					text: [
 						_('Finnish Ski Troops'),
-						_('')]
+						_('Eliminate a Soviet infantry or tank in Finland or Karelia; then recruit a Pact infantry in Finland.')]
 				},
 				29: {
 					type: 'air',
@@ -247,9 +247,9 @@ define(["dojo", "dojo/_base/declare"], function (dojo, declare)
 			{
 				if (!dojo.hasClass(node, 'QGEFselected'))
 				{
-					if (dojo.query('.QGEFhandHolder>.QGEFcardContainer.QGEFselected').length >= 2) return;
-					if (this.bgagame.gamedatas.gamestate.name !== 'actionStep') dojo.query('.QGEFcardContainer.QGEFselected').removeClass('QGEFselected');
-					dojo.query('.QGEFcontingencyHolder>.QGEFcardContainer.QGEFselected').removeClass('QGEFselected');
+					if (dojo.query('.QGEFhandHolder>.QGEFcardContainer.QGEFselectable.QGEFselected').length >= 2) return;
+					if (this.bgagame.gamedatas.gamestate.name !== 'actionStep') dojo.query('.QGEFcardContainer.QGEFselectable..QGEFselected').removeClass('QGEFselected');
+					dojo.query('.QGEFcontingencyHolder>.QGEFcardContainer.QGEFselectable..QGEFselected').removeClass('QGEFselected');
 				}
 				dojo.toggleClass(node, 'QGEFselected');
 //

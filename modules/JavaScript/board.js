@@ -188,10 +188,12 @@ define(["dojo", "dojo/_base/declare"], function (dojo, declare)
 			{
 				dojo.stopEvent(event);
 //
+				if (this.bgagame.gamedatas.gamestate.possibleactions.includes('scorched')) return this.bgagame.QGEFscorched(+node.dataset.location);
 				if (this.bgagame.gamedatas.gamestate.possibleactions.includes('move')) return this.bgagame.QGEFmoveAttack(+node.dataset.location);
 				if (this.bgagame.gamedatas.gamestate.possibleactions.includes('attack')) return this.bgagame.QGEFmoveAttack(+node.dataset.location);
 				if (this.bgagame.gamedatas.gamestate.possibleactions.includes('desperateAttack')) return this.bgagame.QGEFmoveAttack(+node.dataset.location);
 				if (this.bgagame.gamedatas.gamestate.possibleactions.includes('deploy')) return this.bgagame.QGEFdeploy(+node.dataset.location);
+				if (this.bgagame.gamedatas.gamestate.possibleactions.includes('recruit')) return this.bgagame.QGEFrecruit(+node.dataset.location);
 				if (this.bgagame.gamedatas.gamestate.possibleactions.includes('retreat')) return this.bgagame.QGEFretreat(+node.dataset.location);
 				if (this.bgagame.gamedatas.gamestate.possibleactions.includes('forcedMarch')) return this.bgagame.QGEFmoveAttack(+node.dataset.location);
 			}

@@ -97,7 +97,7 @@ $machinestates = [
 		'descriptionmyturn' => clienttranslate('${you} are doing an action'),
 		'type' => 'activeplayer',
 		'args' => 'argAction',
-		'possibleactions' => ['deploy', 'move', 'attack', 'removePiece', 'discard', 'pass', 'cancel'],
+		'possibleactions' => ['scorched', 'deploy', 'recruit', 'move', 'attack', 'removePiece', 'discard', 'pass', 'cancel'],
 		'transitions' => ['action' => 130, 'cancel' => 130, 'attack' => 200, 'next' => 120]
 	],
 	140 => [
@@ -105,7 +105,7 @@ $machinestates = [
 		'description' => clienttranslate('Players may move their tanks and fleets'),
 		'type' => 'game',
 		'action' => 'stSecondMovementStep',
-		'transitions' => ['next' => 145]
+		'transitions' => ['next' => 145, 'skip' => 150]
 	],
 	145 => [
 		'name' => 'secondMovementStep',

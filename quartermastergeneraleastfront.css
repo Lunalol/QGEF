@@ -203,6 +203,13 @@ html {
 	transition: transform 1s;
 	z-index: 50;
 }
+.QGEFcardContainer.QGEFselected.QGEFused
+{
+	transform: scale(1.25) !important;
+	filter: contrast(150%);
+	transition: transform 1s;
+	z-index: 50;
+}
 #QGEFcontingency-axis .QGEFcardContainer {
 	transform-origin: left;
 	transform: rotate(-5deg);
@@ -416,23 +423,34 @@ html {
 /* </editor-fold> */
 /* <editor-fold defaultstate="collapsed" desc="Markers"> */
 .QGEFmarker {
-	background-image: url('img/markers.png');
 	position: absolute;
+	background-image: url('img/markers.png');
 	transition: left CALC(var(--DELAY) * 1ms), top CALC(var(--DELAY) * 1ms), margin .5s
 }
 .QGEFmarker {
-	width: 137px;
-	height: 137px;
 }
 .QGEFmarker:hover {
 	z-index: 1;
 }
+#QGEFboard.QGEFhideMarkers .QGEFmarker {
+	visibility: hidden;
+}
+.QGEFmarker[data-type='scorchedEarth'] {
+	width: 147px;
+	height: 147px;
+	background-position: -2px -148px;
+	opacity: 75%;
+}
 .QGEFmarker[data-type='axis'] {
+	width: 137px;
+	height: 137px;
 	transform: scale(50%);
 	border-radius: 10px;
 	background-position: -150px -153px;
 }
 .QGEFmarker[data-type='allies'] {
+	width: 137px;
+	height: 137px;
 	transform: scale(50%);
 	border-radius: 10px;
 	background-position: -481px -153px;

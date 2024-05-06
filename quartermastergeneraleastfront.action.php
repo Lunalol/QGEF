@@ -92,6 +92,12 @@ class action_quartermastergeneraleastfront extends APP_GameAction
 		$this->game->acDeploy(self::getArg("FACTION", AT_alphanum, true), self::getArg("location", AT_int, true), self::getArg("faction", AT_alphanum, true), self::getArg("type", AT_alphanum, true));
 		self::ajaxResponse("");
 	}
+	public function recruit()
+	{
+		self::setAjaxMode();
+		$this->game->acRecruit(self::getArg("FACTION", AT_alphanum, true), self::getArg("location", AT_int, true), self::getArg("faction", AT_alphanum, true), self::getArg("type", AT_alphanum, true));
+		self::ajaxResponse("");
+	}
 	public function attack()
 	{
 		self::setAjaxMode();
@@ -108,6 +114,12 @@ class action_quartermastergeneraleastfront extends APP_GameAction
 	{
 		self::setAjaxMode();
 		$this->game->acReaction(self::getArg("FACTION", AT_alphanum, true), self::getArg("card", AT_int, true), self::getArg("piece", AT_int, false), self::getArg("location", AT_int, false));
+		self::ajaxResponse("");
+	}
+	public function scorched()
+	{
+		self::setAjaxMode();
+		$this->game->acScorched(self::getArg("FACTION", AT_alphanum, true), self::getArg("location", AT_int, true));
 		self::ajaxResponse("");
 	}
 }

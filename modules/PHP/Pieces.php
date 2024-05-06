@@ -100,17 +100,16 @@ class Pieces extends APP_GameClass
 	{
 		return self::$table->getObjectListFromDB("SELECT DISTINCT location FROM pieces WHERE player <> '$player'", true);
 	}
-	static function getSupply(string $FACTION)
+	static function count(string $faction)
 	{
-		return array_keys(Board::REGIONS);
+		return self::$table->getCollectionFromDB("SELECT type, count(*) FROM pieces WHERE faction = '$faction' GROUP BY type", true);
 	}
 	static function getPossibleMoves(string $FACTION, array $pieces): array
 	{
 		$ennemies = self::getEnnemyControled($FACTION);
 		$control = Board::getControl($FACTION, true);
 #
-		$supply = [];
-		foreach (Factions::FACTIONS[$FACTION] as $faction) $supply[$faction] = self::getSupply($faction);
+		$supply = Board::getSupplyLines($FACTION);
 #
 		$possibles = [];
 		foreach ($pieces as $piece)
@@ -206,8 +205,7 @@ class Pieces extends APP_GameClass
 		$ennemies = self::getEnnemyControled($FACTION);
 		$control = Board::getControl($FACTION);
 #
-		$supply = [];
-		foreach (Factions::FACTIONS[$FACTION] as $faction) $supply[$faction] = self::getSupply($faction);
+		$supply = Board::getSupplyLines($FACTION);
 #
 		$possibles = [];
 		foreach ($pieces as $piece)
@@ -248,7 +246,7 @@ class Pieces extends APP_GameClass
 #
 		return $possibles;
 	}
-	static function getPossibleAttacks(string $FACTION, array $pieces): array
+	static function getPossibleAttacks(string $FACTION, array $pieces, array $into = []): array
 	{
 		$ennemies = self::getEnnemyControled($FACTION);
 		$control = Board::getControl($FACTION);
@@ -261,6 +259,8 @@ class Pieces extends APP_GameClass
 				$locations = [];
 				foreach (Board::ADJACENCY[$piece['location']] as $next_location)
 				{
+					if ($into && !in_array($next_location, $into)) continue;
+//
 					# Infantry and tanks may only move to land spaces
 					if (Board::REGIONS[$next_location]['type'] === LAND)
 					{

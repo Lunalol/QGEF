@@ -92,7 +92,8 @@ define(["dojo", "dojo/_base/declare"], function (dojo, declare)
 					type: 'command',
 					text: [
 						_('Scorched Earth'),
-						_('')]
+						_('Gain 1 VP; then place the Scorched Earth marker on top of any Victory Star east of the 1939 line. That Victory Star is ignored for all purposes for the remainder of the game.')
+					]
 				},
 				38: {
 					type: 'command',
@@ -134,7 +135,7 @@ define(["dojo", "dojo/_base/declare"], function (dojo, declare)
 					type: 'ground',
 					text: [
 						_('Snipers'),
-						_('')]
+						_('Eliminate an Axis infantry or tank adjacent to a Soviet infantry.')]
 				},
 				45: {
 					type: 'tank',
@@ -152,7 +153,7 @@ define(["dojo", "dojo/_base/declare"], function (dojo, declare)
 					type: 'command',
 					text: [
 						_('General Mud'),
-						_('')]
+						_('On the next Axis turn, the Axis cannot use Advance! reactions and must skip the Second Movement step.')]
 				},
 				48: {
 					type: 'command',
@@ -223,9 +224,9 @@ define(["dojo", "dojo/_base/declare"], function (dojo, declare)
 			{
 				if (!dojo.hasClass(node, 'QGEFselected'))
 				{
-					if (dojo.query('.QGEFhandHolder>.QGEFcardContainer.QGEFselected').length >= 2) return;
-					if (this.bgagame.gamedatas.gamestate.name !== 'actionStep') dojo.query('.QGEFcardContainer.QGEFselected').removeClass('QGEFselected');
-					dojo.query('.QGEFcontingencyHolder>.QGEFcardContainer.QGEFselected').removeClass('QGEFselected');
+					if (dojo.query('.QGEFhandHolder>.QGEFcardContainer.QGEFselectable.QGEFselected').length >= 2) return;
+					if (this.bgagame.gamedatas.gamestate.name !== 'actionStep') dojo.query('.QGEFcardContainer.QGEFselectable..QGEFselected').removeClass('QGEFselected');
+					dojo.query('.QGEFcontingencyHolder>.QGEFcardContainer.QGEFselectable..QGEFselected').removeClass('QGEFselected');
 				}
 				dojo.toggleClass(node, 'QGEFselected');
 //
