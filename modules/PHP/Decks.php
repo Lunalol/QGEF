@@ -189,7 +189,7 @@ class Decks extends APP_GameClass
 					['name' => 'attack', 'factions' => [Factions::GERMANY], 'locations' => Board::E1941],
 				],
 				self::SECOND_SIDE => [
-					['name' => 'eliminateVS', 'types' => [Pieces::INFANTRY, Pieces::TANK, Pieces::AIRPLANE, Pieces::FLEET], 'factions' => [Factions::GERMANY, Factions::PACT], 'locations' => [BERLIN, VIENNA, HUNGARY, WARSAW, WESTBALTICSEA]],
+					['name' => 'eliminateVS', 'types' => [Pieces::INFANTRY, Pieces::TANK, Pieces::AIRPLANE, Pieces::FLEET], 'factions' => [Factions::SOVIETUNION], 'locations' => [BERLIN, VIENNA, HUNGARY, WARSAW, WESTBALTICSEA]],
 				],
 			],
 			103 => ['faction' => Factions::GERMANY,

@@ -307,6 +307,11 @@ define(["dojo", "dojo/_base/declare", "ebg/core/gamegui", "ebg/counter",
 					if (this.isCurrentPlayerActive() && '_private' in state.args && 'reactions' in state.args._private)
 					{
 						for (let card of state.args._private.reactions) if (card) dojo.addClass(`QGEFcardContainer-${card}`, 'QGEFselectable');
+						if (state.args._private.reactions.includes(0))
+						{
+							this.gamedatas.gamestate.descriptionmyturn = _('${you} can advance after combat for free');
+							this.updatePageTitle();
+						}
 					}
 //
 					break;
@@ -632,12 +637,6 @@ define(["dojo", "dojo/_base/declare", "ebg/core/gamegui", "ebg/counter",
 				case 'attackRoundAdvance':
 //
 					for (let card of args.action.cards) dojo.query(`.QGEFcardContainer[data-id='${card}']`, 'QGEF').addClass('QGEFselected');
-//
-					if (args._private.reactions.includes(0))
-					{
-						this.gamedatas.gamestate.descriptionmyturn = _('${you} can advance after combat for free');
-//						this.updatePageTitle();
-					}
 //
 					this.board.centerMap(args.location);
 //

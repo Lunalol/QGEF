@@ -581,6 +581,12 @@ trait gameStateActions
 //
 		switch ($reaction)
 		{
+			case 'StandFast':
+//
+				Factions::setStatus($FACTION, 'removedPiece', ['type' => 'StandFast']);
+				$this->gamestate->nextState('continue');
+//
+				break;
 //
 			case 'Exchange':
 //

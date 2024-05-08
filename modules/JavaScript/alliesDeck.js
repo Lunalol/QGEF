@@ -77,7 +77,7 @@ define(["dojo", "dojo/_base/declare"], function (dojo, declare)
 						_('Deploy 2 or 3 Soviet infantry in Gorki.')]
 				},
 				35: {
-					type: 'ground', reation: _('Leningrad'),
+					type: 'ground', reaction: _('Leningrad'),
 					text: [
 						_('People’s Militia Army'),
 						_('Deploy 2 Soviet infantry in Leningrad.')]
@@ -120,7 +120,7 @@ define(["dojo", "dojo/_base/declare"], function (dojo, declare)
 						_('Deploy a Soviet infantry in a space with a Soviet tank; then you may attack with a force containing both pieces.')]
 				},
 				42: {
-					type: 'ground', reation: _('Sevastopol'),
+					type: 'ground', reaction: _('Sevastopol'),
 					text: [
 						_('The Stronghold of Sevastopol'),
 						_('Deploy 2 Soviet infantry in Sevastopol.')]
@@ -180,7 +180,7 @@ define(["dojo", "dojo/_base/declare"], function (dojo, declare)
 //
 			return node;
 		},
-		card: function (card)
+		card: function (card, clone = false)
 		{
 			const reactionSVG = `<img draggable='false' class='QGEFreactionSVG' src='${g_gamethemeurl}img/svg/${this.bgagame.gamedatas.CARDS.allies[card.type_arg].reaction}.svg'>`;
 			let reaction = `<div>${this.bgagame.REACTIONS[this.bgagame.gamedatas.CARDS.allies[card.type_arg].reaction]}</div>`;
@@ -188,7 +188,8 @@ define(["dojo", "dojo/_base/declare"], function (dojo, declare)
 			if (this.bgagame.gamedatas.CARDS.allies[card.type_arg].reaction === 'Advance') reaction += `<div class='QGEFreactionText'>${_('No Spring Turns')}</div>`;
 			if (this.bgagame.gamedatas.CARDS.allies[card.type_arg].reaction === 'SustainAttack') reaction += `<div class='QGEFreactionText'>${_('No Winter Turns')}</div>`;
 //
-			return this.bgagame.format_block('QGEFcard', {id: card.id,
+			return this.bgagame.format_block('QGEFcard', {
+				id: (clone ? 'clone-' : '') + card.id,
 				FACTION: this.bgagame.gamedatas.CARDS.allies[card.type_arg].faction,
 				faction: this.FACTIONS[this.bgagame.gamedatas.CARDS.allies[card.type_arg].faction],
 				type: this.cards[card.type_arg].type, type_arg: card.type_arg,

@@ -203,7 +203,7 @@ define(["dojo", "dojo/_base/declare"], function (dojo, declare)
 //
 			return node;
 		},
-		card: function (card)
+		card: function (card, clone = false)
 		{
 			const reactionSVG = `<img draggable='false' class='QGEFreactionSVG' src='${g_gamethemeurl}img/svg/${this.bgagame.gamedatas.CARDS.axis[card.type_arg].reaction}.svg'>`;
 			let reaction = `<div>${this.bgagame.REACTIONS[this.bgagame.gamedatas.CARDS.axis[card.type_arg].reaction]}</div>`;
@@ -211,7 +211,8 @@ define(["dojo", "dojo/_base/declare"], function (dojo, declare)
 			if (this.bgagame.gamedatas.CARDS.axis[card.type_arg].reaction === 'Advance') reaction += `<div class='QGEFreactionText'>${_('No Spring Turns')}</div>`;
 			if (this.bgagame.gamedatas.CARDS.axis[card.type_arg].reaction === 'SustainAttack') reaction += `<div class='QGEFreactionText'>${_('No Winter Turns')}</div>`;
 //
-			return this.bgagame.format_block('QGEFcard', {id: card.id,
+			return this.bgagame.format_block('QGEFcard', {
+				id: (clone ? 'clone-' : '') + card.id,
 				FACTION: this.bgagame.gamedatas.CARDS.axis[card.type_arg].faction,
 				faction: this.FACTIONS[this.bgagame.gamedatas.CARDS.axis[card.type_arg].faction],
 				type: this.cards[card.type_arg].type, type_arg: card.type_arg,

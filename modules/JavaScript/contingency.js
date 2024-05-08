@@ -78,7 +78,7 @@ define(["dojo", "dojo/_base/declare"], function (dojo, declare)
 				}
 			};
 		},
-		card: function (card, clone)
+		card: function (card, clone = false)
 		{
 			return this.bgagame.format_block('QGEFcontingency', {
 				id: (clone ? 'clone-' : '') + card.id,
@@ -143,6 +143,7 @@ define(["dojo", "dojo/_base/declare"], function (dojo, declare)
 //
 				if (!dojo.hasClass(node, 'QGEFselected')) dojo.query('.QGEFcardContainer.QGEFselected').removeClass('QGEFselected');
 				dojo.toggleClass(node, 'QGEFselected');
+				dojo.removeClass(node, 'QGEFlookBack');
 //
 				this.bgagame.updateActionButtons();
 			}

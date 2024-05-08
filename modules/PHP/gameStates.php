@@ -50,9 +50,9 @@ trait gameStates
 		if (self::getGameStateValue('firstGame'))
 		{
 			$this->decks->moveCards(array_keys($this->decks->getCardsOfTypeInLocation(Decks::FIRST_GAME, null, Factions::ALLIES)), 'hand', Factions::ALLIES);
-			$this->decks->moveCards(array_keys($this->decks->getCardsOfTypeInLocation(Decks::MID, null, Factions::ALLIES)), 'hand', Factions::ALLIES);
+//			$this->decks->moveCards(array_keys($this->decks->getCardsOfTypeInLocation(Decks::MID, null, Factions::ALLIES)), 'hand', Factions::ALLIES);
 			$this->decks->moveCards(array_keys($this->decks->getCardsOfTypeInLocation(Decks::FIRST_GAME, null, Factions::AXIS)), 'hand', Factions::AXIS);
-			$this->decks->moveCards(array_keys($this->decks->getCardsOfTypeInLocation(Decks::MID, null, Factions::AXIS)), 'hand', Factions::AXIS);
+//			$this->decks->moveCards(array_keys($this->decks->getCardsOfTypeInLocation(Decks::MID, null, Factions::AXIS)), 'hand', Factions::AXIS);
 		}
 //
 // At the beginning of the game,
@@ -338,6 +338,10 @@ trait gameStates
 			switch ($action['name'])
 			{
 //
+				case 'discard':
+//
+					if (!($this->decks->countCardInLocation('hand', $FACTION) > 0)) throw new BgaUserException(self::_('No card to discard'));
+//
 				case 'conscription':
 				case 'forcedMarch':
 				case 'desperateAttack':
@@ -426,13 +430,7 @@ trait gameStates
 		$FACTION = Factions::getInActive();
 		$this->gamestate->changeActivePlayer(Factions::getPlayerID($FACTION));
 //
-		if (!self::argAction()['eliminate'])
-		{
-//* -------------------------------------------------------------------------------------------------------- */
-			self::notifyPlayer(Factions::getPlayerID(Factions::getActive()), 'msg', _('Nothing to do'), []);
-			return self::action();
-//* -------------------------------------------------------------------------------------------------------- */
-		}
+		if (!self::argAction()['eliminate']) throw new BgaUserException(self::_('No piece to eliminate'));
 //
 		$this->gamestate->nextState('continue');
 	}

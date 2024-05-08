@@ -260,12 +260,13 @@ trait gameStateArguments
 			{
 				if ($piece['type'] === 'airplane' || $piece['type'] === 'fleet')
 				{
+					{
+						if ($attacker && $piece['player'] === $attackerFACTION && $piece['faction'] === $attackerfaction)
 //
 // Unsupplied attacking airplanes and fleets cannot be used to continue an attack
 //
-					if (in_array($piece['location'], $supplyLines))
-					{
-						if ($attacker && $piece['player'] === $attackerFACTION && $piece['faction'] === $attackerfaction) $attacker[] = +$piece['id'];
+							if (in_array($piece['location'], $supplyLines[$piece['faction']])) $attacker[] = +$piece['id'];
+//
 						if ($defender && $piece['player'] === $defenderFACTION && in_array($piece['faction'], $defenderfactions)) $defender[] = +$piece['id'];
 					}
 				}

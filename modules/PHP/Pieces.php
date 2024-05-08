@@ -109,8 +109,6 @@ class Pieces extends APP_GameClass
 		$ennemies = self::getEnnemyControled($FACTION);
 		$control = Board::getControl($FACTION, true);
 #
-		$supply = Board::getSupplyLines($FACTION);
-#
 		$possibles = [];
 		foreach ($pieces as $piece)
 		{
@@ -128,10 +126,7 @@ class Pieces extends APP_GameClass
 						if (Board::REGIONS[$next_location]['type'] === LAND)
 						{
 							# You may never move a piece to a space occupied by an enemy piece
-							if (!in_array($next_location, $ennemies))
-							{
-								if (in_array($next_location, $supply[$piece['faction']])) $possibles[$piece['id']][] = $next_location;
-							}
+							if (!in_array($next_location, $ennemies)) $possibles[$piece['id']][] = $next_location;
 						}
 					}
 					break;
@@ -146,12 +141,8 @@ class Pieces extends APP_GameClass
 							# You may never move a piece to a space occupied by an enemy piece
 							if (!in_array($next_location, $ennemies))
 							{
-								# You may not move a piece to a space where it would be unsupplied at the moment it moves there
-								if (in_array($next_location, $supply[$piece['faction']]))
-								{
-									# An airplane cannot end its move in a space that you did not control at the beginning of the step
-									if (in_array($next_location, $control)) $possibles[$piece['id']][] = $next_location;
-								}
+								# An airplane cannot end its move in a space that you did not control at the beginning of the step
+								if (in_array($next_location, $control)) $possibles[$piece['id']][] = $next_location;
 							}
 						}
 						# They can move up to 2 spaces
@@ -165,12 +156,8 @@ class Pieces extends APP_GameClass
 									# You may never move a piece to a space occupied by an enemy piece
 									if (!in_array($next_next_location, $ennemies))
 									{
-										# You may not move a piece to a space where it would be unsupplied at the moment it moves there
-										if (in_array($next_next_location, $supply[$piece['faction']]))
-										{
-											# An airplane cannot end its move in a space that you did not control at the beginning of the step
-											if (in_array($next_next_location, $control)) $possibles[$piece['id']][] = $next_next_location;
-										}
+										# An airplane cannot end its move in a space that you did not control at the beginning of the step
+										if (in_array($next_next_location, $control)) $possibles[$piece['id']][] = $next_next_location;
 									}
 								}
 							}
@@ -186,11 +173,7 @@ class Pieces extends APP_GameClass
 						if (Board::REGIONS[$next_location]['type'] === WATER)
 						{
 							# You may never move a piece to a space occupied by an enemy piece
-							if (!in_array($next_location, $ennemies))
-							{
-								# You may not move a piece to a space where it would be unsupplied at the moment it moves there
-								if (in_array($next_location, $supply[$piece['faction']])) $possibles[$piece['id']][] = $next_location;
-							}
+							if (!in_array($next_location, $ennemies)) $possibles[$piece['id']][] = $next_location;
 						}
 					}
 					break;
@@ -204,8 +187,6 @@ class Pieces extends APP_GameClass
 	{
 		$ennemies = self::getEnnemyControled($FACTION);
 		$control = Board::getControl($FACTION);
-#
-		$supply = Board::getSupplyLines($FACTION);
 #
 		$possibles = [];
 		foreach ($pieces as $piece)
@@ -227,11 +208,8 @@ class Pieces extends APP_GameClass
 							# You may never move a piece to a space occupied by an enemy piece
 							if (!in_array($next_location, $ennemies))
 							{
-								if (in_array($next_location, $supply[$piece['faction']]))
-								{
-									# The retreating piece must move to a space you currently control
-									if (in_array($next_location, $control)) $possibles[$piece['id']][] = $next_location;
-								}
+								# The retreating piece must move to a space you currently control
+								if (in_array($next_location, $control)) $possibles[$piece['id']][] = $next_location;
 							}
 						}
 					}

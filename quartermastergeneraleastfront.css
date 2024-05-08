@@ -299,7 +299,7 @@ html {
 	right: 0px;
 	z-index: 1;
 }
-.QGEFcontingencyHolder .QGEFflipButton {
+.QGEFcontingencyHolder>.QGEFcardContainer:not(.QGEFselected) .QGEFflipButton {
 	display: block;
 }
 
