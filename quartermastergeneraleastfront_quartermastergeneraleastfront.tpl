@@ -1,7 +1,7 @@
 {OVERALL_GAME_HEADER}
-<div id='QGEF' style='position:relative;display:flex;flex-direction:row;'>
+<div id='QGEF' style='position:relative;display:flex;flex-direction:row;justify-content:space-evenly;'>
 	<div style='flex:0 0 auto;'>
-		<div id='QGEFcontingency-axis-arrow' class='QGEFdocker' faction='Axis' onclick='{dojo.toggleClass("QGEFcontingency-axis", "dock");gameui.board.resize();}'>🢀</div>
+		<div id='QGEFcontingency-axis-arrow' class='QGEFdocker' faction='Axis'>🢀</div>
 		<div id='QGEFcontingency-axis' class='QGEFcontingencyHolder' faction='Allies'>
 		</div>
 	</div>
@@ -9,9 +9,11 @@
 		<div id='QGEFplayArea' class='QGEFplayArea'>
 			<div style='position:relative;display:flex;flex-direction:row;justify-content:center;'>
 				<div id='QGEFzoom' class='QGEFzoom'>
+					<span id='QGEFsmaller' class='QGEFzoomIcon fa fa-mobile-phone' style='vertical-align:super;padding:0px 5px;'></span>
 					<span id='QGEFzoomMinus' class='QGEFzoomIcon'>🔍</span>
 					<input id='QGEFzoomLevel' type='range' style='vertical-align:middle;'/>
 					<span id='QGEFzoomPlus' class='QGEFzoomIcon'>🔎</span>
+					<span id='QGEFbigger' class='QGEFzoomIcon fa fa-laptop' style='vertical-align:super;padding:0px 5px;'></span>
 				</div>
 			</div>
 			<div id='QGEFscrollArea'>
@@ -68,7 +70,7 @@
 		</div>
 	</div>
 	<div style='flex:0 0 auto;'>
-		<div id='QGEFcontingency-allies-arrow'class='QGEFdocker' faction='Allies' onclick='{dojo.toggleClass("QGEFcontingency-allies", "dock");gameui.board.resize();}'>🢂</div>
+		<div id='QGEFcontingency-allies-arrow'class='QGEFdocker' faction='Allies'>🢂</div>
 		<div id='QGEFcontingency-allies' class='QGEFcontingencyHolder' faction='Allies'>
 		</div>
 	</div>
@@ -91,11 +93,11 @@
 		<div id='QGEFflipButton-${id}' class='QGEFflipButton'>🔄</div>\n\
 		<div class='QGEFfactionName'>${faction}</div>\n\
 		<div class='QGEFtitle'>${title}</div>\n\
-		<div class='QGEFtext'>${text}</div>\n\
+		<div class='QGEFtext' style='font-size:${FONT}%;'>${text}</div>\n\
 		<div id='QGEFcard-back-${id}' class='QGEFcard QGEFback' data-faction='${FACTION}' data-type='${type}'>\n\
 			<div class='QGEFfactionName'>${faction}</div>\n\
 			<div class='QGEFtitle'>${back_title}</div>\n\
-			<div class='QGEFtext'>${back_text}</div>\n\
+			<div class='QGEFtext' style='font-size:${back_FONT}%;'>${back_text}</div>\n\
 		</div>\n\
 	</div>\n\
 </div>";
@@ -104,7 +106,7 @@
 	<div id='QGEFcard-${id}' class='QGEFcard' data-faction='${FACTION}' data-type='${type}'>\n\
 		<div class='QGEFfactionName'>${faction}</div>\n\
 		<div class='QGEFtitle'>${title}</div>\n\
-		<div class='QGEFtext'>${text}</div>\n\
+		<div class='QGEFtext' style='font-size:${FONT}%;'>${text}</div>\n\
 	</div>\n\
 	${reactionSVG}<div class='QGEFreaction'>${reaction}</div>\n\
 </div>";

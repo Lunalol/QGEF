@@ -36,16 +36,29 @@ html {
 }
 /* </editor-fold> */
 /* <editor-fold defaultstate="collapsed" desc="Board"> */
+#QGEFflex {
+	position: relative;
+    display: flex;
+    flex-direction: column;
+	/*    flex: 1 1 auto;*/
+	justify-content: start;
+}
 #QGEFplayArea {
 	z-index: 0;
 }
 #QGEFscrollArea {
-    height: 65vh;
+	margin: auto;
+	/*    max-height: 65vh;*/
+	aspect-ratio: 1;
     overflow: scroll;
 	border-radius: 50px;
 	border: 5px groove white;
 	box-sizing: border-box;
     -webkit-overflow-scrolling: touch;
+}
+.mobile_version #QGEFscrollArea
+{
+    max-height: none;
 }
 #QGEFboard {
     transform-origin: top left;
@@ -67,11 +80,16 @@ html {
 .QGEFzoom {
 	transform-origin: top;
 	transform: scale(2);
+	border-radius: 5px;
+	background: #00000040;
 	z-index: 1;
 }
 .QGEFzoomIcon {
 	background-color: #ffffffc0;
 	border-radius: 50%;
+}
+.QGEFzoomIcon:hover {
+	box-shadow: 0px 0px 2px 2px black;
 }
 .QGEFdocker {
 	font-size: x-large;
@@ -167,8 +185,10 @@ html {
 .QGEFcardContainer {
 	position: relative;
 	margin: 5px;
-	transition: transform 0.25s;
+	transition: transform 0.25s, box-shadow 0.25s;
 	transform-origin: center bottom;
+	border-radius: 5px;
+	font-size: 12px;
 	z-index: 10;
 }
 .QGEFcard {
@@ -199,15 +219,16 @@ html {
 .QGEFcardContainer.QGEFselected
 {
 	transform: scale(1.5) !important;
-	filter: contrast(200%);
-	transition: transform 1s;
+	filter: contrast(150%);
+	box-shadow: 0px 0px 5px 5px;
+	transition: transform 1s, box-shadow 1s;
 	z-index: 50;
 }
 .QGEFcardContainer.QGEFselected.QGEFused
 {
 	transform: scale(1.25) !important;
 	filter: contrast(150%);
-	transition: transform 1s;
+	transition: transform 1s, box-shadow 1s;
 	z-index: 50;
 }
 #QGEFcontingency-axis .QGEFcardContainer {
@@ -220,13 +241,17 @@ html {
 	transform: rotate(5deg);
 	margin-bottom: -75px;
 }
+#QGEFcontingency-axis .QGEFcardContainer.QGEFselected {
+	box-shadow: 0px 0px 5px 5px;
+	border-radius: 5px;
+}
 .QGEFhandHolder .QGEFcardContainer {
 	transform-origin: bottom;
 }
 .QGEFhandHolder>.QGEFcardContainer:hover,.QGEFcontingencyHolder>.QGEFcardContainer:hover
 {
 	transform: scale(1.75) !important;
-	transition: transform 1s;
+	transition: transform 1s, box-shadow 1s;
 	z-index: 100 !important;
 }
 .QGEFhandHolder .QGEFcardContainer:nth-child(even)
@@ -322,8 +347,8 @@ html {
 	position: absolute;
 	top: 155px;
 	padding: 5px 5px 0px 35px;
-	line-height: 12px;
-	font-size: 12px;
+	line-height: 100%;
+	font-size: 100%;
 	font-family: EldonWF;
 	color: white;
 }
@@ -333,23 +358,21 @@ html {
 	font-family: GaramondPremrPro;
 }
 .QGEFtitle {
-	padding: 40px 5px 0px 5px;
+	padding: 40px 10px 0px 10px;
 	color: black;
 	font-size: 14px;
 	font-family: CutrightWF;
-	line-height: 12px;
 	text-align: justify;
 	letter-spacing: -1px;
 	word-spacing: -1px;
 }
 .QGEFtext {
-	padding: 5px 5px 0px 5px;
+	padding: 0px 10px 0px 10px;
 	color: black;
-	font-size: 12px;
 	font-family: GaramondPremrPro;
-	line-height: 12px;
+	line-height: 100%;
 	text-align: justify;
-	word-spacing: -1px;
+	/*	word-spacing: -1px;*/
 }
 /* </editor-fold> */
 /* <editor-fold defaultstate="collapsed" desc="VP Track"> */
@@ -620,15 +643,15 @@ html {
 .QGEFplayer .QGEFpieceContainer.QGEFdisabled{
 	opacity: 50%;
 }
+.QGEFflag {
+	width:25px;
+	vertical-align:middle;
+}
+.QGEFflag:hover {
+	box-shadow: 0px 0px 5px 5px black;
+}
 /* </editor-fold> */
 
-#QGEFflex {
-	position: relative;
-    display: flex;
-    flex-direction: column;
-    flex: 1 1 auto;
-	justify-content: start;
-}
 .gamestate_mulligan #QGEFflex {
 	flex-direction: column-reverse;
 }

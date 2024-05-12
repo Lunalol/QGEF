@@ -195,7 +195,9 @@ define(["dojo", "dojo/_base/declare"], function (dojo, declare)
 //
 			const node = dojo.place(this.card(card), parent);
 			dojo.connect(node, 'click', this, 'click');
-			this.bgagame.addTooltip(node.id, this.cards[card.type_arg].text[0], this.cards[card.type_arg].text[1], 1000);
+			this.bgagame.addTooltip(node.id,
+					'<H2>' + _('Axis card') + '</H2>' + '<B>' + this.cards[card.type_arg].text[0] + '</B>' + '<BR>',
+					this.cards[card.type_arg].text[1], 2000);
 //
 			Array.from(dojo.query('.QGEFcardContainer', parent)).sort((a, b) => {
 				return a.dataset.type_arg - b.dataset.type_arg;
@@ -217,7 +219,7 @@ define(["dojo", "dojo/_base/declare"], function (dojo, declare)
 				faction: this.FACTIONS[this.bgagame.gamedatas.CARDS.axis[card.type_arg].faction],
 				type: this.cards[card.type_arg].type, type_arg: card.type_arg,
 				title: this.cards[card.type_arg].text[0],
-				text: this.cards[card.type_arg].text[1],
+				text: this.cards[card.type_arg].text[1], FONT: 100 - this.cards[card.type_arg].text[1].length / 5,
 				reactionSVG: reactionSVG, reaction: reaction
 			});
 		},
@@ -249,8 +251,8 @@ define(["dojo", "dojo/_base/declare"], function (dojo, declare)
 				if (!dojo.hasClass(node, 'QGEFselected'))
 				{
 					if (dojo.query('.QGEFhandHolder>.QGEFcardContainer.QGEFselectable.QGEFselected').length >= 2) return;
-					if (this.bgagame.gamedatas.gamestate.name !== 'actionStep') dojo.query('.QGEFcardContainer.QGEFselectable..QGEFselected').removeClass('QGEFselected');
-					dojo.query('.QGEFcontingencyHolder>.QGEFcardContainer.QGEFselectable..QGEFselected').removeClass('QGEFselected');
+					if (this.bgagame.gamedatas.gamestate.name !== 'actionStep') dojo.query('.QGEFcardContainer.QGEFselectable.QGEFselected').removeClass('QGEFselected');
+					dojo.query('.QGEFcontingencyHolder>.QGEFcardContainer.QGEFselectable.QGEFselected').removeClass('QGEFselected');
 				}
 				dojo.toggleClass(node, 'QGEFselected');
 //

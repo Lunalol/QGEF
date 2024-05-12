@@ -16,9 +16,9 @@ class Markers extends APP_GameClass
 	{
 		return self::$table->getObjectListFromDB("SELECT * FROM markers ORDER BY type");
 	}
-	static function get(string $type): array
+	static function get(string $type)
 	{
-		return self::$table->getNonEmptyObjectFromDB("SELECT * FROM markers WHERE type = '$type'");
+		return self::$table->getObjectFromDB("SELECT * FROM markers WHERE type = '$type'");
 	}
 	static function getLocation(string $type): string
 	{

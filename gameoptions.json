@@ -50,6 +50,10 @@
 			{
 				"name": "On",
 				"description": "Players with cards labeled \"First Game\" in hand"
+			},
+			{
+				"name": "TEST",
+				"description": "Players with cards labeled \"First Game\" and \"Mid\" in hand"
 			}
 		]
 	}

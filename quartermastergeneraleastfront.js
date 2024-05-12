@@ -826,6 +826,7 @@ define(["dojo", "dojo/_base/declare", "ebg/core/gamegui", "ebg/counter",
 //
 				if ('round' in args) args.round = $(`QGEFround-${args.round}`).outerHTML;
 //
+				if ('you' in args) args.you = `<div class='QGEFfaction' faction='${args.FACTION}'></div><span>&nbsp</span>` + args.you;
 				if ('FACTION' in args) args.FACTION = `<div class='QGEFfaction' faction='${args.FACTION}'></div>`;
 				if ('faction' in args) args.faction = `<img style='width:20px;vertical-align:middle;' src='${g_gamethemeurl}img/flag_${args.faction}.jpg'>`;
 //

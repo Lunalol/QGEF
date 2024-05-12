@@ -15,6 +15,17 @@ define(["dojo", "dojo/_base/declare"], function (dojo, declare)
 //
 			this.bgagame = bgagame;
 //
+			dojo.connect($('QGEFcontingency-allies-arrow'), 'click', (event) => {
+				dojo.stopEvent(event);
+				dojo.toggleClass('QGEFcontingency-allies', 'dock');
+				this.bgagame.board.resize();
+			});
+			dojo.connect($('QGEFcontingency-axis-arrow'), 'click', (event) => {
+				dojo.stopEvent(event);
+				dojo.toggleClass('QGEFcontingency-axis', 'dock');
+				this.bgagame.board.resize();
+			});
+//
 // Translate
 //
 			this.FACTIONS = {sovietUnion: _('Soviet Union'), germany: _('GERMANY'), pact: _('Pact')};
@@ -86,9 +97,9 @@ define(["dojo", "dojo/_base/declare"], function (dojo, declare)
 				faction: this.FACTIONS[this.cards[card.type_arg].faction],
 				type: this.cards[card.type_arg].type, type_arg: card.type_arg,
 				title: this.cards[card.type_arg][INITIAL_SIDE][0],
-				text: this.cards[card.type_arg][INITIAL_SIDE][1],
+				text: this.cards[card.type_arg][INITIAL_SIDE][1], FONT: 100 - this.cards[card.type_arg][INITIAL_SIDE][1].length / 5,
 				back_title: this.cards[card.type_arg][SECOND_SIDE][0],
-				back_text: this.cards[card.type_arg][SECOND_SIDE][1],
+				back_text: this.cards[card.type_arg][SECOND_SIDE][1], back_FONT: 100 - this.cards[card.type_arg][SECOND_SIDE][1].length / 5,
 				side: +card.type,
 				flip: +card.type === SECOND_SIDE ? 'QGEFflip' : ''
 			});
@@ -108,13 +119,13 @@ define(["dojo", "dojo/_base/declare"], function (dojo, declare)
 				dojo.toggleClass(node, 'QGEFlookBack');
 			});
 			this.bgagame.addTooltip(node.id,
+					'<H2>' + _('Contingency card') + '</H2>'
+					+ _('FIRST SIDE: ') + '<B>' + this.cards[card.type_arg][INITIAL_SIDE][0] + '</B><BR>'
+					+ _('SECOND SIDE: ') + '<B>' + this.cards[card.type_arg][SECOND_SIDE][0] + '</B>',
 					'<BR>' + '<BR>'
-					+ _('FIRST SIDE:') + '<B>' + this.cards[card.type_arg][INITIAL_SIDE][0] + '</B><BR>'
-					+ _('SECOND SIDE:') + '<B>' + this.cards[card.type_arg][SECOND_SIDE][0] + '</B>',
-					'<BR>' + '<BR>'
-					+ _('FIRST SIDE:') + this.cards[card.type_arg][INITIAL_SIDE][1] + '<BR>'
-					+ _('SECOND SIDE:') + this.cards[card.type_arg][SECOND_SIDE][1],
-					1000);
+					+ _('FIRST SIDE: ') + this.cards[card.type_arg][INITIAL_SIDE][1] + '<BR>'
+					+ _('SECOND SIDE: ') + this.cards[card.type_arg][SECOND_SIDE][1],
+					2000);
 //
 			Array.from(dojo.query('.QGEFcardContainer', parent)).sort((a, b) => {
 				return a.dataset.type_arg - b.dataset.type_arg;

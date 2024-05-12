@@ -47,12 +47,17 @@ trait gameStates
 //
 // However, if this is your first game, you may want to select the 7 cards labeled “First Game” instead, and shuffle the rest.
 //
-		if (self::getGameStateValue('firstGame'))
+		if (self::getGameStateValue('firstGame') == 1)
 		{
 			$this->decks->moveCards(array_keys($this->decks->getCardsOfTypeInLocation(Decks::FIRST_GAME, null, Factions::ALLIES)), 'hand', Factions::ALLIES);
-//			$this->decks->moveCards(array_keys($this->decks->getCardsOfTypeInLocation(Decks::MID, null, Factions::ALLIES)), 'hand', Factions::ALLIES);
 			$this->decks->moveCards(array_keys($this->decks->getCardsOfTypeInLocation(Decks::FIRST_GAME, null, Factions::AXIS)), 'hand', Factions::AXIS);
-//			$this->decks->moveCards(array_keys($this->decks->getCardsOfTypeInLocation(Decks::MID, null, Factions::AXIS)), 'hand', Factions::AXIS);
+		}
+		if (self::getGameStateValue('firstGame') == 2)
+		{
+			$this->decks->moveCards(array_keys($this->decks->getCardsOfTypeInLocation(Decks::FIRST_GAME, null, Factions::ALLIES)), 'hand', Factions::ALLIES);
+			$this->decks->moveCards(array_keys($this->decks->getCardsOfTypeInLocation(Decks::MID, null, Factions::ALLIES)), 'hand', Factions::ALLIES);
+			$this->decks->moveCards(array_keys($this->decks->getCardsOfTypeInLocation(Decks::FIRST_GAME, null, Factions::AXIS)), 'hand', Factions::AXIS);
+			$this->decks->moveCards(array_keys($this->decks->getCardsOfTypeInLocation(Decks::MID, null, Factions::AXIS)), 'hand', Factions::AXIS);
 		}
 //
 // At the beginning of the game,
@@ -236,7 +241,6 @@ trait gameStates
 //* -------------------------------------------------------------------------------------------------------- */
 //
 // + Late Cards
-//
 // TODO
 //
 // Scoring
@@ -256,7 +260,6 @@ trait gameStates
 					if ($scorchedEarth && $scorchedEarth['location'] === $location) continue;
 					if (array_key_exists('VP', Board::REGIONS[$location])) $VP += Board::REGIONS[$location]['VP'];
 				}
-
 //
 				for ($i = 0; $i < $VP; $i++)
 				{

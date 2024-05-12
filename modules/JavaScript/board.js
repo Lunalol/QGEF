@@ -47,9 +47,35 @@ define(["dojo", "dojo/_base/declare"], function (dojo, declare)
 //
 			dojo.connect(this.playarea, 'scroll', this, 'scroll');
 			dojo.connect(this.playarea, 'wheel', this, 'wheel');
-			dojo.connect(this.zoomLevel, 'oninput', this, () => this.setZoom(Math.pow(10., event.target.value / 100), this.playarea.clientWidth / 2, this.playarea.clientHeight / 2));
-			dojo.connect(dojo.byId('QGEFzoomMinus'), 'onclick', () => this.setZoom(Math.pow(10., (parseInt(this.zoomLevel.value) - 10) / 100), this.playarea.clientWidth / 2, this.playarea.clientHeight / 2));
-			dojo.connect(dojo.byId('QGEFzoomPlus'), 'onclick', () => this.setZoom(Math.pow(10., (parseInt(this.zoomLevel.value) + 10) / 100), this.playarea.clientWidth / 2, this.playarea.clientHeight / 2));
+			dojo.connect(this.zoomLevel, 'oninput', this, () => {
+				dojo.stopEvent(event);
+				this.setZoom(Math.pow(10., event.target.value / 100), this.playarea.clientWidth / 2, this.playarea.clientHeight / 2);
+			});
+			dojo.connect(dojo.byId('QGEFzoomMinus'), 'click', () => {
+				dojo.stopEvent(event);
+				this.setZoom(Math.pow(10., (parseInt(this.zoomLevel.value) - 10) / 100), this.playarea.clientWidth / 2, this.playarea.clientHeight / 2);
+			});
+			dojo.connect(dojo.byId('QGEFzoomPlus'), 'click', () => {
+				dojo.stopEvent(event);
+				this.setZoom(Math.pow(10., (parseInt(this.zoomLevel.value) + 10) / 100), this.playarea.clientWidth / 2, this.playarea.clientHeight / 2);
+			});
+//
+			this.ratio = parseFloat(localStorage.getItem(`${this.bgagame.game_id}.ratio`));
+			if (isNaN(this.ratio)) this.ratio = 1;
+			dojo.style('QGEFscrollArea', 'aspect-ratio', `${this.ratio}`);
+//
+			dojo.connect(dojo.byId('QGEFsmaller'), 'click', (event) => {
+				dojo.stopEvent(event);
+				localStorage.setItem(`${this.bgagame.game_id}.ratio`, this.ratio = this.ratio = Math.min(Math.max(.5, this.ratio - .1), 2));
+				dojo.style('QGEFscrollArea', 'aspect-ratio', `${this.ratio}`);
+				this.resize();
+			});
+			dojo.connect(dojo.byId('QGEFbigger'), 'click', (event) => {
+				dojo.stopEvent(event);
+				localStorage.setItem(`${this.bgagame.game_id}.ratio`, this.ratio = this.ratio = Math.min(Math.max(.5, this.ratio + .1), 2));
+				dojo.style('QGEFscrollArea', 'aspect-ratio', `${this.ratio}`);
+				this.resize();
+			});
 //
 			dojo.connect(this.playarea, 'gesturestart', this, () => this.zooming = this.board.scale);
 			dojo.connect(this.playarea, 'gestureend', this, () => this.zooming = null);
@@ -130,7 +156,7 @@ define(["dojo", "dojo/_base/declare"], function (dojo, declare)
 		},
 		wheel: function (event)
 		{
-			if (event.ctrlKey)
+			if (event.ctrlKey /*|| true*/)
 			{
 //
 // Ctrl + Wheel
@@ -259,7 +285,6 @@ define(["dojo", "dojo/_base/declare"], function (dojo, declare)
 				{
 					if (this.bgagame.gamedatas.ADJACENCY[lines[from]].includes(lines[to]))
 					{
-						console.log(from, to);
 						ctx.beginPath();
 						ctx.moveTo(REGIONS[lines[from]].x, REGIONS[lines[from]].y);
 						ctx.lineTo(REGIONS[lines[to]].x, REGIONS[lines[to]].y);
@@ -269,7 +294,6 @@ define(["dojo", "dojo/_base/declare"], function (dojo, declare)
 			}
 //
 			ctx.restore();
-
 		}
 	}
 	);

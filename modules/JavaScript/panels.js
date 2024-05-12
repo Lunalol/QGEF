@@ -34,7 +34,8 @@ define(["dojo", "dojo/_base/declare"], function (dojo, declare)
 			for (let faction of factions)
 			{
 				const container = dojo.place(`<div id='QGEFplayer-${FACTION}-${faction}' class='QGEFplayer' style='display:grid;grid-template-columns: 30px repeat(4, 40px);'></div>`, player);
-				const flag = dojo.place(`<img style='width:25px;' src='${g_gamethemeurl}img/flag_${faction}.jpg'>`, container);
+				const flag = dojo.place(`<image class='QGEFflag' id='QGEF-flsag-${faction}' src='${g_gamethemeurl}img/flag_${faction}.jpg' >`, container);
+				this.bgagame.addTooltipHtml(flag.id, dojo.string.substitute(_('Click to display ${FLAG} supply lines'), {FLAG: flag.outerHTML}), 1000);
 //
 				dojo.connect(flag, 'click', () => this.bgagame.board.supplyLines(this.bgagame.gamedatas.factions[FACTION].supply[faction], '#ffffff40'));
 //
