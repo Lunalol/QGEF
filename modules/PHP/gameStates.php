@@ -54,10 +54,13 @@ trait gameStates
 		}
 		if (self::getGameStateValue('firstGame') == 2)
 		{
-			$this->decks->moveCards(array_keys($this->decks->getCardsOfTypeInLocation(Decks::FIRST_GAME, null, Factions::ALLIES)), 'hand', Factions::ALLIES);
 			$this->decks->moveCards(array_keys($this->decks->getCardsOfTypeInLocation(Decks::MID, null, Factions::ALLIES)), 'hand', Factions::ALLIES);
-			$this->decks->moveCards(array_keys($this->decks->getCardsOfTypeInLocation(Decks::FIRST_GAME, null, Factions::AXIS)), 'hand', Factions::AXIS);
 			$this->decks->moveCards(array_keys($this->decks->getCardsOfTypeInLocation(Decks::MID, null, Factions::AXIS)), 'hand', Factions::AXIS);
+		}
+		if (self::getGameStateValue('firstGame') == 3)
+		{
+			$this->decks->moveCards(array_keys($this->decks->getCardsOfTypeInLocation(Decks::LATE, null, 'aside', Factions::ALLIES)), 'hand', Factions::ALLIES);
+			$this->decks->moveCards(array_keys($this->decks->getCardsOfTypeInLocation(Decks::LATE, null, 'aside', Factions::AXIS)), 'hand', Factions::AXIS);
 		}
 //
 // At the beginning of the game,
@@ -240,9 +243,6 @@ trait gameStates
 		self::notifyAllPlayers('msg', '<span class="QGEF-phase">${round}${LOG}</span>', ['i18n' => ['LOG'], 'LOG' => clienttranslate('End of round'), 'round' => $round]);
 //* -------------------------------------------------------------------------------------------------------- */
 //
-// + Late Cards
-// TODO
-//
 // Scoring
 //
 		if (in_array($round, [3, 7, 11, 16]))
@@ -274,6 +274,21 @@ trait gameStates
 //* -------------------------------------------------------------------------------------------------------- */
 			}
 			if (abs(Factions::getVP('allies') - Factions::getVP('axis')) >= 10) return $this->gamestate->nextState('endOfGame');
+		}
+//
+// + Late Cards
+//
+		if ($round === 3)
+		{
+			$steps = [3 => 4][$round];
+//* -------------------------------------------------------------------------------------------------------- */
+			self::notifyAllPlayers('updateRound', '<span class="QGEF-phase">${LOG}</span>', ['i18n' => ['LOG'], 'LOG' => clienttranslate('Late cards'), 'steps' => $steps]);
+//* -------------------------------------------------------------------------------------------------------- */
+			$this->decks->moveCards(array_keys($this->decks->getCardsOfTypeInLocation(Decks::LATE, null, 'aside', Factions::ALLIES)), Factions::ALLIES);
+			$this->decks->moveCards(array_keys($this->decks->getCardsOfTypeInLocation(Decks::LATE, null, 'aside', Factions::AXIS)), Factions::AXIS);
+//
+			$this->decks->shuffle(Factions::ALLIES);
+			$this->decks->shuffle(Factions::AXIS);
 		}
 //
 		Factions::setActivation();
@@ -345,12 +360,19 @@ trait gameStates
 //
 					if (!($this->decks->countCardInLocation('hand', $FACTION) > 0)) throw new BgaUserException(self::_('No card to discard'));
 //
+				case 'move/attack':
+//
+					if (array_key_exists('requirement', $action) && $action['requirement'] === 'noSprintTurn' && intval(self::getGameStateValue('round')) % 4 !== 0)
+					{
+						self::action();
+						break;
+					}
+//
 				case 'conscription':
 				case 'forcedMarch':
 				case 'desperateAttack':
 				case 'deploy':
 				case 'recruit':
-				case 'move/attack':
 				case 'move':
 				case 'attack':
 				case 'eliminate':

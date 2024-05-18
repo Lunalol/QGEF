@@ -38,6 +38,12 @@ class action_quartermastergeneraleastfront extends APP_GameAction
 		$this->game->acCancel(self::getArg("FACTION", AT_alphanum, true));
 		self::ajaxResponse("");
 	}
+	public function remove()
+	{
+		self::setAjaxMode();
+		$this->game->acRemove(self::getArg("FACTION", AT_alphanum, true), self::getArg("piece", AT_int, true));
+		self::ajaxResponse("");
+	}
 	public function discard()
 	{
 		self::setAjaxMode();

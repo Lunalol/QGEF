@@ -57,7 +57,6 @@ class Decks extends APP_GameClass
 					['name' => 'attack', 'containing' => true]
 				]
 			],
-//TODO//
 			15 => ['faction' => Factions::GERMANY, 'reaction' => 'Advance',
 				self::MID => [
 					['name' => 'attack', 'types' => [Pieces::INFANTRY, Pieces::TANK], 'factions' => [Factions::GERMANY],
@@ -71,7 +70,6 @@ class Decks extends APP_GameClass
 					['name' => 'move', 'types' => [Pieces::INFANTRY], 'factions' => [Factions::GERMANY], 'different' => true]
 				]
 			],
-//TODO//
 			17 => ['faction' => Factions::GERMANY, 'reaction' => 'Advance', 'requirement' => 'noSpringTurn',
 				self::MID => [
 					['name' => 'move', 'types' => [Pieces::TANK], 'factions' => [Factions::GERMANY]],
@@ -103,7 +101,6 @@ class Decks extends APP_GameClass
 					['name' => 'deploy', 'types' => [Pieces::AIRPLANE], 'factions' => [Factions::GERMANY], 'locations' => Board::W1941, 'different' => true],
 				]
 			],
-//TODO//
 			22 => ['faction' => Factions::GERMANY, 'reaction' => 'Advance', 'requirement' => 'noSpringTurn',
 				self::MID => [
 					['name' => 'move', 'types' => [Pieces::TANK], 'factions' => [Factions::GERMANY]],
@@ -173,7 +170,60 @@ class Decks extends APP_GameClass
 					['name' => 'action']
 				]
 			],
-//
+			49 => ['faction' => Factions::GERMANY, 'reaction' => 'Advance',
+				self::LATE => [
+					['name' => 'deploy', 'types' => [Pieces::TANK], 'factions' => [Factions::GERMANY], 'locations' => Board::ALL],
+					['name' => 'move/attack', 'containing' => true, 'requirement' => 'noSpringTurn']
+				]
+			],
+			50 => ['faction' => Factions::GERMANY, 'reaction' => 'SustainAttack',
+				self::LATE => [
+					['name' => 'deploy', 'types' => [Pieces::INFANTRY, Pieces::TANK, Pieces::AIRPLANE], 'factions' => [Factions::GERMANY], 'locations' => Board::E1939, 'mandatory' => true],
+					['name' => 'move/attack', 'containing' => true]
+				]
+			],
+			51 => ['faction' => Factions::GERMANY, 'reaction' => 'Retreat',
+				self::LATE => [
+				]
+			],
+			52 => ['faction' => Factions::GERMANY, 'reaction' => 'NavalCombat',
+				self::LATE => [
+					['name' => 'eliminate', 'types' => [Pieces::FLEET], 'factions' => [Factions::SOVIETUNION], 'locations' => [], 'adjacent' => [Pieces::AIRPLANE, Pieces::FLEET]]
+				]
+			],
+			53 => ['faction' => Factions::GERMANY, 'reaction' => 'NavalCombat',
+				self::LATE => [
+				]
+			],
+			54 => ['faction' => Factions::GERMANY, 'reaction' => 'SustainAttack',
+				self::LATE => [
+				]
+			],
+			55 => ['faction' => Factions::GERMANY, 'reaction' => 'AntiAir',
+				self::LATE => [
+					['name' => 'deploy', 'types' => [Pieces::AIRPLANE], 'factions' => [Factions::GERMANY], 'locations' => Board::ALL],
+					['name' => 'action']
+				]
+			],
+			56 => ['faction' => Factions::GERMANY, 'reaction' => 'Retreat',
+				self::LATE => [
+					['name' => 'eliminate', 'types' => [Pieces::INFANTRY], 'factions' => [Factions::GERMANY], 'locations' => Board::ALL, 'mandatory' => true],
+					['name' => 'deploy', 'types' => [Pieces::TANK], 'factions' => [Factions::GERMANY], 'locations' => Board::ALL, 'same' => true],
+					['name' => 'action']
+				]
+			],
+			57 => ['faction' => Factions::GERMANY, 'reaction' => 'StandFast',
+				self::LATE => [
+					['name' => 'deploy', 'types' => [Pieces::INFANTRY], 'factions' => [Factions::GERMANY], 'locations' => [BERLIN]],
+					['name' => 'deploy', 'types' => [Pieces::INFANTRY], 'factions' => [Factions::GERMANY], 'locations' => [VIENNA]]
+				]
+			],
+			58 => ['faction' => Factions::GERMANY, 'reaction' => 'SustainAttack',
+				self::LATE => [
+					['name' => 'attack', 'factions' => [Factions::GERMANY], 'locations' => Board::ALL, 'contain' => [Pieces::TANK]],
+					['name' => 'action']
+				]
+			],
 			101 => ['faction' => Factions::GERMANY,
 				self::INITIAL_SIDE => [
 					['name' => 'deploy', 'types' => [Pieces::TANK, Pieces::AIRPLANE], 'factions' => [Factions::GERMANY], 'locations' => Board::SUPPLY[Factions::GERMANY]],
@@ -220,6 +270,7 @@ class Decks extends APP_GameClass
 					['name' => 'deploy', 'types' => [Pieces::INFANTRY], 'factions' => [Factions::PACT], 'locations' => Board::SUPPLY[Factions::PACT]],
 				],
 			]],
+//
 		Factions::ALLIES => [
 			8 => ['faction' => Factions::SOVIETUNION, 'reaction' => 'Advance',
 				self::FIRST_GAME => [
@@ -411,26 +462,18 @@ class Decks extends APP_GameClass
 //
 // ➤ 51 Soviet Union cards
 //
-		for ($index = 8;
-			$index <= 14;
-			$index++) $alliesDECK[] = ['type' => self::FIRST_GAME, 'type_arg' => $index, 'nbr' => 1];
-		for ($index = 34;
-			$index <= 48;
-			$index++) $alliesDECK[] = ['type' => self::MID, 'type_arg' => $index, 'nbr' => 1];
+		for ($index = 8; $index <= 14; $index++) $alliesDECK[] = ['type' => self::FIRST_GAME, 'type_arg' => $index, 'nbr' => 1];
+		for ($index = 34; $index <= 48; $index++) $alliesDECK[] = ['type' => self::MID, 'type_arg' => $index, 'nbr' => 1];
 		$decks->createCards($alliesDECK, Factions::ALLIES);
 //
 		$ASIDE = [];
-		for ($index = 72;
-			$index <= 100;
-			$index++) $ASIDE[] = ['type' => self::LATE, 'type_arg' => $index, 'nbr' => 1];
+		for ($index = 72; $index <= 100; $index++) $ASIDE[] = ['type' => self::LATE, 'type_arg' => $index, 'nbr' => 1];
 		$decks->createCards($ASIDE, 'aside', Factions::ALLIES);
 //
 // ➤ 5 Soviet Union Contingency cards
 //
 		$CONTINGENCY = [];
-		for ($index = 106;
-			$index <= 110;
-			$index++) $CONTINGENCY[] = ['type' => self::INITIAL_SIDE, 'type_arg' => $index, 'nbr' => 1];
+		for ($index = 106; $index <= 110; $index++) $CONTINGENCY[] = ['type' => self::INITIAL_SIDE, 'type_arg' => $index, 'nbr' => 1];
 		$decks->createCards($CONTINGENCY, 'contingency', Factions::ALLIES);
 	}
 	static function setupAxis($decks)
@@ -439,26 +482,18 @@ class Decks extends APP_GameClass
 // ➤ 49 Axis cards (31 Germany, 18 Pact)
 //
 		$axisDECK = [];
-		for ($index = 1;
-			$index <= 7;
-			$index++) $axisDECK[] = ['type' => self::FIRST_GAME, 'type_arg' => $index, 'nbr' => 1];
-		for ($index = 15;
-			$index <= 33;
-			$index++) $axisDECK[] = ['type' => self::MID, 'type_arg' => $index, 'nbr' => 1];
+		for ($index = 1; $index <= 7; $index++) $axisDECK[] = ['type' => self::FIRST_GAME, 'type_arg' => $index, 'nbr' => 1];
+		for ($index = 15; $index <= 33; $index++) $axisDECK[] = ['type' => self::MID, 'type_arg' => $index, 'nbr' => 1];
 		$decks->createCards($axisDECK, Factions::AXIS);
 //
 		$ASIDE = [];
-		for ($index = 49;
-			$index <= 71;
-			$index++) $ASIDE[] = ['type' => self::LATE, 'type_arg' => $index, 'nbr' => 1];
+		for ($index = 49; $index <= 71; $index++) $ASIDE[] = ['type' => self::LATE, 'type_arg' => $index, 'nbr' => 1];
 		$decks->createCards($ASIDE, 'aside', Factions::AXIS);
 //
 // ➤ 5 Axis Contingency cards (3 Germany, 2 Pact)
 //
 		$CONTINGENCY = [];
-		for ($index = 101;
-			$index <= 105;
-			$index++) $CONTINGENCY[] = ['type' => self::INITIAL_SIDE, 'type_arg' => $index, 'nbr' => 1];
+		for ($index = 101; $index <= 105; $index++) $CONTINGENCY[] = ['type' => self::INITIAL_SIDE, 'type_arg' => $index, 'nbr' => 1];
 		$decks->createCards($CONTINGENCY, 'contingency', Factions::AXIS,);
 //
 	}
@@ -472,10 +507,24 @@ class Decks extends APP_GameClass
 			case 19: // Defending infantry
 				foreach ($pieces as $piece) if (Pieces::get($piece)['type'] === 'infantry') return true;
 				return false;
-			case 35:
+			case 35: // Leningrad
 				return $location === LENINGRAD;
-			case 42:
+			case 42: // Sevastopol
 				return $location === SEVASTOPOL;
+			case 57: // In or adjacent to Berlin
+				return in_array($location, [BERLIN, VIENNA, HUNGARY, WARSAW, WESTBALTICSEA]);
+			case 59: // Defending tank
+				foreach ($pieces as $piece) if (Pieces::get($piece)['type'] === 'tank') return true;
+				return false;
+			case 68: // Finland or Karelia
+				return in_array($location, [FINLAND, KARELIA]);
+			case 79: // Moscow
+				return $location === MOSCOW;
+			case 35: // Stalingrad
+				return $location === STALINGRAD;
+			case 96: // Defending tank
+				foreach ($pieces as $piece) if (Pieces::get($piece)['type'] === 'tank') return true;
+				return false;
 			default:
 				return false;
 		}

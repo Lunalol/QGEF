@@ -120,11 +120,11 @@ define(["dojo", "dojo/_base/declare"], function (dojo, declare)
 			});
 			this.bgagame.addTooltip(node.id,
 					'<H2>' + _('Contingency card') + '</H2>'
-					+ _('FIRST SIDE: ') + '<B>' + this.cards[card.type_arg][INITIAL_SIDE][0] + '</B><BR>'
-					+ _('SECOND SIDE: ') + '<B>' + this.cards[card.type_arg][SECOND_SIDE][0] + '</B>',
+					+ _('FIRST SIDE: ') + '<B>' + _(this.cards[card.type_arg][INITIAL_SIDE][0]) + '</B><BR>'
+					+ _('SECOND SIDE: ') + '<B>' + _(this.cards[card.type_arg][SECOND_SIDE][0]) + '</B>',
 					'<BR>' + '<BR>'
-					+ _('FIRST SIDE: ') + this.cards[card.type_arg][INITIAL_SIDE][1] + '<BR>'
-					+ _('SECOND SIDE: ') + this.cards[card.type_arg][SECOND_SIDE][1],
+					+ _('FIRST SIDE: ') + _(this.cards[card.type_arg][INITIAL_SIDE][1]) + '<BR>'
+					+ _('SECOND SIDE: ') + _(this.cards[card.type_arg][SECOND_SIDE][1]),
 					2000);
 //
 			Array.from(dojo.query('.QGEFcardContainer', parent)).sort((a, b) => {

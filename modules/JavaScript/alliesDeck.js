@@ -168,13 +168,15 @@ define(["dojo", "dojo/_base/declare"], function (dojo, declare)
 		},
 		place: function (card, location = 'QGEFhand-allies')
 		{
+			if (!(card.type_arg in this.bgagame.gamedatas.CARDS.allies)) return null;
+//
 			const parent = $(location);
 //
 			const node = dojo.place(this.card(card), parent);
 			dojo.connect(node, 'click', this, 'click');
 			this.bgagame.addTooltip(node.id,
-					'<H2>' + _('Allies card') + '</H2>' + '<B>' + this.cards[card.type_arg].text[0] + '</B>' + '<BR>',
-					this.cards[card.type_arg].text[1], 2000);
+					'<H2>' + _('Allies card') + '</H2>' + '<B>' + _(this.cards[card.type_arg].text[0]) + '</B>' + '<BR>',
+					_(this.cards[card.type_arg].text[1]), 2000);
 //
 			Array.from(dojo.query('.QGEFcardContainer', parent)).sort((a, b) => {
 				return a.dataset.type_arg - b.dataset.type_arg;

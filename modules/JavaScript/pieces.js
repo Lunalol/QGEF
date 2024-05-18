@@ -20,7 +20,7 @@ define(["dojo", "dojo/_base/declare"], function (dojo, declare)
 			let node = $(`QGEFpiece-${piece.id}`);
 			if (!node)
 			{
-				node = dojo.place(`<div id='QGEFpiece-${piece.id}' class='QGEFpiece' data-id='${piece.id}' data-faction='${piece.faction}' data-type='${piece.type}' data-location='${piece.location}'></div>`, this.board);
+				node = dojo.place(`<div id='QGEFpiece-${piece.id}' class='QGEFpiece' data-id='${piece.id}' data-player='${piece.player}' data-faction='${piece.faction}' data-type='${piece.type}' data-location='${piece.location}'></div>`, this.board);
 				dojo.connect(node, 'click', this, 'click');
 			}
 			else location = +node.dataset.location;
@@ -59,6 +59,7 @@ define(["dojo", "dojo/_base/declare"], function (dojo, declare)
 			{
 				dojo.stopEvent(event);
 //
+				if (this.bgagame.gamedatas.gamestate.name === 'remove') return this.bgagame.QGEFremove(node.dataset.id);
 				if (this.bgagame.gamedatas.gamestate.possibleactions.includes('removePiece')) return this.bgagame.QGEFreaction(node.dataset.id);
 				if (this.bgagame.gamedatas.gamestate.possibleactions.includes('reaction')) return this.bgagame.QGEFreaction(node.dataset.id);
 //

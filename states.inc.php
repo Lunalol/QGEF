@@ -65,7 +65,7 @@ $machinestates = [
 		'descriptionmyturn' => clienttranslate('${you} may move all of your pieces'),
 		'type' => 'activeplayer',
 		'args' => 'argMovementStep',
-		'possibleactions' => ['cancel', 'move', 'pass'],
+		'possibleactions' => ['cancel', 'remove', 'move', 'pass'],
 		'transitions' => ['cancel' => 115, 'continue' => 115, 'next' => 120]
 	],
 	120 => [
@@ -97,8 +97,8 @@ $machinestates = [
 		'descriptionmyturn' => clienttranslate('${you} are doing an action'),
 		'type' => 'activeplayer',
 		'args' => 'argAction',
-		'possibleactions' => ['scorched', 'deploy', 'recruit', 'move', 'attack', 'removePiece', 'discard', 'pass', 'cancel'],
-		'transitions' => ['action' => 130, 'cancel' => 130, 'attack' => 200, 'next' => 120]
+		'possibleactions' => ['remove', 'scorched', 'deploy', 'recruit', 'remove', 'move', 'attack', 'removePiece', 'discard', 'pass', 'cancel'],
+		'transitions' => ['continue' => 135, 'action' => 130, 'cancel' => 130, 'attack' => 200, 'next' => 120]
 	],
 	140 => [
 		'name' => '_secondMovementStep',
@@ -113,7 +113,7 @@ $machinestates = [
 		'descriptionmyturn' => clienttranslate('${you} may move your tanks and fleets'),
 		'type' => 'activeplayer',
 		'args' => 'argMovementStep',
-		'possibleactions' => ['cancel', 'move', 'pass'],
+		'possibleactions' => ['cancel', 'remove', 'move', 'pass'],
 		'transitions' => ['cancel' => 145, 'continue' => 145, 'next' => 150]
 	],
 	150 => [

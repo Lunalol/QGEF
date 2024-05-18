@@ -1,22 +1,31 @@
 {
 	"100": {
 		"name": "\u2694 DUEL mode \u2694",
-		"values": [
-			{
-				"name": "Off"
-			},
-			{
-				"name": "On",
-				"description": "Players play the game twice, swapping factions",
-				"tmdisplay": "\u2694 DUEL mode ON \u2694"
-			}
-		],
+		"values": {
+			"0":
+					{
+						"name": "Off"
+					},
+			"1":
+					{
+						"name": "On",
+						"description": "Players play the game twice, swapping factions",
+						"tmdisplay": "\u2694 DUEL mode ON \u2694"
+					}
+		},
 		"displaycondition": [
 			{
 				"type": "maxplayers",
 				"value": 2
 			}
 		],
+		"startcondition": {
+			"1": [{
+					"type": "maxplayers",
+					"value": 0,
+					"message": "NOT IMPLEMENTED"
+				}]
+		},
 		"notdisplayedmessage": "Duel mode option is only available for a two players game"
 	},
 	"101": {
@@ -52,8 +61,12 @@
 				"description": "Players with cards labeled \"First Game\" in hand"
 			},
 			{
-				"name": "TEST",
-				"description": "Players with cards labeled \"First Game\" and \"Mid\" in hand"
+				"name": "TEST - MID",
+				"description": "Players with cards \"Mid\" in hand"
+			},
+			{
+				"name": "TEST - LATE",
+				"description": "Players with cards \"Late\" in hand"
 			}
 		]
 	}

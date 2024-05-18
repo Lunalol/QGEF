@@ -273,6 +273,32 @@ trait gameStateActions
 //
 		self::action();
 	}
+	function acRemove(string $FACTION, int $id): void
+	{
+//
+// Check Remove
+//
+		$this->checkAction('remove');
+		if ($FACTION !== Factions::getActive()) throw new BgaVisibleSystemException("Invalid FACTION: $FACTION");
+//
+		$piece = Pieces::get($id);
+		if (!$piece) throw new BgaVisibleSystemException("Invalid piece: $id");
+		if ($piece['player'] !== $FACTION) throw new BgaVisibleSystemException("Invalid FACTION: $piece[player]");
+//
+		Pieces::destroy($id);
+//* -------------------------------------------------------------------------------------------------------- */
+		self::notifyAllPlayers('removePiece', clienttranslate('${faction} <B>${type}</B> is removed at <B>${location}</B>'), [
+			'faction' => $piece['faction'], 'type' => $this->PIECES[$piece['type']],
+			'location' => $this->REGIONS[$piece['location']], 'i18n' => ['type', 'location'],
+			'piece' => $piece]);
+//* -------------------------------------------------------------------------------------------------------- */
+		Actions::add('undo', ['name' => 'remove', 'piece' => $piece]);
+//* -------------------------------------------------------------------------------------------------------- */
+		self::notifyAllPlayers('updateSupply', '', [Factions::ALLIES => Board::getSupplyLines(Factions::ALLIES), Factions::AXIS => Board::getSupplyLines(Factions::AXIS)]);
+//* -------------------------------------------------------------------------------------------------------- */
+//
+		$this->gamestate->nextState('continue');
+	}
 	function acDeploy(string $FACTION, string $location, string $faction, string $type): void
 	{
 //

@@ -183,21 +183,83 @@ define(["dojo", "dojo/_base/declare"], function (dojo, declare)
 					text: [
 						_('Armata Italiana in Russia'),
 						_('Deploy a Pact infantry east of the 1941 line; then take another action.')]
-				}
+				},
 //
 // Late game (49-71)
 //
+				49: {
+					type: 'tank',
+					text: [
+						_('Panzer V “Panther”'),
+						_('Deploy a German tank in any Axis-controlled space; then, if it is not a Spring turn, move that tank or attack with a force containing that tank.')]
+				},
+				50: {
+					type: 'ground',
+					text: [
+						_('Case Blue'),
+						_('Deploy a German piece on a land space east of the 1939 line; then you may attack with a force from that space.')]
+				},
+				51: {
+					type: 'ground',
+					text: [
+						_('Kuban Bridgehead'),
+						_('If you control Sevastopol, recruit a German infantry in Caucasus. That infantry is supplied until the start of your next turn.')]
+				},
+				52: {
+					type: 'sea',
+					text: [
+						_('Naval Air Raid'),
+						_('Eliminate an Allies fleet adjacent to a German fleet or airplane.')]
+				},
+				53: {
+					type: 'air',
+					text: [
+						_('Convoy Interdiction'),
+						_('May only be played if a German airplane is in or adjacent to Finland. Gain 1 VP; the Allies must eliminate a Soviet piece in or adjacent to Vologda, if possible.')]
+				},
+				54: {
+					type: 'ground',
+					text: [
+						_('Railway Gun'),
+						_('Deploy a German infantry in a space that was Axis-controlled at the beginning of the turn; then attack into a Victory Star space with a force containing that infantry.')]
+				},
+				55: {
+					type: 'air',
+					text: [
+						_('Airfield Repairs'),
+						_('Deploy a German airplane on a space you control; then take another action.')]
+				},
+				56: {
+					type: 'ground',
+					text: [
+						_('Refits'),
+						_('Eliminate a German infantry and deploy a German tank in the same space; then take another action.')]
+				},
+				57: {
+					type: 'ground', reaction: _('In or adjacent to Berlin'),
+					text: [
+						_('Security Troops'),
+						_('Deploy a German infantry in each of Berlin and Vienna.')]
+				},
+				58: {
+					type: 'tank',
+					text: [
+						_('Hummel Self-Propelled Gun'),
+						_('Attack with a German force containing a tank; then take another action.')]
+				}
 			};
 		},
 		place: function (card, location = 'QGEFhand-axis')
 		{
+			if (!(card.type_arg in this.bgagame.gamedatas.CARDS.axis)) return null;
+//
 			const parent = $(location);
 //
 			const node = dojo.place(this.card(card), parent);
 			dojo.connect(node, 'click', this, 'click');
 			this.bgagame.addTooltip(node.id,
-					'<H2>' + _('Axis card') + '</H2>' + '<B>' + this.cards[card.type_arg].text[0] + '</B>' + '<BR>',
-					this.cards[card.type_arg].text[1], 2000);
+					'<H2>' + _('Axis card') + '</H2>' + '<B>' + _(this.cards[card.type_arg].text[0]) + '</B>' + '<BR>',
+					_(this.cards[card.type_arg].text[1]), 2000);
 //
 			Array.from(dojo.query('.QGEFcardContainer', parent)).sort((a, b) => {
 				return a.dataset.type_arg - b.dataset.type_arg;
