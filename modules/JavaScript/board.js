@@ -66,13 +66,13 @@ define(["dojo", "dojo/_base/declare"], function (dojo, declare)
 //
 			dojo.connect(dojo.byId('QGEFsmaller'), 'click', (event) => {
 				dojo.stopEvent(event);
-				localStorage.setItem(`${this.bgagame.game_id}.ratio`, this.ratio = this.ratio = Math.min(Math.max(.5, this.ratio - .1), 2));
+				localStorage.setItem(`${this.bgagame.game_id}.ratio`, this.ratio = this.ratio = Math.min(Math.max(.5, this.ratio - .25), 2.5));
 				dojo.style('QGEFscrollArea', 'aspect-ratio', `${this.ratio}`);
 				this.resize();
 			});
 			dojo.connect(dojo.byId('QGEFbigger'), 'click', (event) => {
 				dojo.stopEvent(event);
-				localStorage.setItem(`${this.bgagame.game_id}.ratio`, this.ratio = this.ratio = Math.min(Math.max(.5, this.ratio + .1), 2));
+				localStorage.setItem(`${this.bgagame.game_id}.ratio`, this.ratio = this.ratio = Math.min(Math.max(.5, this.ratio + .25), 2.5));
 				dojo.style('QGEFscrollArea', 'aspect-ratio', `${this.ratio}`);
 				this.resize();
 			});

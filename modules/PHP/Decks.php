@@ -15,6 +15,9 @@ class Decks extends APP_GameClass
 //
 	const DECKS = [
 		Factions::AXIS => [
+//
+// First game (1-7)
+//
 			1 => ['faction' => Factions::GERMANY, 'reaction' => 'SustainAttack',
 				self::FIRST_GAME => [
 					['name' => 'deploy', 'types' => [Pieces::INFANTRY], 'factions' => [Factions::GERMANY], 'locations' => [LWOW, ROMANIA, BESSARABIA, KIEV, MOGILEV, BREST, WARSAW, HUNGARY], 'mandatory' => true],
@@ -57,6 +60,9 @@ class Decks extends APP_GameClass
 					['name' => 'attack', 'containing' => true]
 				]
 			],
+//
+// Mid game (15-33)
+//
 			15 => ['faction' => Factions::GERMANY, 'reaction' => 'Advance',
 				self::MID => [
 					['name' => 'attack', 'types' => [Pieces::INFANTRY, Pieces::TANK], 'factions' => [Factions::GERMANY],
@@ -91,7 +97,8 @@ class Decks extends APP_GameClass
 			],
 			20 => ['faction' => Factions::GERMANY, 'reaction' => 'Exchange',
 				self::MID => [
-					['name' => 'recruit', 'types' => [Pieces::INFANTRY], 'factions' => [Factions::GERMANY], 'locations' => [], 'adjacent' => [Pieces::FLEET]],
+					['name' => 'recruit', 'types' => [Pieces::INFANTRY], 'factions' => [Factions::GERMANY], 'locations' => [],
+						'adjacent' => ['types' => [Pieces::FLEET], 'factions' => [Factions::GERMANY]]],
 					['name' => 'move/attack', 'containing' => true]
 				]
 			],
@@ -109,13 +116,15 @@ class Decks extends APP_GameClass
 			],
 			23 => ['faction' => Factions::GERMANY, 'reaction' => 'Exchange',
 				self::MID => [
-					['name' => 'eliminate', 'types' => [Pieces::INFANTRY, Pieces::TANK], 'factions' => [Factions::SOVIETUNION], 'locations' => [], 'adjacent' => [Pieces::INFANTRY]]
+					['name' => 'eliminate', 'types' => [Pieces::INFANTRY, Pieces::TANK], 'factions' => [Factions::SOVIETUNION], 'locations' => [],
+						'adjacent' => ['types' => [Pieces::INFANTRY], 'factions' => [Factions::GERMANY]]],
 				]
 			],
 			24 => ['faction' => Factions::GERMANY, 'reaction' => 'SustainAttack',
 				self::MID => [
-					['name' => 'eliminate', 'types' => [Pieces::INFANTRY], 'factions' => [Factions::SOVIETUNION], 'locations' => [], 'adjacent' => [Pieces::INFANTRY], 'mandatory' => true],
-					['name' => 'attack', 'into' => true]
+					['name' => 'eliminate', 'types' => [Pieces::INFANTRY], 'factions' => [Factions::SOVIETUNION], 'locations' => [], 'mandatory' => true,
+						'adjacent' => ['types' => [Pieces::INFANTRY], 'factions' => [Factions::GERMANY]]],
+					['name' => 'attack', 'factions' => [Factions::GERMANY], 'into' => true]
 				]
 			],
 			25 => ['faction' => Factions::PACT, 'reaction' => 'SustainAttack',
@@ -125,7 +134,8 @@ class Decks extends APP_GameClass
 			],
 			26 => ['faction' => Factions::PACT, 'reaction' => 'SustainAttack',
 				self::MID => [
-					['name' => 'attack', 'factions' => [Factions::PACT], 'into' => [KARELIA, PETROZAVODSK], 'contain' => [Pieces::INFANTRY], 'advance' => [Pieces::INFANTRY]],
+					['name' => 'attack', 'factions' => [Factions::PACT], 'into' => [KARELIA, PETROZAVODSK], 'advance' => [Pieces::INFANTRY],
+						'contain' => ['types' => [Pieces::INFANTRY], 'factions' => [Factions::PACT]]],
 				]
 			],
 			27 => ['faction' => Factions::PACT, 'reaction' => 'Advance', 'requirement' => 'noSpringTurn',
@@ -170,6 +180,9 @@ class Decks extends APP_GameClass
 					['name' => 'action']
 				]
 			],
+//
+// Late game (49-71)
+//
 			49 => ['faction' => Factions::GERMANY, 'reaction' => 'Advance',
 				self::LATE => [
 					['name' => 'deploy', 'types' => [Pieces::TANK], 'factions' => [Factions::GERMANY], 'locations' => Board::ALL],
@@ -179,7 +192,7 @@ class Decks extends APP_GameClass
 			50 => ['faction' => Factions::GERMANY, 'reaction' => 'SustainAttack',
 				self::LATE => [
 					['name' => 'deploy', 'types' => [Pieces::INFANTRY, Pieces::TANK, Pieces::AIRPLANE], 'factions' => [Factions::GERMANY], 'locations' => Board::E1939, 'mandatory' => true],
-					['name' => 'move/attack', 'containing' => true]
+					['name' => 'attack', 'containing' => true]
 				]
 			],
 			51 => ['faction' => Factions::GERMANY, 'reaction' => 'Retreat',
@@ -188,7 +201,8 @@ class Decks extends APP_GameClass
 			],
 			52 => ['faction' => Factions::GERMANY, 'reaction' => 'NavalCombat',
 				self::LATE => [
-					['name' => 'eliminate', 'types' => [Pieces::FLEET], 'factions' => [Factions::SOVIETUNION], 'locations' => [], 'adjacent' => [Pieces::AIRPLANE, Pieces::FLEET]]
+					['name' => 'eliminate', 'types' => [Pieces::FLEET], 'factions' => [Factions::SOVIETUNION], 'locations' => [],
+						'adjacent' => ['types' => [Pieces::AIRPLANE, Pieces::FLEET], 'factions' => [Factions::GERMANY]]],
 				]
 			],
 			53 => ['faction' => Factions::GERMANY, 'reaction' => 'NavalCombat',
@@ -220,10 +234,82 @@ class Decks extends APP_GameClass
 			],
 			58 => ['faction' => Factions::GERMANY, 'reaction' => 'SustainAttack',
 				self::LATE => [
-					['name' => 'attack', 'factions' => [Factions::GERMANY], 'locations' => Board::ALL, 'contain' => [Pieces::TANK]],
+					['name' => 'attack', 'factions' => [Factions::GERMANY], 'locations' => Board::ALL, 'special' => 58],
 					['name' => 'action']
 				]
 			],
+			59 => ['faction' => Factions::GERMANY, 'reaction' => 'StandFast',
+				self::LATE => [
+					['name' => 'deploy', 'types' => [Pieces::TANK], 'factions' => [Factions::GERMANY], 'locations' => [],
+						'contain' => ['types' => [Pieces::INFANTRY], 'factions' => [Factions::GERMANY]]],
+					['name' => 'action']
+				]
+			],
+			60 => ['faction' => Factions::GERMANY, 'reaction' => 'Exchange',
+				self::LATE => [
+					['name' => 'deploy', 'types' => [Pieces::INFANTRY], 'factions' => [Factions::GERMANY], 'locations' => [],
+						'contain' => ['types' => [Pieces::INFANTRY, Pieces::TANK, Pieces::AIRPLANE], 'factions' => [Factions::GERMANY]]],
+					['name' => 'deploy', 'types' => [Pieces::INFANTRY], 'factions' => [Factions::GERMANY], 'locations' => [], 'different' => true,
+						'contain' => ['types' => [Pieces::INFANTRY, Pieces::TANK, Pieces::AIRPLANE], 'factions' => [Factions::GERMANY]]],
+				]
+			],
+			61 => ['faction' => Factions::GERMANY, 'reaction' => 'Retreat',
+				self::LATE => [
+				]
+			],
+			62 => ['faction' => Factions::GERMANY, 'reaction' => 'Exchange',
+				self::LATE => [
+				]
+			],
+			63 => ['faction' => Factions::GERMANY, 'reaction' => 'Retreat',
+				self::LATE => [
+					['name' => 'deploy', 'types' => [Pieces::INFANTRY], 'factions' => [Factions::GERMANY], 'locations' => [BERLIN]],
+					['name' => 'deploy', 'types' => [Pieces::INFANTRY], 'factions' => [Factions::GERMANY], 'locations' => [VIENNA]],
+					['name' => 'deploy', 'types' => [Pieces::INFANTRY], 'factions' => [Factions::GERMANY], 'locations' => [EASTPRUSSIA]],
+					['name' => 'action']
+				]
+			],
+			64 => ['faction' => Factions::PACT, 'reaction' => 'Exchange', 'requirement' => 64,
+				self::LATE => [
+					['name' => 'deploy', 'types' => [Pieces::TANK], 'factions' => [Factions::GERMANY], 'locations' => [BERLIN]],
+					['name' => 'VP', 'FACTION' => Factions::AXIS]
+				]
+			],
+			65 => ['faction' => Factions::PACT, 'reaction' => 'Retreat', 'requirement' => 65,
+				self::LATE => [
+					['name' => 'deploy', 'types' => [Pieces::INFANTRY], 'factions' => [Factions::GERMANY], 'locations' => [BERLIN]],
+					['name' => 'VP', 'FACTION' => Factions::AXIS]
+				]
+			],
+			66 => ['faction' => Factions::PACT, 'reaction' => 'Retreat',
+				self::LATE => [
+				]
+			],
+			67 => ['faction' => Factions::PACT, 'reaction' => 'Retreat',
+				self::LATE => [
+				]
+			],
+			68 => ['faction' => Factions::PACT, 'reaction' => 'StandFast',
+				self::LATE => [
+				]
+			],
+			69 => ['faction' => Factions::PACT, 'reaction' => 'Exchange',
+				self::LATE => [
+					['name' => 'draw', 'count' => 2],
+				]
+			],
+			70 => ['faction' => Factions::PACT, 'reaction' => 'SustainAttack',
+				self::LATE => [
+				]
+			],
+			71 => ['faction' => Factions::PACT, 'reaction' => 'NavalCombat',
+				self::LATE => [
+					['name' => 'deploy', 'types' => [Pieces::FLEET], 'factions' => [Factions::PACT], 'locations' => [ROMANIA, BULGARIA, YUGOSLAVIA, HUNGARY, LWOW, BESSARABIA, BLACKSEA, BOSPORUS]]
+				]
+			],
+//
+// Contingency (101-105)
+//
 			101 => ['faction' => Factions::GERMANY,
 				self::INITIAL_SIDE => [
 					['name' => 'deploy', 'types' => [Pieces::TANK, Pieces::AIRPLANE], 'factions' => [Factions::GERMANY], 'locations' => Board::SUPPLY[Factions::GERMANY]],
@@ -236,7 +322,7 @@ class Decks extends APP_GameClass
 			],
 			102 => ['faction' => Factions::GERMANY,
 				self::INITIAL_SIDE => [
-					['name' => 'attack', 'factions' => [Factions::GERMANY], 'locations' => Board::E1941],
+					['name' => 'attack', 'factions' => [Factions::GERMANY], 'into' => Board::E1941],
 				],
 				self::SECOND_SIDE => [
 					['name' => 'eliminateVS', 'types' => [Pieces::INFANTRY, Pieces::TANK, Pieces::AIRPLANE, Pieces::FLEET], 'factions' => [Factions::SOVIETUNION], 'locations' => [BERLIN, VIENNA, HUNGARY, WARSAW, WESTBALTICSEA]],
@@ -272,6 +358,9 @@ class Decks extends APP_GameClass
 			]],
 //
 		Factions::ALLIES => [
+//
+// First game (8-14)
+//
 			8 => ['faction' => Factions::SOVIETUNION, 'reaction' => 'Advance',
 				self::FIRST_GAME => [
 					['name' => 'draw', 'count' => 1],
@@ -293,8 +382,10 @@ class Decks extends APP_GameClass
 			],
 			11 => ['faction' => Factions::SOVIETUNION, 'reaction' => 'StandFast',
 				self::FIRST_GAME => [
-					['name' => 'deploy', 'types' => [Pieces::INFANTRY], 'factions' => [Factions::SOVIETUNION], 'locations' => [], 'contain' => [Pieces::INFANTRY, Pieces::TANK, Pieces::AIRPLANE]],
-					['name' => 'deploy', 'types' => [Pieces::INFANTRY], 'factions' => [Factions::SOVIETUNION], 'locations' => [], 'contain' => [Pieces::INFANTRY, Pieces::TANK, Pieces::AIRPLANE], 'different' => true],
+					['name' => 'deploy', 'types' => [Pieces::INFANTRY], 'factions' => [Factions::SOVIETUNION], 'locations' => [],
+						'contain' => ['types' => [Pieces::INFANTRY, Pieces::TANK, Pieces::AIRPLANE], 'factions' => [Factions::SOVIETUNION],]],
+					['name' => 'deploy', 'types' => [Pieces::INFANTRY], 'factions' => [Factions::SOVIETUNION], 'locations' => [], 'different' => true,
+						'contain' => ['types' => [Pieces::INFANTRY, Pieces::TANK, Pieces::AIRPLANE], 'factions' => [Factions::SOVIETUNION],]],
 				]
 			],
 			12 => ['faction' => Factions::SOVIETUNION, 'reaction' => 'NavalCombat',
@@ -314,6 +405,9 @@ class Decks extends APP_GameClass
 					['name' => 'action']
 				]
 			],
+//
+// Mid game (34-48)
+//
 			34 => ['faction' => Factions::SOVIETUNION, 'reaction' => 'Retreat',
 				self::MID => [
 					['name' => 'deploy', 'types' => [Pieces::INFANTRY], 'factions' => [Factions::SOVIETUNION], 'locations' => [GORKI]],
@@ -360,7 +454,8 @@ class Decks extends APP_GameClass
 			],
 			41 => ['faction' => Factions::SOVIETUNION, 'reaction' => 'SustainAttack',
 				self::MID => [
-					['name' => 'deploy', 'types' => [Pieces::INFANTRY], 'factions' => [Factions::SOVIETUNION], 'locations' => [], 'contain' => [Pieces::TANK], 'mandatory' => true],
+					['name' => 'deploy', 'types' => [Pieces::INFANTRY], 'factions' => [Factions::SOVIETUNION], 'locations' => [], 'mandatory' => true,
+						'contain' => ['types' => [Pieces::TANK], 'factions' => [Factions::SOVIETUNION]]],
 					['name' => 'attack', 'containing' => true]
 				]
 			],
@@ -378,7 +473,8 @@ class Decks extends APP_GameClass
 			],
 			44 => ['faction' => Factions::SOVIETUNION, 'reaction' => 'SustainAttack',
 				self::MID => [
-					['name' => 'eliminate', 'types' => [Pieces::INFANTRY, Pieces::TANK], 'factions' => [Factions::GERMANY, Factions::PACT], 'locations' => [], 'adjacent' => [Pieces::INFANTRY]]
+					['name' => 'eliminate', 'types' => [Pieces::INFANTRY, Pieces::TANK], 'factions' => [Factions::GERMANY, Factions::PACT], 'locations' => [],
+						'adjacent' => ['types' => [Pieces::INFANTRY], 'factions' => [Factions::SOVIETUNION]]],
 				]
 			],
 			45 => ['faction' => Factions::SOVIETUNION, 'reaction' => 'Advance',
@@ -399,12 +495,133 @@ class Decks extends APP_GameClass
 					['name' => 'mud'],
 				]
 			],
-			48 => ['faction' => Factions::SOVIETUNION, 'reaction' => 'Advance', 'requirement' => '<=3',
+			48 => ['faction' => Factions::SOVIETUNION, 'reaction' => 'Advance', 'requirement' => 48,
 				self::MID => [
 					['name' => 'draw', 'count' => 3],
 					['name' => 'VP', 'FACTION' => Factions::AXIS]
 				]
 			],
+//
+// Late game (72-100)
+//
+			72 => ['faction' => Factions::SOVIETUNION, 'reaction' => 'AntiAir',
+				self::LATE => [
+				]
+			],
+			73 => ['faction' => Factions::SOVIETUNION, 'reaction' => 'Retreat',
+				self::LATE => [
+				]
+			],
+			74 => ['faction' => Factions::SOVIETUNION, 'reaction' => 'SustainAttack',
+				self::LATE => [
+				]
+			],
+			75 => ['faction' => Factions::SOVIETUNION, 'reaction' => 'SustainAttack',
+				self::LATE => [
+				]
+			],
+			76 => ['faction' => Factions::SOVIETUNION, 'reaction' => 'Advance',
+				self::LATE => [
+				]
+			],
+			77 => ['faction' => Factions::SOVIETUNION, 'reaction' => 'Exchange',
+				self::LATE => [
+				]
+			],
+			78 => ['faction' => Factions::SOVIETUNION, 'reaction' => 'Retreat',
+				self::LATE => [
+				]
+			],
+			79 => ['faction' => Factions::SOVIETUNION, 'reaction' => 'StandFast',
+				self::LATE => [
+				]
+			],
+			80 => ['faction' => Factions::SOVIETUNION, 'reaction' => 'SustainAttack',
+				self::LATE => [
+				]
+			],
+			81 => ['faction' => Factions::SOVIETUNION, 'reaction' => 'StandFast',
+				self::LATE => [
+				]
+			],
+			82 => ['faction' => Factions::SOVIETUNION, 'reaction' => 'SustainAttack',
+				self::LATE => [
+				]
+			],
+			83 => ['faction' => Factions::SOVIETUNION, 'reaction' => 'AntiAir',
+				self::LATE => [
+				]
+			],
+			84 => ['faction' => Factions::SOVIETUNION, 'reaction' => 'Advance',
+				self::LATE => [
+				]
+			],
+			85 => ['faction' => Factions::SOVIETUNION, 'reaction' => 'Exchange',
+				self::LATE => [
+				]
+			],
+			86 => ['faction' => Factions::SOVIETUNION, 'reaction' => 'Retreat',
+				self::LATE => [
+				]
+			],
+			87 => ['faction' => Factions::SOVIETUNION, 'reaction' => 'SustainAttack',
+				self::LATE => [
+				]
+			],
+			88 => ['faction' => Factions::SOVIETUNION, 'reaction' => 'Advance',
+				self::LATE => [
+				]
+			],
+			89 => ['faction' => Factions::SOVIETUNION, 'reaction' => 'AntiAir',
+				self::LATE => [
+				]
+			],
+			90 => ['faction' => Factions::SOVIETUNION, 'reaction' => 'Retreat',
+				self::LATE => [
+				]
+			],
+			91 => ['faction' => Factions::SOVIETUNION, 'reaction' => 'Retreat',
+				self::LATE => [
+				]
+			],
+			92 => ['faction' => Factions::SOVIETUNION, 'reaction' => 'SustainAttack',
+				self::LATE => [
+				]
+			],
+			93 => ['faction' => Factions::SOVIETUNION, 'reaction' => 'Advance',
+				self::LATE => [
+				]
+			],
+			94 => ['faction' => Factions::SOVIETUNION, 'reaction' => 'AntiAir',
+				self::LATE => [
+				]
+			],
+			95 => ['faction' => Factions::SOVIETUNION, 'reaction' => 'SustainAttack',
+				self::LATE => [
+				]
+			],
+			96 => ['faction' => Factions::SOVIETUNION, 'reaction' => 'StandFast',
+				self::LATE => [
+				]
+			],
+			97 => ['faction' => Factions::SOVIETUNION, 'reaction' => 'Advance',
+				self::LATE => [
+				]
+			],
+			98 => ['faction' => Factions::SOVIETUNION, 'reaction' => 'Advance',
+				self::LATE => [
+				]
+			],
+			99 => ['faction' => Factions::SOVIETUNION, 'reaction' => 'Advance',
+				self::LATE => [
+				]
+			],
+			100 => ['faction' => Factions::SOVIETUNION, 'reaction' => 'Exchange',
+				self::LATE => [
+				]
+			],
+//
+// Contingency (106-110)
 //
 			106 => ['faction' => Factions::GERMANY,
 				self::INITIAL_SIDE => [
@@ -548,6 +765,12 @@ class Decks extends APP_GameClass
 // Attack with a German force containing an infantry
 //
 				return Pieces::getPossibleAttacks(Factions::AXIS, self::$table->getObjectListFromDB("SELECT * FROM pieces WHERE faction = 'germany' AND type IN ('INFANTRY','TANK') AND location in (SELECT location FROM pieces WHERE faction = 'germany' AND type = 'INFANTRY')"));
+//
+			case 58:
+//
+// Attack with a German force containing a tank
+//
+				return Pieces::getPossibleAttacks(Factions::AXIS, self::$table->getObjectListFromDB("SELECT * FROM pieces WHERE faction = 'germany' AND type IN ('INFANTRY','TANK') AND location in (SELECT location FROM pieces WHERE faction = 'germany' AND type = 'TANK')"));
 //
 			case 108:
 //

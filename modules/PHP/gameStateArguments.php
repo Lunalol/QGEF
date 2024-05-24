@@ -78,7 +78,7 @@ trait gameStateArguments
 				{
 					foreach ($action['types'] as $type)
 					{
-						if (array_key_exists('contain', $action)) foreach (Pieces::getAll($FACTION) as $piece) if (in_array($piece['type'], $action['contain'])) $action['locations'][] = intval($piece['location']);
+						if (array_key_exists('contain', $action)) foreach (Pieces::getAll($FACTION) as $piece) if (in_array($piece['faction'], $action['contain']['factions']) && in_array($piece['type'], $action['contain']['types'])) $action['locations'][] = intval($piece['location']);
 //
 						$locations = [];
 						foreach ($action['locations'] as $location)
@@ -102,12 +102,12 @@ trait gameStateArguments
 				{
 					foreach ($action['types'] as $type)
 					{
-						if (array_key_exists('contain', $action)) foreach (Pieces::getAll($FACTION) as $piece) if (in_array($piece['type'], $action['contain'])) $action['locations'][] = intval($piece['location']);
+						if (array_key_exists('contain', $action)) foreach (Pieces::getAll($FACTION) as $piece) if (in_array($piece['faction'], $action['contain']['factions']) && in_array($piece['type'], $action['contain']['types'])) $action['locations'][] = intval($piece['location']);
 						if (array_key_exists('adjacent', $action))
 						{
 							foreach (Pieces::getAll($FACTION) as $piece)
 							{
-								if (in_array($piece['type'], $action['adjacent']))
+								if (in_array($piece['faction'], $action['adjacent']['factions']) && in_array($piece['type'], $action['adjacent']['types']))
 								{
 									foreach (Board::ADJACENCY[$piece['location']] as $next_location) $action['locations'][] = $next_location;
 								}
@@ -130,7 +130,8 @@ trait gameStateArguments
 			case 'move/attack':
 //
 				$this->possible['move'] = Pieces::getPossibleMoves($FACTION, $playedPieces);
-				if (array_key_exists('containing', $action)) $this->possible['attack'] = Pieces::getPossibleAttacks($FACTION, $playedPieces);
+//				if (array_key_exists('containing', $action)) $this->possible['attack'] = Pieces::getPossibleAttacks($FACTION, $playedPieces);
+				if (array_key_exists('containing', $action)) $this->possible['attack'] = Pieces::getPossibleAttacks($FACTION, array_filter(Pieces::getAll($FACTION), fn($piece) => in_array($piece['location'], $playedLocations)));
 				else $this->possible['attack'] = Pieces::getPossibleAttacks($FACTION, array_filter(Pieces::getAll($FACTION), fn($piece) => in_array($piece['location'], $action['locations']) && in_array($piece['faction'], $action['factions'])));
 				return ['FACTION' => $FACTION, 'cancel' => Actions::empty() && !array_key_exists('noundo', $action), 'action' => $action, 'move' => $this->possible['move'], 'attack' => $this->possible['attack']];
 //
@@ -143,12 +144,12 @@ trait gameStateArguments
 //
 			case 'attack':
 //
-				if (array_key_exists('containing', $action)) $this->possible['attack'] = Pieces::getPossibleAttacks($FACTION, $playedPieces);
+				if (array_key_exists('containing', $action)) $this->possible['attack'] = Pieces::getPossibleAttacks($FACTION, array_filter(Pieces::getAll($FACTION), fn($piece) => in_array($piece['location'], $playedLocations)));
 				if (array_key_exists('locations', $action)) $this->possible['attack'] = Pieces::getPossibleAttacks($FACTION, array_filter(Pieces::getAll($FACTION), fn($piece) => in_array($piece['location'], $action['locations']) && in_array($piece['faction'], $action['factions'])));
 				if (array_key_exists('into', $action))
 				{
-					if ($action['into'] === true) $this->possible['attack'] = Pieces::getPossibleAttacks($FACTION, Pieces::getAll($FACTION), $playedLocations);
-					else $this->possible['attack'] = Pieces::getPossibleAttacks($FACTION, Pieces::getAll($FACTION), $action['into']);
+					if ($action['into'] === true) $this->possible['attack'] = Pieces::getPossibleAttacks($FACTION, array_filter(Pieces::getAll($FACTION), fn($piece) => in_array($piece['faction'], $action['factions'])), $playedLocations);
+					else $this->possible['attack'] = Pieces::getPossibleAttacks($FACTION, array_filter(Pieces::getAll($FACTION), fn($piece) => in_array($piece['faction'], $action['factions'])), $action['into']);
 				}
 
 				if (array_key_exists('special', $action)) $this->possible['attack'] = Decks::special($action);
@@ -162,7 +163,7 @@ trait gameStateArguments
 				{
 					foreach (Pieces::getAll($FACTION) as $piece)
 					{
-						if (in_array($piece['type'], $action['adjacent']))
+						if (in_array($piece['faction'], $action['adjacent']['factions']) && in_array($piece['type'], $action['adjacent']['types']))
 						{
 							foreach (Board::ADJACENCY[$piece['location']] as $next_location) $action['locations'][] = $next_location;
 						}
@@ -368,7 +369,7 @@ trait gameStateArguments
 		$action = Actions::get(Actions::getNextAction());
 //
 		$free = array_key_exists('advance', $action);
-		if (array_key_exists('requirement', $action) && $action['requirement'] === 'noSprintTurn') $free = $free && intval(self::getGameStateValue('round')) % 4 !== 0;
+		if (array_key_exists('requirement', $action) && $action['requirement'] === 'noSpringTurn') $free = $free && intval(self::getGameStateValue('round')) % 4 !== 0;
 		if (!$free)
 		{
 			if (!Factions::getStatus($attackerFACTION, 'mud'))

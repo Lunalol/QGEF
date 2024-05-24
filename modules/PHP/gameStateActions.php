@@ -143,8 +143,27 @@ trait gameStateActions
 			{
 				switch (Decks::DECKS[$FACTION][$card['type_arg']]['requirement'])
 				{
+					case 64:
 //
-					case '<=3':
+						if (Pieces::getAtLocation(ROMANIA, Factions::SOVIETUNION) ||
+							Pieces::getAtLocation(BULGARIA, Factions::SOVIETUNION) ||
+							Pieces::getAtLocation(YUGOSLAVIA, Factions::SOVIETUNION) ||
+							Pieces::getAtLocation(HUNGARY, Factions::SOVIETUNION) ||
+							Pieces::getAtLocation(LWOW, Factions::SOVIETUNION) ||
+							Pieces::getAtLocation(BESSARABIA, Factions::SOVIETUNION) ||
+							Pieces::getAtLocation(BLACKSEA, Factions::SOVIETUNION) ||
+							Pieces::getAtLocation(BOSPORUS, Factions::SOVIETUNION)
+						) throw new BgaUserException(self::_('May only be played if there are no Soviet pieces in or adjacent to Romania'));
+//
+						break;
+//
+					case 65:
+//
+						if (!Pieces::getAtLocation(ROMANIA, Factions::GERMANY)) throw new BgaUserException(self::_('May only be played if there is a German piece in Romania'));
+//
+						break;
+//
+					case 48:
 //
 						if ($this->decks->countCardInLocation('hand', $FACTION) > 3) throw new BgaUserException(self::_('May only be played if you have 3 or fewer cards in hand, including this one'));
 //

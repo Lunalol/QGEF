@@ -160,10 +160,185 @@ define(["dojo", "dojo/_base/declare"], function (dojo, declare)
 					text: [
 						_('5 Year Plan'),
 						_('May only be played if you have 3 or fewer cards in hand, including this one. Draw 3 cards; then take another action.')]
-				}
+				},
 //
 // Late game (72-100)
 //
+				72: {
+					type: 'command',
+					text: [
+						_('Operation Orator'),
+						_('Deploy a Soviet infantry, tank, and airplane in Vologda.')]
+				},
+				73: {
+					type: 'command',
+					text: [
+						_('Pripyat Partisans'),
+						_('Gain 2 VPs unless the Axis either eliminates an Axis piece in Mogilev or discards 3 cards.')]
+				},
+				74: {
+					type: 'tank',
+					text: [
+						_('Shock Armies'),
+						_('Deploy a Soviet tank in a space containing a Soviet infantry; then you may attack with a force containing both pieces.')]
+				},
+				75: {
+					type: 'command',
+					text: [
+						_('Katyusha Rocket Launcher'),
+						_('Eliminate an Axis infantry adjacent to a Soviet force; then you may attack the space from which the infantry was eliminated.')]
+				},
+				76: {
+					type: 'ground',
+					text: [
+						_('Studebaker Deuceand-a-Half Truck'),
+						_('May only be played if it is not a Spring turn. Attack with a force containing a Soviet infantry; then, you may move that infantry into the attacked space.')]
+				},
+				77: {
+					type: 'sea',
+					text: [
+						_('Road of Life'),
+						_('Deploy a Soviet infantry in Petrozavodsk and a Soviet fleet in Lake Ladoga.')]
+				},
+				78: {
+					type: 'command',
+					text: [
+						_('Warsaw Uprising'),
+						_('Gain 2 VPs unless the Axis either eliminates an Axis piece in Warsaw or discards 3 cards.')]
+				},
+				79: {
+					type: 'ground', reaction: _('Moscow'),
+					text: [
+						_('Counteroffensive'),
+						_('Deploy a Soviet infantry in or adjacent to Moscow; then you may attack with a force containing that infantry.')]
+				},
+				80: {
+					type: 'command',
+					text: [
+						_('Moscow Armistice'),
+						_('May only be played if 4 or more Soviet pieces are in or adjacent to Finland. Gain 1 VP; the Axis must either eliminate a Pact piece in Finland or discard 2 cards , if possible.')
+					]
+				},
+				81: {
+					type: 'tank', reaction: _('Stalingrad'),
+					text: [
+						_('Volgograd Tractor Plant'),
+						_('Deploy a Soviet tank in or adjacent to Stalingrad; then you may attack with a force containing that tank.')]
+				},
+				82: {
+					type: 'air',
+					text: [
+						_('Airborne Corps'),
+						_('Deploy a Soviet infantry in a space with a Soviet airplane; then attack with a force containing that infantry; then move that infantry into the attacked space.')]
+				},
+				83: {
+					type: 'air',
+					text: [
+						_('Yak-3 Fighter'),
+						_('Deploy a Soviet airplane east of the 1939 line; then you may eliminate an Axis airplane adjacent to the airplane you deployed.')]
+				},
+				84: {
+					type: 'command',
+					text: [
+						_('Yalta Conference'),
+						_('Draw 2 cards; then gain 1 VP if a Soviet piece is in or adjacent to Warsaw; then gain 1 VP if a Soviet piece is in or adjacent to Berlin.')]
+				},
+				85: {
+					type: 'ground',
+					text: [
+						_('Guards Armies'),
+						_('Deploy a Soviet infantry in a space with a Soviet tank; then you may attack with a force containing both pieces.')]
+				},
+				86: {
+					type: 'command',
+					text: [
+						_('Industrial Evacuation'),
+						_('Draw 1 card; then place the Gorki Victory Star marker on Gorki. (This marker counts as a Victory Star.)')]
+				},
+				87: {
+					type: 'tank',
+					text: [
+						_('IS-2 Heavy Tank'),
+						_('Eliminate an Axis tank adjacent to a Soviet tank; then, if it is not a Winter turn, you may attack the space from which the tank was eliminated.')]
+				},
+				88: {
+					type: 'command',
+					text: [
+						_('King Michael Stages Coup'),
+						_('If 2 or more Soviet pieces are in or adjacent to Romania: Gain 1 VP; the Axis must either eliminate a Pact piece in Romania or discard 2 cards, if possible.')]
+				},
+				89: {
+					type: 'air',
+					text: [
+						_('Night Witches'),
+						_('Deploy a Soviet airplane in a space east of the 1939 line; then you may attack with a Soviet force from that space.')]
+				},
+				90: {
+					type: 'ground',
+					text: [
+						_('Diversionist Groups'),
+						_('Gain 1 VP; then recruit a Soviet infantry in an unoccupied Axiscontrolled space east of the 1941 line. That infantry is supplied until the start of your next turn.')]
+				},
+				91: {
+					type: 'command',
+					text: [
+						_('Tito Leads Yugoslav Resistance'),
+						_('Gain 2 VPs unless the Axis either eliminates an Axis piece in Yugoslavia or discards 3 cards.')]
+				},
+				92: {
+					type: 'command',
+					text: [
+						_('Breakthrough Artillery Divisions'),
+						_('Attack with a Soviet force; then take another action.')]
+				},
+				93: {
+					type: 'tank',
+					text: [
+						_('Bagration Strategic Offensive Operation'),
+						_('Deploy a Soviet tank in or adjacent to Smolensk; then attack with a force containing that tank.')]
+				},
+				94: {
+					type: 'air',
+					text: [
+						_('IL-2 Shturmovik'),
+						_('Deploy a Soviet airplane in each of 2 different Victory Star spaces east of the 1939 line.')]
+				},
+				95: {
+					type: 'ground',
+					text: [
+						_('Massed Attack'),
+						_('Attack with a force containing 2 Soviet infantry; then you may attack a different space with that force if it still contains 2 infantry.')]
+				},
+				96: {
+					type: 'command', reaction: _('Defending tank'),
+					text: [
+						_('Kursk Strategic Defensive Operation'),
+						_('May only be played during your Second Action step. Deploy a Soviet infantry and 2 tanks in the same space, in or adjacent to Kursk.')]
+				},
+				97: {
+					type: 'command',
+					text: [
+						_('Teheran Conference'),
+						_('Draw 2 cards; then take another action.')]
+				},
+				98: {
+					type: 'command',
+					text: [
+						_('Command Economy'),
+						_('Draw 3 cards; then discard 1 card and deploy a Soviet piece in a land space east of the 1939 line.')]
+				},
+				99: {
+					type: 'ground',
+					text: [
+						_('Forward!'),
+						_('One at a time, move 1 or 2 different Soviet infantry; then take another action.')]
+				},
+				100: {
+					type: 'ground',
+					text: [
+						_('Hero of the Soviet Union'),
+						_('Eliminate a Soviet infantry in order to eliminate an adjacent Axis infantry or tank; then take another action.')]
+				},
 			};
 		},
 		place: function (card, location = 'QGEFhand-allies')

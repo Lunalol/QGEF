@@ -47,17 +47,17 @@ trait gameStates
 //
 // However, if this is your first game, you may want to select the 7 cards labeled “First Game” instead, and shuffle the rest.
 //
-		if (self::getGameStateValue('firstGame') == 1)
+		if (self::getGameStateValue('firstGame') >= 1)
 		{
 			$this->decks->moveCards(array_keys($this->decks->getCardsOfTypeInLocation(Decks::FIRST_GAME, null, Factions::ALLIES)), 'hand', Factions::ALLIES);
 			$this->decks->moveCards(array_keys($this->decks->getCardsOfTypeInLocation(Decks::FIRST_GAME, null, Factions::AXIS)), 'hand', Factions::AXIS);
 		}
-		if (self::getGameStateValue('firstGame') == 2)
+		if (self::getGameStateValue('firstGame') >= 2)
 		{
 			$this->decks->moveCards(array_keys($this->decks->getCardsOfTypeInLocation(Decks::MID, null, Factions::ALLIES)), 'hand', Factions::ALLIES);
 			$this->decks->moveCards(array_keys($this->decks->getCardsOfTypeInLocation(Decks::MID, null, Factions::AXIS)), 'hand', Factions::AXIS);
 		}
-		if (self::getGameStateValue('firstGame') == 3)
+		if (self::getGameStateValue('firstGame') >= 3)
 		{
 			$this->decks->moveCards(array_keys($this->decks->getCardsOfTypeInLocation(Decks::LATE, null, 'aside', Factions::ALLIES)), 'hand', Factions::ALLIES);
 			$this->decks->moveCards(array_keys($this->decks->getCardsOfTypeInLocation(Decks::LATE, null, 'aside', Factions::AXIS)), 'hand', Factions::AXIS);
@@ -362,7 +362,7 @@ trait gameStates
 //
 				case 'move/attack':
 //
-					if (array_key_exists('requirement', $action) && $action['requirement'] === 'noSprintTurn' && intval(self::getGameStateValue('round')) % 4 !== 0)
+					if (array_key_exists('requirement', $action) && $action['requirement'] === 'noSpringTurn' && intval(self::getGameStateValue('round')) % 4 === 0)
 					{
 						self::action();
 						break;

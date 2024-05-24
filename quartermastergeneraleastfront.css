@@ -358,21 +358,22 @@ html {
 	font-family: GaramondPremrPro;
 }
 .QGEFtitle {
-	padding: 40px 10px 0px 10px;
+	padding: 40px 5px 5px 5px;
 	color: black;
 	font-size: 14px;
 	font-family: CutrightWF;
-	text-align: justify;
+	line-height: 100%;
+	text-align: left;
 	letter-spacing: -1px;
-	word-spacing: -1px;
+	/*	word-spacing: -1px;*/
 }
 .QGEFtext {
-	padding: 0px 10px 0px 10px;
+	padding: 0px 5px 0px 5px;
 	color: black;
 	font-family: GaramondPremrPro;
 	line-height: 100%;
 	text-align: justify;
-	/*	word-spacing: -1px;*/
+	word-spacing: -1px;
 }
 /* </editor-fold> */
 /* <editor-fold defaultstate="collapsed" desc="VP Track"> */

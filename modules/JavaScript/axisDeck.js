@@ -246,6 +246,85 @@ define(["dojo", "dojo/_base/declare"], function (dojo, declare)
 					text: [
 						_('Hummel Self-Propelled Gun'),
 						_('Attack with a German force containing a tank; then take another action.')]
+				},
+				59: {
+					type: 'tank', reaction: _('Defending tank'),
+					text: [
+						_('Tiger Battalions'),
+						_('Deploy a German tank in a space containing a German infantry; then take another action.')]
+				},
+				60: {
+					type: 'ground',
+					text: [
+						_('MG-42 Machine Gun'),
+						_('Deploy a German infantry in each of 2 different spaces that already contain a German piece.')]
+				},
+				61: {
+					type: 'command',
+					text: [
+						_('Captured Oil'),
+						_('Gain 1 VP for each of the following spaces that the Axis controls: Rostov, Caucasus, and/or Stalingrad.')]
+				},
+				62: {
+					type: 'command',
+					text: [
+						_('Integrated Command'),
+						_('Attack with a German force from a space also containing a Pact piece. During this attack, you may remove Pact pieces in that space to continue the attack or satisfy an <B>Exchange</B>.')
+					]
+				},
+				63: {
+					type: 'ground',
+					text: [
+						_('Volkssturm'),
+						_('Deploy a German infantry in Berlin, Vienna, or East Prussia; then take another action.')]
+				},
+				64: {
+					type: 'tank',
+					text: [
+						_('Ploiesti Oil Fields'),
+						_('May only be played if there are no Soviet pieces in or adjacent to Romania. Gain 1 VP and deploy a German tank in Berlin.')]
+				},
+				65: {
+					type: 'ground',
+					text: [
+						_('Romanian Food Exports'),
+						_('May only be played if there is a German piece in Romania. Gain 1 VP and deploy a German infantry in Berlin.')]
+				},
+				66: {
+					type: 'command',
+					text: [
+						_('Tripartite Pact'),
+						_('Gain 1 VP for every 3 Pact pieces in land spaces east of the 1941 line, rounded up.')]
+				},
+				67: {
+					type: 'command',
+					text: [
+						_('Reichskommissariat Ukraine'),
+						_('Gain 1 VP for each of the following spaces that the Axis controls: Kiev, Sevastopol, and/or Kharkov.')]
+				},
+				68: {
+					type: 'command', reaction: 'Finland or Karelia',
+					text: [
+						_('Sword Scabbard Declaration'),
+						_('Gain 1 VP for each of the following spaces that the Axis controls: Finland, Karelia, and/or Petrozavodsk.')]
+				},
+				69: {
+					type: 'command',
+					text: [
+						_('Anti-Soviet Sentiment'),
+						_('Draw 2 cards; then gain 2 VPs if the Axis controls every land space between the 1939 and 1941 lines.')]
+				},
+				70: {
+					type: 'command',
+					text: [
+						_('Railroad Gauge Conversion'),
+						_('Gain 1 VP; then move an Axis infantry or tank any distance through land spaces you control.')]
+				},
+				71: {
+					type: 'sea',
+					text: [
+						_('Royal Romanian Navy'),
+						_('Deploy a Pact fleet adjacent to Romania.')]
 				}
 			};
 		},
