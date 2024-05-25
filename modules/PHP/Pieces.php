@@ -261,14 +261,17 @@ class Pieces extends APP_GameClass
 			if ($range >= 1)
 			{
 				$next_locations = Board::ADJACENCY[$location];
-				if (!in_array($piece['location'], $next_locations) & $range >= 2)
+				if (!in_array($piece['location'], $next_locations))
 				{
-					foreach (Board::ADJACENCY[$location] as $next_location)
+					if ($range >= 2)
 					{
-						if (in_array($piece['location'], Board::ADJACENCY[$next_location]))
+						foreach (Board::ADJACENCY[$location] as $next_location)
 						{
-							$possibles[] = $piece['id'];
-							break;
+							if (in_array($piece['location'], Board::ADJACENCY[$next_location]))
+							{
+								$possibles[] = $piece['id'];
+								break;
+							}
 						}
 					}
 				}

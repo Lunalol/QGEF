@@ -506,6 +506,9 @@ class Decks extends APP_GameClass
 //
 			72 => ['faction' => Factions::SOVIETUNION, 'reaction' => 'AntiAir',
 				self::LATE => [
+					['name' => 'deploy', 'types' => [Pieces::INFANTRY], 'factions' => [Factions::SOVIETUNION], 'locations' => [VOLOGDA]],
+					['name' => 'deploy', 'types' => [Pieces::TANK], 'factions' => [Factions::SOVIETUNION], 'locations' => [VOLOGDA]],
+					['name' => 'deploy', 'types' => [Pieces::AIRPLANE], 'factions' => [Factions::SOVIETUNION], 'locations' => [VOLOGDA]],
 				]
 			],
 			73 => ['faction' => Factions::SOVIETUNION, 'reaction' => 'Retreat',
@@ -514,10 +517,16 @@ class Decks extends APP_GameClass
 			],
 			74 => ['faction' => Factions::SOVIETUNION, 'reaction' => 'SustainAttack',
 				self::LATE => [
+					['name' => 'deploy', 'types' => [Pieces::TANK], 'factions' => [Factions::SOVIETUNION], 'locations' => [],
+						'contain' => ['types' => [Pieces::INFANTRY], 'factions' => [Factions::SOVIETUNION]]],
+					['name' => 'attack', 'containing' => true]
 				]
 			],
 			75 => ['faction' => Factions::SOVIETUNION, 'reaction' => 'SustainAttack',
 				self::LATE => [
+					['name' => 'eliminate', 'types' => [Pieces::INFANTRY], 'factions' => [Factions::GERMANY, Factions::PACT], 'locations' => [], 'mandatory' => true,
+						'adjacent' => ['types' => [Pieces::INFANTRY, Pieces::TANK, Pieces::AIRPLANE, Pieces::FLEET], 'factions' => [Factions::SOVIETUNION]]],
+					['name' => 'attack', 'factions' => [Factions::SOVIETUNION], 'into' => true]
 				]
 			],
 			76 => ['faction' => Factions::SOVIETUNION, 'reaction' => 'Advance',
@@ -526,6 +535,8 @@ class Decks extends APP_GameClass
 			],
 			77 => ['faction' => Factions::SOVIETUNION, 'reaction' => 'Exchange',
 				self::LATE => [
+					['name' => 'deploy', 'types' => [Pieces::INFANTRY], 'factions' => [Factions::SOVIETUNION], 'locations' => [PETROZAVODSK]],
+					['name' => 'deploy', 'types' => [Pieces::FLEET], 'factions' => [Factions::SOVIETUNION], 'locations' => [LAKELADOGA]],
 				]
 			],
 			78 => ['faction' => Factions::SOVIETUNION, 'reaction' => 'Retreat',
@@ -534,6 +545,8 @@ class Decks extends APP_GameClass
 			],
 			79 => ['faction' => Factions::SOVIETUNION, 'reaction' => 'StandFast',
 				self::LATE => [
+					['name' => 'deploy', 'types' => [Pieces::INFANTRY], 'factions' => [Factions::SOVIETUNION], 'locations' => [MOSCOW, KURSK, VORONEZH, GORKI, VOLOGDA, RYBINSKSEA, NOVGOROD, SMOLENSK]],
+					['name' => 'attack', 'containing' => true]
 				]
 			],
 			80 => ['faction' => Factions::SOVIETUNION, 'reaction' => 'SustainAttack',
@@ -542,30 +555,46 @@ class Decks extends APP_GameClass
 			],
 			81 => ['faction' => Factions::SOVIETUNION, 'reaction' => 'StandFast',
 				self::LATE => [
+					['name' => 'deploy', 'types' => [Pieces::TANK], 'factions' => [Factions::SOVIETUNION], 'locations' => [STALINGRAD, CAUCASUS, GORKI, VOLGARIVER, ROSTOV]],
+					['name' => 'attack', 'containing' => true]
 				]
 			],
 			82 => ['faction' => Factions::SOVIETUNION, 'reaction' => 'SustainAttack',
 				self::LATE => [
+					['name' => 'deploy', 'types' => [Pieces::INFANTRY], 'factions' => [Factions::SOVIETUNION], 'locations' => [],
+						'contain' => ['types' => [Pieces::AIRPLANE], 'factions' => [Factions::SOVIETUNION]]],
+					['name' => 'attack', 'containing' => true, 'advance' => [Pieces::INFANTRY]]
 				]
 			],
 			83 => ['faction' => Factions::SOVIETUNION, 'reaction' => 'AntiAir',
 				self::LATE => [
+					['name' => 'deploy', 'types' => [Pieces::AIRPLANE], 'factions' => [Factions::SOVIETUNION], 'locations' => Board::E1939, 'mandatory' => true],
+					['name' => 'eliminate', 'types' => [Pieces::AIRPLANE], 'factions' => [Factions::GERMANY, Factions::PACT], 'range' => 1]
 				]
 			],
 			84 => ['faction' => Factions::SOVIETUNION, 'reaction' => 'Advance',
 				self::LATE => [
+					['name' => 'draw', 'count' => 2],
 				]
 			],
 			85 => ['faction' => Factions::SOVIETUNION, 'reaction' => 'Exchange',
 				self::LATE => [
+					['name' => 'deploy', 'types' => [Pieces::INFANTRY], 'factions' => [Factions::SOVIETUNION], 'locations' => [],
+						'contain' => ['types' => [Pieces::TANK], 'factions' => [Factions::SOVIETUNION]]],
+					['name' => 'attack', 'containing' => true]
 				]
 			],
 			86 => ['faction' => Factions::SOVIETUNION, 'reaction' => 'Retreat',
 				self::LATE => [
+					['name' => 'draw', 'count' => 1],
+					['name' => 'gorki'],
 				]
 			],
 			87 => ['faction' => Factions::SOVIETUNION, 'reaction' => 'SustainAttack',
 				self::LATE => [
+					['name' => 'eliminate', 'types' => [Pieces::TANK], 'factions' => [Factions::GERMANY, Factions::PACT], 'locations' => [], 'mandatory' => true,
+						'adjacent' => ['types' => [Pieces::TANK], 'factions' => [Factions::SOVIETUNION]]],
+					['name' => 'attack', 'factions' => [Factions::SOVIETUNION], 'into' => true]
 				]
 			],
 			88 => ['faction' => Factions::SOVIETUNION, 'reaction' => 'Advance',
@@ -574,6 +603,8 @@ class Decks extends APP_GameClass
 			],
 			89 => ['faction' => Factions::SOVIETUNION, 'reaction' => 'AntiAir',
 				self::LATE => [
+					['name' => 'deploy', 'types' => [Pieces::AIRPLANE], 'factions' => [Factions::SOVIETUNION], 'locations' => Board::E1939, 'mandatory' => true],
+					['name' => 'attack', 'containing' => true]
 				]
 			],
 			90 => ['faction' => Factions::SOVIETUNION, 'reaction' => 'Retreat',
@@ -586,38 +617,56 @@ class Decks extends APP_GameClass
 			],
 			92 => ['faction' => Factions::SOVIETUNION, 'reaction' => 'SustainAttack',
 				self::LATE => [
+					['name' => 'attack', 'factions' => [Factions::SOVIETUNION], 'locations' => Board::ALL],
+					['name' => 'action']
 				]
 			],
 			93 => ['faction' => Factions::SOVIETUNION, 'reaction' => 'Advance',
 				self::LATE => [
+					['name' => 'deploy', 'types' => [Pieces::TANK], 'factions' => [Factions::SOVIETUNION], 'locations' => [SMOLENSK, MOGILEV, KURSK, MOSCOW, NOVGOROD, LAKEPEIPUS, BALTICSTATES, BREST], 'mandatory' => true],
+					['name' => 'attack', 'containing' => true]
 				]
 			],
 			94 => ['faction' => Factions::SOVIETUNION, 'reaction' => 'AntiAir',
 				self::LATE => [
+					['name' => 'deploy', 'types' => [Pieces::AIRPLANE], 'factions' => [Factions::SOVIETUNION], 'locations' => [KIEV, SEVASTOPOL, CAUCASUS, STALINGRAD, SMOLENSK, VORONEZH, MOSCOW, LENINGRAD, VOLOGDA]],
+					['name' => 'deploy', 'types' => [Pieces::AIRPLANE], 'factions' => [Factions::SOVIETUNION], 'locations' => [KIEV, SEVASTOPOL, CAUCASUS, STALINGRAD, SMOLENSK, VORONEZH, MOSCOW, LENINGRAD, VOLOGDA], 'different' => true],
 				]
 			],
 			95 => ['faction' => Factions::SOVIETUNION, 'reaction' => 'SustainAttack',
 				self::LATE => [
 				]
 			],
-			96 => ['faction' => Factions::SOVIETUNION, 'reaction' => 'StandFast',
+			96 => ['faction' => Factions::SOVIETUNION, 'reaction' => 'StandFast', 'requirement' => 96,
 				self::LATE => [
+					['name' => 'deploy', 'types' => [Pieces::INFANTRY], 'factions' => [Factions::SOVIETUNION], 'locations' => [KURSK, KHARKOV, VORONEZH, MOSCOW, SMOLENSK, MOGILEV]],
+					['name' => 'deploy', 'types' => [Pieces::TANK], 'factions' => [Factions::SOVIETUNION], 'locations' => [KURSK, KHARKOV, VORONEZH, MOSCOW, SMOLENSK, MOGILEV], 'same' => true],
+					['name' => 'deploy', 'types' => [Pieces::TANK], 'factions' => [Factions::SOVIETUNION], 'locations' => [KURSK, KHARKOV, VORONEZH, MOSCOW, SMOLENSK, MOGILEV], 'same' => true],
 				]
 			],
 			97 => ['faction' => Factions::SOVIETUNION, 'reaction' => 'Advance',
 				self::LATE => [
+					['name' => 'draw', 'count' => 1],
+					['name' => 'action']
 				]
 			],
 			98 => ['faction' => Factions::SOVIETUNION, 'reaction' => 'Advance',
 				self::LATE => [
+					['name' => 'draw', 'count' => 3],
+					['name' => 'discard', 'count' => 1],
+					['name' => 'deploy', 'types' => [Pieces::INFANTRY, Pieces::TANK, Pieces::AIRPLANE], 'factions' => [Factions::SOVIETUNION], 'locations' => Board::E1939],
 				]
 			],
 			99 => ['faction' => Factions::SOVIETUNION, 'reaction' => 'Advance',
 				self::LATE => [
+					['name' => 'move', 'types' => [Pieces::INFANTRY], 'factions' => [Factions::SOVIETUNION]],
+					['name' => 'move', 'types' => [Pieces::INFANTRY], 'factions' => [Factions::SOVIETUNION], 'different' => true],
+					['name' => 'action']
 				]
 			],
 			100 => ['faction' => Factions::SOVIETUNION, 'reaction' => 'Exchange',
 				self::LATE => [
+					['name' => 'action']
 				]
 			],
 //

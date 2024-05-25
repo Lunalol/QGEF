@@ -169,6 +169,12 @@ trait gameStateActions
 //
 						break;
 //
+					case 96:
+//
+						if (self::getGameStateValue('action') != 2) throw new BgaUserException(self::_('May only be played during your Second Action step'));
+//
+						break;
+//
 					case 'winterTurn':
 //
 						if (intval(self::getGameStateValue('round')) % 4 !== 3) throw new BgaUserException(self::_('May only be played on a Winter turn'));

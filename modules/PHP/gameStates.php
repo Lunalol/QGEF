@@ -359,14 +359,23 @@ trait gameStates
 				case 'discard':
 //
 					if (!($this->decks->countCardInLocation('hand', $FACTION) > 0)) throw new BgaUserException(self::_('No card to discard'));
+					$this->gamestate->nextState('continue');
+//
+					break;
 //
 				case 'move/attack':
 //
-					if (array_key_exists('requirement', $action) && $action['requirement'] === 'noSpringTurn' && intval(self::getGameStateValue('round')) % 4 === 0)
-					{
-						self::action();
-						break;
-					}
+					if (array_key_exists('requirement', $action) && $action['requirement'] === 'noSpringTurn' && intval(self::getGameStateValue('round')) % 4 === 0) self::action();
+					else $this->gamestate->nextState('continue');
+//
+					break;
+//
+				case 'attack':
+//
+					if (array_key_exists('requirement', $action) && $action['requirement'] === 'noWinterTurn' && intval(self::getGameStateValue('round')) % 4 === 3) self::action();
+					else $this->gamestate->nextState('continue');
+//
+					break;
 //
 				case 'conscription':
 				case 'forcedMarch':
