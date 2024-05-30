@@ -179,15 +179,19 @@ trait gameStates
 		self::notifyAllPlayers('msg', '<span class="QGEF-phase">${FACTION}${LOG}</span>', ['i18n' => ['LOG'], 'LOG' => clienttranslate('Supply step'), 'FACTION' => $FACTION]);
 //* -------------------------------------------------------------------------------------------------------- */
 		$supplyLines = Board::getSupplyLines($FACTION);
-		foreach (array_filter(Pieces::getAll($FACTION), fn($piece) => !in_array($piece['location'], $supplyLines[$piece['faction']])) as $piece)
+		foreach (Pieces::getAll($FACTION) as $piece)
 		{
-			Pieces::destroy($piece['id']);
+			if (!in_array($piece['location'], $supplyLines[$piece['faction']]) && !Pieces::getStatus($piece['id'], 'supplied'))
+			{
+				Pieces::destroy($piece['id']);
 //* -------------------------------------------------------------------------------------------------------- */
-			self::notifyAllPlayers('removePiece', clienttranslate('${faction} <B>${type}</B> is removed at <B>${location}</B>'), [
-				'faction' => $piece['faction'], 'type' => $this->PIECES[$piece['type']],
-				'location' => $this->REGIONS[$piece['location']], 'i18n' => ['type', 'location'],
-				'piece' => $piece]);
+				self::notifyAllPlayers('removePiece', clienttranslate('${faction} <B>${type}</B> is removed at <B>${location}</B>'), [
+					'faction' => $piece['faction'], 'type' => $this->PIECES[$piece['type']],
+					'location' => $this->REGIONS[$piece['location']], 'i18n' => ['type', 'location'],
+					'piece' => $piece]);
 //* -------------------------------------------------------------------------------------------------------- */
+			}
+			Pieces::setStatus($piece['id'], 'supplied');
 		}
 //* -------------------------------------------------------------------------------------------------------- */
 		self::notifyAllPlayers('updateControl', '', [Factions::ALLIES => Board::getControl(Factions::ALLIES), Factions::AXIS => Board::getControl(Factions::AXIS)]);
@@ -402,6 +406,14 @@ trait gameStates
 				case 'action':
 //
 					self::incGameStateValue('action', -1);
+					self::action();
+//
+					break;
+//
+				case 'supply':
+//
+					$playedPieces = Actions::getPlayedPieces();
+					foreach ($playedPieces as $piece) Pieces::setStatus($piece['id'], 'supplied', true);
 					self::action();
 //
 					break;

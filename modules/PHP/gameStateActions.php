@@ -143,6 +143,12 @@ trait gameStateActions
 			{
 				switch (Decks::DECKS[$FACTION][$card['type_arg']]['requirement'])
 				{
+					case 51:
+//
+						if (!in_array(SEVASTOPOL, Board::getControl($FACTION))) throw new BgaUserException(self::_('May only be played if you control Sevastopol'));
+//
+						break;
+//
 					case 64:
 //
 						if (Pieces::getAtLocation(ROMANIA, Factions::SOVIETUNION) ||

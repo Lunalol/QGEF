@@ -195,8 +195,10 @@ class Decks extends APP_GameClass
 					['name' => 'attack', 'containing' => true]
 				]
 			],
-			51 => ['faction' => Factions::GERMANY, 'reaction' => 'Retreat',
+			51 => ['faction' => Factions::GERMANY, 'reaction' => 'Retreat', 'requirement' => 51,
 				self::LATE => [
+					['name' => 'recruit', 'types' => [Pieces::INFANTRY], 'factions' => [Factions::GERMANY], 'locations' => [CAUCASUS]],
+					['name' => 'supply']
 				]
 			],
 			52 => ['faction' => Factions::GERMANY, 'reaction' => 'NavalCombat',
@@ -728,18 +730,26 @@ class Decks extends APP_GameClass
 //
 // ➤ 51 Soviet Union cards
 //
-		for ($index = 8; $index <= 14; $index++) $alliesDECK[] = ['type' => self::FIRST_GAME, 'type_arg' => $index, 'nbr' => 1];
-		for ($index = 34; $index <= 48; $index++) $alliesDECK[] = ['type' => self::MID, 'type_arg' => $index, 'nbr' => 1];
+		for ($index = 8;
+			$index <= 14;
+			$index++) $alliesDECK[] = ['type' => self::FIRST_GAME, 'type_arg' => $index, 'nbr' => 1];
+		for ($index = 34;
+			$index <= 48;
+			$index++) $alliesDECK[] = ['type' => self::MID, 'type_arg' => $index, 'nbr' => 1];
 		$decks->createCards($alliesDECK, Factions::ALLIES);
 //
 		$ASIDE = [];
-		for ($index = 72; $index <= 100; $index++) $ASIDE[] = ['type' => self::LATE, 'type_arg' => $index, 'nbr' => 1];
+		for ($index = 72;
+			$index <= 100;
+			$index++) $ASIDE[] = ['type' => self::LATE, 'type_arg' => $index, 'nbr' => 1];
 		$decks->createCards($ASIDE, 'aside', Factions::ALLIES);
 //
 // ➤ 5 Soviet Union Contingency cards
 //
 		$CONTINGENCY = [];
-		for ($index = 106; $index <= 110; $index++) $CONTINGENCY[] = ['type' => self::INITIAL_SIDE, 'type_arg' => $index, 'nbr' => 1];
+		for ($index = 106;
+			$index <= 110;
+			$index++) $CONTINGENCY[] = ['type' => self::INITIAL_SIDE, 'type_arg' => $index, 'nbr' => 1];
 		$decks->createCards($CONTINGENCY, 'contingency', Factions::ALLIES);
 	}
 	static function setupAxis($decks)
@@ -748,18 +758,26 @@ class Decks extends APP_GameClass
 // ➤ 49 Axis cards (31 Germany, 18 Pact)
 //
 		$axisDECK = [];
-		for ($index = 1; $index <= 7; $index++) $axisDECK[] = ['type' => self::FIRST_GAME, 'type_arg' => $index, 'nbr' => 1];
-		for ($index = 15; $index <= 33; $index++) $axisDECK[] = ['type' => self::MID, 'type_arg' => $index, 'nbr' => 1];
+		for ($index = 1;
+			$index <= 7;
+			$index++) $axisDECK[] = ['type' => self::FIRST_GAME, 'type_arg' => $index, 'nbr' => 1];
+		for ($index = 15;
+			$index <= 33;
+			$index++) $axisDECK[] = ['type' => self::MID, 'type_arg' => $index, 'nbr' => 1];
 		$decks->createCards($axisDECK, Factions::AXIS);
 //
 		$ASIDE = [];
-		for ($index = 49; $index <= 71; $index++) $ASIDE[] = ['type' => self::LATE, 'type_arg' => $index, 'nbr' => 1];
+		for ($index = 49;
+			$index <= 71;
+			$index++) $ASIDE[] = ['type' => self::LATE, 'type_arg' => $index, 'nbr' => 1];
 		$decks->createCards($ASIDE, 'aside', Factions::AXIS);
 //
 // ➤ 5 Axis Contingency cards (3 Germany, 2 Pact)
 //
 		$CONTINGENCY = [];
-		for ($index = 101; $index <= 105; $index++) $CONTINGENCY[] = ['type' => self::INITIAL_SIDE, 'type_arg' => $index, 'nbr' => 1];
+		for ($index = 101;
+			$index <= 105;
+			$index++) $CONTINGENCY[] = ['type' => self::INITIAL_SIDE, 'type_arg' => $index, 'nbr' => 1];
 		$decks->createCards($CONTINGENCY, 'contingency', Factions::AXIS,);
 //
 	}

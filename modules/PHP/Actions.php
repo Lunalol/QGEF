@@ -45,7 +45,7 @@ class Actions extends APP_GameClass
 	}
 	static function getPlayedPieces()
 	{
-		return self::$table->getCollectionFromDB("SELECT id,player,faction,type,location FROM pieces WHERE id IN (SELECT JSON_UNQUOTE(data->'$.piece.id') FROM actions WHERE status = 'undo')");
+		return self::$table->getCollectionFromDB("SELECT id,player,faction,type,location FROM pieces WHERE id IN (SELECT JSON_UNQUOTE(data->'$.piece.id') FROM actions WHERE status = 'undo' AND data->'$.name' <> 'remove')");
 	}
 	static function getLastUndo()
 	{

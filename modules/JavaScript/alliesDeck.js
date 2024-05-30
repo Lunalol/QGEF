@@ -277,7 +277,7 @@ define(["dojo", "dojo/_base/declare"], function (dojo, declare)
 					type: 'ground',
 					text: [
 						_('Diversionist Groups'),
-						_('Gain 1 VP; then recruit a Soviet infantry in an unoccupied Axiscontrolled space east of the 1941 line. That infantry is supplied until the start of your next turn.')]
+						_('Gain 1 VP; then recruit a Soviet infantry in an unoccupied Axis controlled space east of the 1941 line. That infantry is supplied until the start of your next turn.')]
 				},
 				91: {
 					type: 'command',
