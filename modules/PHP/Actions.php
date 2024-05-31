@@ -41,11 +41,11 @@ class Actions extends APP_GameClass
 	}
 	static function getPlayedLocations()
 	{
-		return self::$table->getObjectListFromDB("SELECT JSON_UNQUOTE(data->'$.piece.location') FROM actions WHERE status = 'undo' AND data->'$.name' <> 'remove'", true);
+		return self::$table->getObjectListFromDB("SELECT JSON_UNQUOTE(data->'$.piece.location') FROM actions WHERE status = 'undo' AND data->'$.name' <> 'removeFree'", true);
 	}
 	static function getPlayedPieces()
 	{
-		return self::$table->getCollectionFromDB("SELECT id,player,faction,type,location FROM pieces WHERE id IN (SELECT JSON_UNQUOTE(data->'$.piece.id') FROM actions WHERE status = 'undo' AND data->'$.name' <> 'remove')");
+		return self::$table->getCollectionFromDB("SELECT id,player,faction,type,location FROM pieces WHERE id IN (SELECT JSON_UNQUOTE(data->'$.piece.id') FROM actions WHERE status = 'undo' AND data->'$.name' <> 'removeFree')");
 	}
 	static function getLastUndo()
 	{

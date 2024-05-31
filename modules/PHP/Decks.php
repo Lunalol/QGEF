@@ -207,8 +207,10 @@ class Decks extends APP_GameClass
 						'adjacent' => ['types' => [Pieces::AIRPLANE, Pieces::FLEET], 'factions' => [Factions::GERMANY]]],
 				]
 			],
-			53 => ['faction' => Factions::GERMANY, 'reaction' => 'NavalCombat',
+			53 => ['faction' => Factions::GERMANY, 'reaction' => 'NavalCombat', 'requirement' => 53,
 				self::LATE => [
+					['name' => 'VP', 'FACTION' => Factions::AXIS],
+					['name' => 'eliminateVS', 'types' => [Pieces::INFANTRY, Pieces::TANK, Pieces::AIRPLANE, Pieces::FLEET], 'factions' => [Factions::SOVIETUNION], 'locations' => [VOLOGDA, MOSCOW, GORKI, LAKEONEGA, PETROZAVODSK, RYBINSKSEA]],
 				]
 			],
 			54 => ['faction' => Factions::GERMANY, 'reaction' => 'SustainAttack',
@@ -257,6 +259,7 @@ class Decks extends APP_GameClass
 			],
 			61 => ['faction' => Factions::GERMANY, 'reaction' => 'Retreat',
 				self::LATE => [
+					['name' => 'VP', 'FACTION' => Factions::AXIS, 'locations' => [ROSTOV, CAUCASUS, STALINGRAD]],
 				]
 			],
 			62 => ['faction' => Factions::GERMANY, 'reaction' => 'Exchange',
@@ -289,10 +292,12 @@ class Decks extends APP_GameClass
 			],
 			67 => ['faction' => Factions::PACT, 'reaction' => 'Retreat',
 				self::LATE => [
+					['name' => 'VP', 'FACTION' => Factions::AXIS, 'locations' => [KIEV, SEVASTOPOL, KHARKOV]],
 				]
 			],
 			68 => ['faction' => Factions::PACT, 'reaction' => 'StandFast',
 				self::LATE => [
+					['name' => 'VP', 'FACTION' => Factions::AXIS, 'locations' => [FINLAND, KARELIA, PETROZAVODSK]],
 				]
 			],
 			69 => ['faction' => Factions::PACT, 'reaction' => 'Exchange',
@@ -327,7 +332,7 @@ class Decks extends APP_GameClass
 					['name' => 'attack', 'factions' => [Factions::GERMANY], 'into' => Board::E1941],
 				],
 				self::SECOND_SIDE => [
-					['name' => 'eliminateVS', 'types' => [Pieces::INFANTRY, Pieces::TANK, Pieces::AIRPLANE, Pieces::FLEET], 'factions' => [Factions::SOVIETUNION], 'locations' => [BERLIN, VIENNA, HUNGARY, WARSAW, WESTBALTICSEA]],
+					['name' => 'eliminateVS', 'types' => [Pieces::INFANTRY, Pieces::TANK, Pieces::AIRPLANE, Pieces::FLEET], 'factions' => [Factions::SOVIETUNION], 'locations' => [BERLIN, VIENNA, HUNGARY, WARSAW, WESTBALTICSEA], 'mandatory' => true],
 				],
 			],
 			103 => ['faction' => Factions::GERMANY,

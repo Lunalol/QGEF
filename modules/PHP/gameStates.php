@@ -429,7 +429,13 @@ trait gameStates
 //
 					$otherFACTION = $action['FACTION'];
 //
-					$VP = 1;
+					if (array_key_exists('locations', $action))
+					{
+						$VP = 0;
+						$control = Board::getControl($FACTION);
+						foreach ($action['locations'] as $location) if (in_array($location, $control)) $VP++;
+					}
+					else $VP = 1;
 					Markers::setLocation($otherFACTION, Factions::incVP($otherFACTION, $VP));
 //* -------------------------------------------------------------------------------------------------------- */
 					self::notifyAllPlayers('placeMarker', '', ['marker' => Markers::get($otherFACTION)]);
@@ -476,8 +482,15 @@ trait gameStates
 		$FACTION = Factions::getInActive();
 		$this->gamestate->changeActivePlayer(Factions::getPlayerID($FACTION));
 //
-		if (!self::argAction()['eliminate']) throw new BgaUserException(self::_('No piece to eliminate'));
-//
-		$this->gamestate->nextState('continue');
+		$args = self::argAction();
+		if (!$args['eliminate'])
+		{
+			if (array_key_exists('mandatory', $args['action'])) throw new BgaUserException(self::_('No piece to eliminate'));
+//* -------------------------------------------------------------------------------------------------------- */
+			self::notifyAllPlayers('msg', clienttranslate('No piece to eliminate'), ['FACTION' => $FACTION]);
+//* -------------------------------------------------------------------------------------------------------- */
+			self::action();
+		}
+		else $this->gamestate->nextState('continue');
 	}
 }

@@ -105,6 +105,7 @@ trait gameStateActions
 					break;
 //
 				case 'remove':
+				case 'removeFree':
 //* -------------------------------------------------------------------------------------------------------- */
 					self::notifyAllPlayers('placePiece', '', ['piece' => Pieces::get(Pieces::create($action['piece']['player'], $action['piece']['faction'], $action['piece']['type'], $action['piece']['location']))]);
 //* -------------------------------------------------------------------------------------------------------- */
@@ -146,6 +147,14 @@ trait gameStateActions
 					case 51:
 //
 						if (!in_array(SEVASTOPOL, Board::getControl($FACTION))) throw new BgaUserException(self::_('May only be played if you control Sevastopol'));
+//
+						break;
+//
+					case 53:
+//
+						$airplane = false;
+						foreach ([FINLAND, GULFOFFINLAND, KARELIA, BALTICSEA] as $location) foreach (Pieces::getAtLocation($location, 'germany') as $piece) if ($piece['type'] === Pieces::AIRPLANE) $airplane = true;
+						if (!$airplane) throw new BgaUserException(self::_('May only be played if a German airplane is in or adjacent to Finland'));
 //
 						break;
 //
@@ -323,7 +332,7 @@ trait gameStateActions
 			'location' => $this->REGIONS[$piece['location']], 'i18n' => ['type', 'location'],
 			'piece' => $piece]);
 //* -------------------------------------------------------------------------------------------------------- */
-		Actions::add('undo', ['name' => 'remove', 'piece' => $piece]);
+		Actions::add('undo', ['name' => 'removeFree', 'piece' => $piece]);
 //* -------------------------------------------------------------------------------------------------------- */
 		self::notifyAllPlayers('updateSupply', '', [Factions::ALLIES => Board::getSupplyLines(Factions::ALLIES), Factions::AXIS => Board::getSupplyLines(Factions::AXIS)]);
 //* -------------------------------------------------------------------------------------------------------- */
