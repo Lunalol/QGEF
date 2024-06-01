@@ -53,11 +53,25 @@ define(["dojo", "dojo/_base/declare"], function (dojo, declare)
 //
 				case 'scorchedEarth':
 //
-					const node = dojo.place(`<div id='QGEFmarker-${marker.type}' class='QGEFmarker' data-type='${marker.type}' data-location='${marker.location}'></div>`, this.board);
-					dojo.setStyle(node, {
-						left: (REGIONS[marker.location].x - node.offsetWidth / 2) + 'px',
-						top: (REGIONS[marker.location].y - node.offsetHeight / 2) + 'px'
-					});
+					{
+						const node = dojo.place(`<div id='QGEFmarker-${marker.type}' class='QGEFmarker' data-type='${marker.type}' data-location='${marker.location}'></div>`, this.board);
+						dojo.setStyle(node, {
+							left: (REGIONS[marker.location].x - node.offsetWidth / 2) + 'px',
+							top: (REGIONS[marker.location].y - node.offsetHeight / 2) + 'px'
+						});
+					}
+//
+					break;
+//
+				case 'Gorki':
+//
+					{
+						const node = dojo.place(`<div id='QGEFmarker-${marker.type}' class='QGEFmarker' data-type='${marker.type}' data-location='${marker.location}'></div>`, this.board);
+						dojo.setStyle(node, {
+							left: (REGIONS[marker.location].x - node.offsetWidth / 2) + 'px',
+							top: (REGIONS[marker.location].y - node.offsetHeight / 2) + 'px'
+						});
+					}
 //
 					break;
 //

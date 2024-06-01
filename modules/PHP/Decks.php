@@ -288,6 +288,7 @@ class Decks extends APP_GameClass
 			],
 			66 => ['faction' => Factions::PACT, 'reaction' => 'Retreat',
 				self::LATE => [
+					['name' => 'VP', 'FACTION' => Factions::AXIS, 'special' => 66]
 				]
 			],
 			67 => ['faction' => Factions::PACT, 'reaction' => 'Retreat',
@@ -303,6 +304,7 @@ class Decks extends APP_GameClass
 			69 => ['faction' => Factions::PACT, 'reaction' => 'Exchange',
 				self::LATE => [
 					['name' => 'draw', 'count' => 2],
+					['name' => 'VP', 'FACTION' => Factions::AXIS, 'special' => 69]
 				]
 			],
 			70 => ['faction' => Factions::PACT, 'reaction' => 'SustainAttack',
@@ -536,8 +538,10 @@ class Decks extends APP_GameClass
 					['name' => 'attack', 'factions' => [Factions::SOVIETUNION], 'into' => true]
 				]
 			],
-			76 => ['faction' => Factions::SOVIETUNION, 'reaction' => 'Advance',
+			76 => ['faction' => Factions::SOVIETUNION, 'reaction' => 'Advance', 'requirement' => 'noSpringTurn',
 				self::LATE => [
+					['name' => 'attack', 'factions' => [Factions::SOVIETUNION], 'locations' => Board::ALL, 'advance' => [Pieces::INFANTRY],
+						'contain' => ['types' => [Pieces::INFANTRY], 'factions' => [Factions::SOVIETUNION]]],
 				]
 			],
 			77 => ['faction' => Factions::SOVIETUNION, 'reaction' => 'Exchange',
@@ -582,6 +586,7 @@ class Decks extends APP_GameClass
 			84 => ['faction' => Factions::SOVIETUNION, 'reaction' => 'Advance',
 				self::LATE => [
 					['name' => 'draw', 'count' => 2],
+					['name' => 'VP', 'FACTION' => Factions::ALLIES, 'special' => 84]
 				]
 			],
 			85 => ['faction' => Factions::SOVIETUNION, 'reaction' => 'Exchange',
@@ -594,7 +599,7 @@ class Decks extends APP_GameClass
 			86 => ['faction' => Factions::SOVIETUNION, 'reaction' => 'Retreat',
 				self::LATE => [
 					['name' => 'draw', 'count' => 1],
-					['name' => 'gorki'],
+					['name' => 'Gorki'],
 				]
 			],
 			87 => ['faction' => Factions::SOVIETUNION, 'reaction' => 'SustainAttack',
@@ -616,6 +621,9 @@ class Decks extends APP_GameClass
 			],
 			90 => ['faction' => Factions::SOVIETUNION, 'reaction' => 'Retreat',
 				self::LATE => [
+					['name' => 'recruit', 'types' => [Pieces::INFANTRY], 'factions' => [Factions::SOVIETUNION], 'special' => 90],
+					['name' => 'supply'],
+					['name' => 'VP', 'FACTION' => Factions::ALLIES]
 				]
 			],
 			91 => ['faction' => Factions::SOVIETUNION, 'reaction' => 'Retreat',
@@ -673,6 +681,9 @@ class Decks extends APP_GameClass
 			],
 			100 => ['faction' => Factions::SOVIETUNION, 'reaction' => 'Exchange',
 				self::LATE => [
+					['name' => 'eliminate', 'types' => [Pieces::INFANTRY], 'factions' => [Factions::SOVIETUNION], 'locations' => [], 'mandatory' => true,
+						'adjacent' => ['types' => [Pieces::INFANTRY, Pieces::TANK], 'factions' => [Factions::GERMANY, Factions::PACT]]],
+					['name' => 'eliminate', 'types' => [Pieces::INFANTRY, Pieces::TANK], 'factions' => [Factions::GERMANY, Factions::PACT], 'range' => 1],
 					['name' => 'action']
 				]
 			],
@@ -843,6 +854,12 @@ class Decks extends APP_GameClass
 // Attack with a German force containing a tank
 //
 				return Pieces::getPossibleAttacks(Factions::AXIS, self::$table->getObjectListFromDB("SELECT * FROM pieces WHERE faction = 'germany' AND type IN ('INFANTRY','TANK') AND location in (SELECT location FROM pieces WHERE faction = 'germany' AND type = 'TANK')"));
+//
+			case 90:
+//
+// Unoccupied Axis controlled space east of the 1941 line
+//
+				return array_map('intval', array_intersect(Board::getControl(Factions::AXIS), Board::E1941));
 //
 			case 108:
 //

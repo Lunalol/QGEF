@@ -102,6 +102,7 @@ trait gameStateArguments
 				{
 					foreach ($action['types'] as $type)
 					{
+						if (array_key_exists('special', $action)) $action['locations'] = Decks::special($action);
 						if (array_key_exists('contain', $action)) foreach (Pieces::getAll($FACTION) as $piece) if (in_array($piece['faction'], $action['contain']['factions']) && in_array($piece['type'], $action['contain']['types'])) $action['locations'][] = intval($piece['location']);
 						if (array_key_exists('adjacent', $action))
 						{
@@ -161,7 +162,7 @@ trait gameStateArguments
 				$this->possible['pieces'] = [];
 				if (array_key_exists('adjacent', $action))
 				{
-					foreach (Pieces::getAll($FACTION) as $piece)
+					foreach (Pieces::getAllDatas() as $piece)
 					{
 						if (in_array($piece['faction'], $action['adjacent']['factions']) && in_array($piece['type'], $action['adjacent']['types']))
 						{
@@ -370,7 +371,7 @@ trait gameStateArguments
 //
 		$free = array_key_exists('advance', $action);
 		if (array_key_exists('requirement', $action) && $action['requirement'] === 'noSpringTurn') $free = $free && intval(self::getGameStateValue('round')) % 4 !== 0;
-		if (!$free)
+//		if (!$free)
 		{
 			if (!Factions::getStatus($attackerFACTION, 'mud'))
 			{
@@ -382,10 +383,10 @@ trait gameStateArguments
 				}
 			}
 		}
-		else
+		if ($free)
 		{
 			$this->possible['reactions'][] = 0;
-			$this->possible['pieces'] = array_keys(array_filter(Pieces::getAtLocation($from, $attackerfaction), fn($piece) => in_array($piece['type'], $action['advance'])));
+			$this->possible['free'] = array_keys(array_filter(Pieces::getAtLocation($from, $attackerfaction), fn($piece) => in_array($piece['type'], $action['advance'])));
 		}
 //
 		return ['FACTION' => $attackerFACTION, '_private' => [Factions::getPlayerID($attackerFACTION) => $this->possible],

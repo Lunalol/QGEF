@@ -465,6 +465,12 @@ html {
 	background-position: -2px -148px;
 	opacity: 75%;
 }
+.QGEFmarker[data-type='Gorki'] {
+	width: 147px;
+	height: 147px;
+	background-position: -618px -148px;
+	opacity: 75%;
+}
 .QGEFmarker[data-type='axis'] {
 	width: 137px;
 	height: 137px;

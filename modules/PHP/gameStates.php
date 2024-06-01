@@ -256,12 +256,14 @@ trait gameStates
 			self::notifyAllPlayers('updateRound', '<span class="QGEF-phase">${LOG}</span>', ['i18n' => ['LOG'], 'LOG' => clienttranslate('Scoring'), 'steps' => $steps]);
 //* -------------------------------------------------------------------------------------------------------- */
 			$scorchedEarth = Markers::get('scorchedEarth');
+			$Gorky = Markers::get('Gorky');
 			foreach (array_keys(Factions::FACTIONS) as $FACTION)
 			{
 				$VP = 0;
 				foreach (Board::getControl($FACTION) as $location)
 				{
 					if ($scorchedEarth && $scorchedEarth['location'] === $location) continue;
+					if ($Gorky && $Gorky['location'] === $location) $VP++;
 					if (array_key_exists('VP', Board::REGIONS[$location])) $VP += Board::REGIONS[$location]['VP'];
 				}
 //
@@ -425,17 +427,75 @@ trait gameStates
 //
 					break;
 //
+				case 'Gorki':
+//
+					Markers::create('Gorki', GORKI);
+//* -------------------------------------------------------------------------------------------------------- */
+					self::notifyAllPlayers('placeMarker', '', ['marker' => Markers::get('Gorki')]);
+//* -------------------------------------------------------------------------------------------------------- */
+					self::action();
+//
+					break;
+//
 				case 'VP':
 //
 					$otherFACTION = $action['FACTION'];
 //
-					if (array_key_exists('locations', $action))
+					if (array_key_exists('special', $action))
+					{
+						switch ($action['special'])
+						{
+							case 66: // Gain 1 VP for every 3 Pact pieces in land spaces east of the 1941 line, rounded up
+//
+								$pieces = 0;
+								foreach (Board::E1941 as $location) $pieces += sizeof(Pieces::getAtLocation($location, Factions::PACT));
+								$VP = intdiv($pieces + 2, 3);
+//
+								break;
+//
+							case 69: // Gain 2 VPs if the Axis controls every land space between the 1939 and 1941 lines
+//
+								$VP = 2;
+								$control = Board::getControl($FACTION);
+								foreach (array_intersect(Board::E1941, Board::W1939) as $location) if (!in_array($location, $control)) $VP = 0;
+//
+								break;
+//
+							case 84: // gain 1 VP if a Soviet piece is in or adjacent to Warsaw; gain 1 VP if a Soviet piece is in or adjacent to Berlin
+//
+								$VP = 0;
+								foreach ([WARSAW, HUNGARY, LWOW, BREST, EASTPRUSSIA, WESTBALTICSEA, BERLIN] as $location)
+								{
+									if (Pieces::getAtLocation($location, Factions::SOVIETUNION))
+									{
+										$VP++;
+										break;
+									}
+								}
+								foreach ([BERLIN, VIENNA, HUNGARY, WARSAW, WESTBALTICSEA] as $location)
+								{
+									if (Pieces::getAtLocation($location, Factions::SOVIETUNION))
+									{
+										$VP++;
+										break;
+									}
+								}
+//
+								break;
+//
+							default:
+//
+								throw new BgaVisibleSystemException("Invalid special: $action[special]");
+						}
+					}
+					else if (array_key_exists('locations', $action))
 					{
 						$VP = 0;
 						$control = Board::getControl($FACTION);
 						foreach ($action['locations'] as $location) if (in_array($location, $control)) $VP++;
 					}
 					else $VP = 1;
+//
 					Markers::setLocation($otherFACTION, Factions::incVP($otherFACTION, $VP));
 //* -------------------------------------------------------------------------------------------------------- */
 					self::notifyAllPlayers('placeMarker', '', ['marker' => Markers::get($otherFACTION)]);
