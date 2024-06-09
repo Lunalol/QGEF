@@ -48,12 +48,15 @@ trait gameUtils
 	function action(bool $pass = false)
 	{
 //PJL
-		self::setGameStateValue('action', 1);
+//		self::setGameStateValue('action', 1);
 //PJL
 		$id = Actions::getNextAction();
 		if ($id)
 		{
 			$action = Actions::get($id);
+//
+			if (array_key_exists('infinite', $action) && !$pass) return $this->gamestate->nextState('action');
+//
 			Actions::setStatus($id, 'done');
 			if (!$pass && array_key_exists('trigger', $action))
 			{

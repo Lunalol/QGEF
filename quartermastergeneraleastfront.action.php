@@ -47,7 +47,13 @@ class action_quartermastergeneraleastfront extends APP_GameAction
 	public function discard()
 	{
 		self::setAjaxMode();
-		$this->game->acDiscard(self::getArg("FACTION", AT_alphanum, true), self::getArg("card", AT_int, true));
+		$this->game->acDiscard(self::getArg("FACTION", AT_alphanum, true), self::getArg("cards", AT_json, true));
+		self::ajaxResponse("");
+	}
+	public function VP()
+	{
+		self::setAjaxMode();
+		$this->game->acVP(self::getArg("FACTION", AT_alphanum, true));
 		self::ajaxResponse("");
 	}
 	public function play()

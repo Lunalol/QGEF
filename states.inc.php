@@ -34,7 +34,8 @@ $machinestates = [
 		'name' => 'endOfRound',
 		'type' => 'game',
 		'action' => 'stEndOfRound',
-		'transitions' => ['startOfRound' => 10, 'endOfGame' => 99]
+		'transitions' => ['startOfRound' => 10, 'endOfGame' => 99],
+		'updateGameProgression' => true
 	],
 	99 => [
 		'name' => 'gameEnd',
@@ -235,7 +236,7 @@ $machinestates = [
 		'descriptionmyturn' => clienttranslate('${you} are doing an action'),
 		'type' => 'activeplayer',
 		'args' => 'argAction',
-		'possibleactions' => ['removePiece'],
+		'possibleactions' => ['removePiece', 'discard', 'VP'],
 		'transitions' => ['action' => 130, 'next' => 120]
 	],
 ];

@@ -211,6 +211,7 @@ trait gameStateActions
 			Actions::add('pending', $new);
 		}
 //
+		self::setGameStateValue('location', 0);
 		$this->gamestate->nextState('action');
 	}
 	function acConscription(string $FACTION, array $cards): void
@@ -298,18 +299,42 @@ trait gameStateActions
 //
 		$this->gamestate->nextState('action');
 	}
-	function acDiscard(string $FACTION, int $cardID): void
+	function acVP(string $FACTION): void
+	{
+//
+// Check Play
+//
+		$this->checkAction('VP');
+		if ($FACTION !== Factions::getInActive()) throw new BgaVisibleSystemException("Invalid FACTION: $FACTION");
+//
+		$action = Actions::get(Actions::getNextAction());
+		$VP = $action['VP'];
+//
+		Markers::setLocation($FACTION, Factions::incVP($FACTION, $VP));
+//* -------------------------------------------------------------------------------------------------------- */
+		self::notifyAllPlayers('placeMarker', '', ['marker' => Markers::get($FACTION)]);
+//* -------------------------------------------------------------------------------------------------------- */
+		if (self::getPlayersNumber() === 2) self::notifyAllPlayers('updateScore', '', ['player_id' => Factions::getPlayerID($FACTION), 'VP' => Factions::getVP($FACTION)]);
+//* -------------------------------------------------------------------------------------------------------- */
+		self::notifyAllPlayers('msg', clienttranslate('${FACTION} Gains ${VP} VP(s)'), ['VP' => $VP, 'FACTION' => $FACTION]);
+//* -------------------------------------------------------------------------------------------------------- */
+		self::action();
+	}
+	function acDiscard(string $FACTION, array $cards): void
 	{
 //
 // Check Play
 //
 		$this->checkAction('discard');
-		if ($FACTION !== Factions::getActive()) throw new BgaVisibleSystemException("Invalid FACTION: $FACTION");
+//		if ($FACTION !== Factions::getActive()) throw new BgaVisibleSystemException("Invalid FACTION: $FACTION");
 //
-		$this->decks->moveCard($cardID, 'discard', $FACTION);
+		foreach ($cards as $cardID)
+		{
+			$this->decks->moveCard($cardID, 'discard', $FACTION);
 //* -------------------------------------------------------------------------------------------------------- */
-		self::notifyAllPlayers($FACTION . 'Discard', clienttranslate('${FACTION} Discards 1 card'), ['card' => ['id' => $cardID], 'FACTION' => $FACTION]);
+			self::notifyAllPlayers($FACTION . 'Discard', clienttranslate('${FACTION} Discards 1 card'), ['card' => ['id' => $cardID], 'FACTION' => $FACTION]);
 //* -------------------------------------------------------------------------------------------------------- */
+		}
 //
 		self::action();
 	}
@@ -474,6 +499,8 @@ trait gameStateActions
 //
 			if (!in_array($piece['location'], $supplyLines[$piece['faction']])) throw new BgaUserException(self::_('An unsupplied piece cannot attack'));
 		}
+//
+		self::setGameStateValue('location', $from);
 //
 		Factions::setStatus(Factions::getActive(), 'attack', ['location' => $location, 'faction' => $faction, 'from' => $from]);
 		Factions::setStatus(Factions::getActive(), 'removedPiece');

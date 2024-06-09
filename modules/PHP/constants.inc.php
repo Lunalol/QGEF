@@ -23,6 +23,7 @@ define('FIRSTGAME', 102);
 #
 define('ROUND', 10);
 define('ACTION', 11);
+define('LOCATION', 20);
 #
 # Regions (44)
 #

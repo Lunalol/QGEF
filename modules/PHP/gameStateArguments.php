@@ -139,7 +139,7 @@ trait gameStateArguments
 			case 'move':
 //
 				if (array_key_exists('different', $action)) $this->possible['move'] = Pieces::getPossibleMoves($FACTION, array_filter(Pieces::getAll($FACTION), fn($piece) => !array_key_exists($piece['id'], $playedPieces) && in_array($piece['type'], $action['types']) && in_array($piece['faction'], $action['factions'])));
-				else if (array_key_exists('same', $action)) $this->possible['move'] = Pieces::getPossibleMoves($FACTION, array_filter(Pieces::getAll($FACTION), fn($piece) => array_key_exists($piece['id'], $playedPieces) && in_array($piece['type'], $action['types']) && in_array($piece['faction'], $action['factions'])));
+				else if (array_key_exists('same', $action) && $playedPieces) $this->possible['move'] = Pieces::getPossibleMoves($FACTION, array_filter(Pieces::getAll($FACTION), fn($piece) => array_key_exists($piece['id'], $playedPieces)));
 				else $this->possible['move'] = Pieces::getPossibleMoves($FACTION, array_filter(Pieces::getAll($FACTION), fn($piece) => in_array($piece['type'], $action['types']) && in_array($piece['faction'], $action['factions'])));
 				return ['FACTION' => $FACTION, 'cancel' => Actions::empty() && !array_key_exists('noundo', $action), 'action' => $action, 'move' => $this->possible['move']];
 //
@@ -186,13 +186,17 @@ trait gameStateArguments
 				if (array_key_exists('locations', $action)) foreach (Pieces::getAllDatas() as $piece) if (in_array($piece['location'], $action['locations']) && in_array($piece['type'], $action['types']) && in_array($piece['faction'], $action['factions'])) $this->possible['pieces'][] = $piece['id'];
 				if (array_key_exists('special', $action)) $this->possible['pieces'] = Decks::special($action);
 //
-				return ['FACTION' => $FACTION, 'cancel' => false, 'action' => $action, 'eliminate' => $this->possible['pieces']];
+				return ['FACTION' => Factions::getInactive(), 'cancel' => false, 'action' => $action, 'eliminate' => $this->possible['pieces'], 'discard' => $action['discard'] ?? null, 'VP' => $action['VP'] ?? null];
 //
 			case 'scorched':
 //
 				$this->possible['scorched'] = $action['locations'];
 //
 				return ['FACTION' => $FACTION, 'cancel' => Actions::empty() && !array_key_exists('noundo', $action), 'action' => $action, 'scorched' => $this->possible['scorched']];
+//
+			case 'discard':
+//
+				return ['FACTION' => $FACTION, 'action' => $action, 'discard' => $action['count']];
 //
 			default :
 //
@@ -275,9 +279,21 @@ trait gameStateArguments
 			}
 		}
 //
+		$action = Actions::get(Actions::getNextAction());
+		if ($action && array_key_exists('special', $action) && $action['special'] === 62)
+		{
+			foreach (Pieces::getAtLocation($from, Factions::PACT) as $piece) $attacker[] = $piece['id'];
+			foreach (Board::ADJACENCY[$location] as $next_location)
+			{
+				foreach (Pieces::getAtLocation($next_location, Factions::PACT) as $piece)
+				{
+					if ($piece['type'] === 'airplane' || $piece['type'] === 'fleet') $attacker[] = +$piece['id'];
+				}
+			}
+		}
+//
 		$this->possible = ['reactions' => [], 'pieces' => $attacker];
 //
-		$action = Actions::get(Actions::getNextAction());
 		$removedPiece = Factions::getStatus($defenderFACTION, 'removedPiece');
 		foreach ($this->decks->getPlayerHand($attackerFACTION) as $card)
 		{
@@ -315,11 +331,24 @@ trait gameStateArguments
 			}
 		}
 //
+		$action = Actions::get(Actions::getNextAction());
+		if ($action && array_key_exists('special', $action) && $action['special'] === 62)
+		{
+			foreach (Pieces::getAtLocation($from, Factions::PACT) as $piece) $attacker[] = $piece['id'];
+			foreach (Board::ADJACENCY[$location] as $next_location)
+			{
+				foreach (Pieces::getAtLocation($next_location, Factions::PACT) as $piece)
+				{
+					if ($piece['type'] === 'airplane' || $piece['type'] === 'fleet') $attacker[] = +$piece['id'];
+				}
+			}
+		}
+//
 		$this->possible = ['reactions' => [], 'pieces' => $attacker];
 //
 		return ['FACTION' => $attackerFACTION, '_private' => [Factions::getPlayerID($attackerFACTION) => $this->possible],
 			'location' => $location, 'attacker' => $attacker, 'defender' => $defender,
-			'action' => Actions::get(Actions::getNextAction())];
+			'action' => $action];
 	}
 	function argAttackRoundSpecial()
 	{

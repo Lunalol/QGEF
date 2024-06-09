@@ -97,9 +97,9 @@ define(["dojo", "dojo/_base/declare"], function (dojo, declare)
 				faction: this.FACTIONS[this.cards[card.type_arg].faction],
 				type: this.cards[card.type_arg].type, type_arg: card.type_arg,
 				title: this.cards[card.type_arg][INITIAL_SIDE][0],
-				text: this.cards[card.type_arg][INITIAL_SIDE][1], FONT: 100 - this.cards[card.type_arg][INITIAL_SIDE][1].length / 5,
+				text: this.cards[card.type_arg][INITIAL_SIDE][1], FONT: 100 - this.cards[card.type_arg][INITIAL_SIDE][1].length / 6,
 				back_title: this.cards[card.type_arg][SECOND_SIDE][0],
-				back_text: this.cards[card.type_arg][SECOND_SIDE][1], back_FONT: 100 - this.cards[card.type_arg][SECOND_SIDE][1].length / 5,
+				back_text: this.cards[card.type_arg][SECOND_SIDE][1], back_FONT: 100 - this.cards[card.type_arg][SECOND_SIDE][1].length / 6,
 				side: +card.type,
 				flip: +card.type === SECOND_SIDE ? 'QGEFflip' : ''
 			});

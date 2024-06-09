@@ -146,7 +146,7 @@ define(["dojo", "dojo/_base/declare", "ebg/core/gamegui", "ebg/counter",
 							this.gamedatas.gamestate.possibleactions = ['scorched'];
 							break;
 						case 'discard':
-							this.gamedatas.gamestate.descriptionmyturn = _('Discard a card');
+							this.gamedatas.gamestate.descriptionmyturn = _('Discard some cards');
 							this.gamedatas.gamestate.possibleactions = ['discard'];
 							break;
 						case 'deploy':
@@ -172,7 +172,7 @@ define(["dojo", "dojo/_base/declare", "ebg/core/gamegui", "ebg/counter",
 						case 'eliminate':
 						case 'eliminateVS':
 							this.gamedatas.gamestate.descriptionmyturn = _('Eliminate an unit');
-							this.gamedatas.gamestate.possibleactions = ['removePiece'];
+							this.gamedatas.gamestate.possibleactions = ['removePiece', 'discard', 'VP'];
 							break;
 						case 'conscription':
 							this.gamedatas.gamestate.descriptionmyturn = {1: _('Discard 1 card to deploy an infantry'), 2: _('Discard 2 cards to deploy a tank, airplane, or fleet')}[state.args.action.cards.length];
@@ -495,13 +495,25 @@ define(["dojo", "dojo/_base/declare", "ebg/core/gamegui", "ebg/counter",
 //
 							dojo.query('.QGEFhandHolder>.QGEFcardContainer').addClass('QGEFselectable');
 //
-							this.addActionButton('QGEFdiscard', _('Discard'), (event) => {
+							this.addActionButton('QGEFdiscard', dojo.string.substitute(_('Discard ${N} card(s)'), {N: args.discard}), (event) => {
 								dojo.stopEvent(event);
-								const cards = dojo.query('.QGEFcardContainer.QGEFselectable.QGEFselected', `QGEFhand-${this.FACTION}`);
-								if (cards.length === 1) this.confirm(_('Discard 1 card'), 'discard', {FACTION: this.FACTION, card: cards[0].dataset.id});
+								const cards = dojo.query('.QGEFcardContainer.QGEFselectable.QGEFselected', `QGEFhand-${this.FACTION}`).reduce((L, node) => [...L, +node.dataset.id], []);
+								if (cards.length === args.discard) this.confirm(dojo.string.substitute(_('Discard ${N} card(s)'), {N: args.discard}), 'discard', {FACTION: this.FACTION, cards: JSON.stringify(cards)});
 							}, null, false, 'red');
 //
 							this.updateActionButtons();
+//
+							break;
+//
+						case 'move':
+//
+							if (!('mandatory' in args.action))
+							{
+								this.addActionButton('QGEFpass', _('No movement'), (event) => {
+									dojo.stopEvent(event);
+									this.confirm(_('Do nothing'), 'pass', {FACTION: this.FACTION});
+								}, null, false, 'red');
+							}
 //
 							break;
 //
@@ -525,6 +537,33 @@ define(["dojo", "dojo/_base/declare", "ebg/core/gamegui", "ebg/counter",
 									dojo.stopEvent(event);
 									this.confirm(_('Do nothing'), 'pass', {FACTION: this.FACTION});
 								}, null, false, 'red');
+							}
+//
+							break;
+//
+						case 'eliminateVS':
+//
+							if ('discard' in args.action)
+							{
+								dojo.query('.QGEFhandHolder>.QGEFcardContainer').addClass('QGEFselectable');
+//
+								this.addActionButton('QGEFdiscard', dojo.string.substitute(_('Discard ${N} card(s)'), {N: args.discard}), (event) => {
+									dojo.stopEvent(event);
+									const cards = dojo.query('.QGEFcardContainer.QGEFselectable.QGEFselected', `QGEFhand-${this.FACTION}`).reduce((L, node) => [...L, +node.dataset.id], []);
+									if (cards.length === args.discard) this.confirm(dojo.string.substitute(_('Discard ${N} card(s)'), {N: args.discard}), 'discard', {FACTION: this.FACTION, cards: JSON.stringify(cards)});
+								}, null, false, 'red');
+//
+								this.updateActionButtons();
+							}
+//
+							if ('VP' in args.action)
+							{
+								this.addActionButton('QGEFVP', dojo.string.substitute(_('${VP} VP(s) to opponent'), {VP: args.VP}), (event) => {
+									dojo.stopEvent(event);
+									this.confirm(dojo.string.substitute(_('${VP} VP(s) to opponent'), {VP: args.VP}), 'VP', {FACTION: this.FACTION});
+								}, null, false, 'red');
+//
+								this.updateActionButtons();
 							}
 //
 							break;
@@ -735,7 +774,7 @@ define(["dojo", "dojo/_base/declare", "ebg/core/gamegui", "ebg/counter",
 				if ($('QGEFpass')) dojo.toggleClass('QGEFpass', 'disabled', cards + contingency !== 0);
 				if ($('QGEFproductionInitiative')) dojo.style('QGEFproductionInitiative', 'display', (cards + contingency === 0) ? '' : 'none');
 //
-				if ($('QGEFdiscard')) dojo.toggleClass('QGEFdiscard', 'disabled', cards !== 1);
+				if ($('QGEFdiscard')) dojo.toggleClass('QGEFdiscard', 'disabled', cards !== this.gamedatas.gamestate.args.discard);
 			}
 		},
 		QGEFremove: function (piece)

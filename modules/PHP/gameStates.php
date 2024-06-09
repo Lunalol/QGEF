@@ -47,12 +47,12 @@ trait gameStates
 //
 // However, if this is your first game, you may want to select the 7 cards labeled “First Game” instead, and shuffle the rest.
 //
-		if (self::getGameStateValue('firstGame') >= 1)
+		if (self::getGameStateValue('firstGame') == 1)
 		{
 			$this->decks->moveCards(array_keys($this->decks->getCardsOfTypeInLocation(Decks::FIRST_GAME, null, Factions::ALLIES)), 'hand', Factions::ALLIES);
 			$this->decks->moveCards(array_keys($this->decks->getCardsOfTypeInLocation(Decks::FIRST_GAME, null, Factions::AXIS)), 'hand', Factions::AXIS);
 		}
-		if (self::getGameStateValue('firstGame') >= 2)
+		if (self::getGameStateValue('firstGame') == 2)
 		{
 			$this->decks->moveCards(array_keys($this->decks->getCardsOfTypeInLocation(Decks::MID, null, Factions::ALLIES)), 'hand', Factions::ALLIES);
 			$this->decks->moveCards(array_keys($this->decks->getCardsOfTypeInLocation(Decks::MID, null, Factions::AXIS)), 'hand', Factions::AXIS);
@@ -392,7 +392,6 @@ trait gameStates
 				case 'attack':
 				case 'eliminate':
 				case 'discard':
-				case 'discard':
 				case 'scorched':
 //
 					$this->gamestate->nextState('continue');
@@ -543,7 +542,7 @@ trait gameStates
 		$this->gamestate->changeActivePlayer(Factions::getPlayerID($FACTION));
 //
 		$args = self::argAction();
-		if (!$args['eliminate'])
+		if (!$args['eliminate'] && !array_key_exists('discard', $args))
 		{
 			if (array_key_exists('mandatory', $args['action'])) throw new BgaUserException(self::_('No piece to eliminate'));
 //* -------------------------------------------------------------------------------------------------------- */

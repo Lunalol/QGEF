@@ -264,6 +264,7 @@ class Decks extends APP_GameClass
 			],
 			62 => ['faction' => Factions::GERMANY, 'reaction' => 'Exchange',
 				self::LATE => [
+					['name' => 'attack', 'types' => [Pieces::INFANTRY, Pieces::TANK], 'factions' => [Factions::GERMANY], 'special' => 62],
 				]
 			],
 			63 => ['faction' => Factions::GERMANY, 'reaction' => 'Retreat',
@@ -309,6 +310,8 @@ class Decks extends APP_GameClass
 			],
 			70 => ['faction' => Factions::PACT, 'reaction' => 'SustainAttack',
 				self::LATE => [
+					['name' => 'move', 'types' => [Pieces::INFANTRY, Pieces::TANK], 'factions' => [Factions::GERMANY, Factions::PACT], 'same' => true, 'infinite' => true],
+					['name' => 'VP', 'FACTION' => Factions::AXIS]
 				]
 			],
 			71 => ['faction' => Factions::PACT, 'reaction' => 'NavalCombat',
@@ -522,6 +525,7 @@ class Decks extends APP_GameClass
 			],
 			73 => ['faction' => Factions::SOVIETUNION, 'reaction' => 'Retreat',
 				self::LATE => [
+					['name' => 'eliminateVS', 'types' => [Pieces::INFANTRY, Pieces::TANK, Pieces::AIRPLANE, Pieces::FLEET], 'factions' => [Factions::SOVIETUNION], 'locations' => [MOGILEV], 'discard' => 3, 'VP' => 2],
 				]
 			],
 			74 => ['faction' => Factions::SOVIETUNION, 'reaction' => 'SustainAttack',
@@ -552,6 +556,7 @@ class Decks extends APP_GameClass
 			],
 			78 => ['faction' => Factions::SOVIETUNION, 'reaction' => 'Retreat',
 				self::LATE => [
+					['name' => 'eliminateVS', 'types' => [Pieces::INFANTRY, Pieces::TANK, Pieces::AIRPLANE, Pieces::FLEET], 'factions' => [Factions::SOVIETUNION], 'locations' => [WARSAW], 'discard' => 3, 'VP' => 2],
 				]
 			],
 			79 => ['faction' => Factions::SOVIETUNION, 'reaction' => 'StandFast',
@@ -628,6 +633,7 @@ class Decks extends APP_GameClass
 			],
 			91 => ['faction' => Factions::SOVIETUNION, 'reaction' => 'Retreat',
 				self::LATE => [
+					['name' => 'eliminateVS', 'types' => [Pieces::INFANTRY, Pieces::TANK, Pieces::AIRPLANE, Pieces::FLEET], 'factions' => [Factions::SOVIETUNION], 'locations' => [YUGOSLAVIA], 'discard' => 3, 'VP' => 2],
 				]
 			],
 			92 => ['faction' => Factions::SOVIETUNION, 'reaction' => 'SustainAttack',
@@ -650,6 +656,8 @@ class Decks extends APP_GameClass
 			],
 			95 => ['faction' => Factions::SOVIETUNION, 'reaction' => 'SustainAttack',
 				self::LATE => [
+					['name' => 'attack', 'factions' => [Factions::SOVIETUNION], 'locations' => Board::ALL, 'special' => 95],
+					['name' => 'attack', 'factions' => [Factions::SOVIETUNION], 'locations' => Board::ALL, 'special' => 95, 'noundo' => true],
 				]
 			],
 			96 => ['faction' => Factions::SOVIETUNION, 'reaction' => 'StandFast', 'requirement' => 96,
@@ -855,11 +863,25 @@ class Decks extends APP_GameClass
 //
 				return Pieces::getPossibleAttacks(Factions::AXIS, self::$table->getObjectListFromDB("SELECT * FROM pieces WHERE faction = 'germany' AND type IN ('INFANTRY','TANK') AND location in (SELECT location FROM pieces WHERE faction = 'germany' AND type = 'TANK')"));
 //
+			case 62:
+//
+// Attack with a German force from a space also containing a Pact piece
+//
+				return Pieces::getPossibleAttacks(Factions::AXIS, self::$table->getObjectListFromDB("SELECT * FROM pieces WHERE faction = 'germany' AND type IN ('INFANTRY','TANK') AND location in (SELECT location FROM pieces WHERE faction = 'pact')"));
+//
 			case 90:
 //
 // Unoccupied Axis controlled space east of the 1941 line
 //
 				return array_map('intval', array_intersect(Board::getControl(Factions::AXIS), Board::E1941));
+//
+			case 95:
+//
+// Attack with a force containing 2 Soviet infantry
+//
+				$location = self::$table->getGameStateValue('location');
+				if ($location) return Pieces::getPossibleAttacks(Factions::ALLIES, self::$table->getObjectListFromDB("SELECT * FROM pieces WHERE faction = 'sovietUnion' AND type IN ('INFANTRY','TANK') AND location = $location AND location in (SELECT location FROM pieces WHERE faction = 'sovietUnion' AND type = 'infantry' GROUP BY location HAVING count(*) >= 2)"));
+				return Pieces::getPossibleAttacks(Factions::ALLIES, self::$table->getObjectListFromDB("SELECT * FROM pieces WHERE faction = 'sovietUnion' AND type IN ('INFANTRY','TANK') AND location in (SELECT location FROM pieces WHERE faction = 'sovietUnion' AND type = 'infantry' GROUP BY location HAVING count(*) >= 2)"));
 //
 			case 108:
 //
