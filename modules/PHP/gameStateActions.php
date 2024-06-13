@@ -184,6 +184,14 @@ trait gameStateActions
 //
 						break;
 //
+					case 80:
+//
+						$pieces = 0;
+						foreach ([FINLAND, GULFOFFINLAND, KARELIA, BALTICSEA] as $location) $pieces += sizeof(Pieces::getAtLocation($location, Factions::SOVIETUNION));
+						if ($pieces < 4) throw new BgaUserException(self::_('May only be played if 4 or more Soviet pieces are in or adjacent to Finland'));
+//
+						break;
+//
 					case 96:
 //
 						if (self::getGameStateValue('action') != 2) throw new BgaUserException(self::_('May only be played during your Second Action step'));
@@ -521,10 +529,10 @@ trait gameStateActions
 		switch ($this->gamestate->state()['name'])
 		{
 			case 'attackRoundDefender':
-				if ($FACTION !== Factions::getInactive()) throw new BgaVisibleSystemException("Invalid FACTION: $FACTION");
+//				if ($FACTION !== Factions::getInactive()) throw new BgaVisibleSystemException("Invalid FACTION: $FACTION");
 				break;
 			default:
-				if ($FACTION !== Factions::getActive()) throw new BgaVisibleSystemException("Invalid FACTION: $FACTION");
+//				if ($FACTION !== Factions::getActive()) throw new BgaVisibleSystemException("Invalid FACTION: $FACTION");
 				break;
 		}
 		if (!array_key_exists('pieces', $this->possible)) throw new BgaVisibleSystemException("Invalid possible: " . json_encode($this->possible));

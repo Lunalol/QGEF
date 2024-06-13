@@ -48,9 +48,9 @@ $machinestates = [
 // Main loop
 //
 	100 => [
-		'name' => 'startOfFactionRound',
+		'name' => 'startOfTurn',
 		'type' => 'game',
-		'action' => 'stStartOfFactionRound',
+		'action' => 'stStartOfTurn',
 		'transitions' => ['next' => 110]
 	],
 	110 => [

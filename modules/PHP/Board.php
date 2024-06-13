@@ -121,17 +121,30 @@ class Board extends APP_GameClass
 	];
 //
 	static $table = null;
-	static function updateControl(bool $startOfRound = false): void
+	static function updateControl(string $update = ''): void
 	{
 		self::$table->DbQuery("UPDATE control SET current = 'both' WHERE terrain = 'water'");
 		foreach (array_keys(Factions::FACTIONS) as $FACTION) self::$table->DbQuery("UPDATE control SET current = '$FACTION' WHERE location IN (SELECT DISTINCT location FROM pieces WHERE player = '$FACTION')");
 //
-		if ($startOfRound) self::$table->DbQuery("UPDATE control SET startOfRound = current");
+		if ($update) self::$table->DbQuery("UPDATE control SET $update = current");
 	}
-	static function getControl(string $FACTION, bool $startOfRound = false): array
+	static function getControl(string $FACTION, string $when = 'current'): array
 	{
-		if ($startOfRound) return self::$table->getObjectListFromDB("SELECT location FROM control WHERE startOfRound IN ('both', '$FACTION')", true);
-		return self::$table->getObjectListFromDB("SELECT location FROM control WHERE current IN ('both', '$FACTION')", true);
+		return array_map('intval', self::$table->getObjectListFromDB("SELECT location FROM control WHERE $when IN ('both', '$FACTION')", true));
+	}
+	static function victoryStars()
+	{
+		$scorchedEarth = Markers::get('scorchedEarth');
+		$Gorky = Markers::get('Gorky');
+//
+		$VPs = [];
+		foreach (Board::ALL as $location)
+		{
+			if ($scorchedEarth && $scorchedEarth['location'] === $location) continue;
+			if ($Gorky && $Gorky['location'] === $location) $VPs[$location] = 1;
+			if (array_key_exists('VP', Board::REGIONS[$location])) $VPs[] = Board::REGIONS[$location]['VP'];
+		}
+		return $VPs;
 	}
 	static function getSupplyLines($FACTION)
 	{

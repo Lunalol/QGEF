@@ -79,6 +79,7 @@ trait gameStateArguments
 					foreach ($action['types'] as $type)
 					{
 						if (array_key_exists('contain', $action)) foreach (Pieces::getAll($FACTION) as $piece) if (in_array($piece['faction'], $action['contain']['factions']) && in_array($piece['type'], $action['contain']['types'])) $action['locations'][] = intval($piece['location']);
+						if (array_key_exists('control', $action)) $action['locations'] = Board::getControl($FACTION, $action['control']);
 //
 						$locations = [];
 						foreach ($action['locations'] as $location)
@@ -145,13 +146,14 @@ trait gameStateArguments
 //
 			case 'attack':
 //
-				if (array_key_exists('containing', $action)) $this->possible['attack'] = Pieces::getPossibleAttacks($FACTION, array_filter(Pieces::getAll($FACTION), fn($piece) => in_array($piece['location'], $playedLocations)));
-				if (array_key_exists('locations', $action)) $this->possible['attack'] = Pieces::getPossibleAttacks($FACTION, array_filter(Pieces::getAll($FACTION), fn($piece) => in_array($piece['location'], $action['locations']) && in_array($piece['faction'], $action['factions'])));
-				if (array_key_exists('into', $action))
+				if (array_key_exists('containing', $action) && array_key_exists('into', $action)) $this->possible['attack'] = Pieces::getPossibleAttacks($FACTION, array_filter(Pieces::getAll($FACTION), fn($piece) => in_array($piece['location'], $playedLocations)), $action['into']);
+				else if (array_key_exists('into', $action))
 				{
 					if ($action['into'] === true) $this->possible['attack'] = Pieces::getPossibleAttacks($FACTION, array_filter(Pieces::getAll($FACTION), fn($piece) => in_array($piece['faction'], $action['factions'])), $playedLocations);
 					else $this->possible['attack'] = Pieces::getPossibleAttacks($FACTION, array_filter(Pieces::getAll($FACTION), fn($piece) => in_array($piece['faction'], $action['factions'])), $action['into']);
 				}
+				else if (array_key_exists('containing', $action)) $this->possible['attack'] = Pieces::getPossibleAttacks($FACTION, array_filter(Pieces::getAll($FACTION), fn($piece) => in_array($piece['location'], $playedLocations)));
+				else if (array_key_exists('locations', $action)) $this->possible['attack'] = Pieces::getPossibleAttacks($FACTION, array_filter(Pieces::getAll($FACTION), fn($piece) => in_array($piece['location'], $action['locations']) && in_array($piece['faction'], $action['factions'])));
 
 				if (array_key_exists('special', $action)) $this->possible['attack'] = Decks::special($action);
 //

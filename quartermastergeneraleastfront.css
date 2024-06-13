@@ -184,6 +184,9 @@ html {
 }
 .QGEFcardContainer {
 	position: relative;
+	width: 144px;
+	aspect-ratio: 431/579;
+	container-type: size;
 	margin: 5px;
 	transition: transform 0.25s, box-shadow 0.25s;
 	transform-origin: center bottom;
@@ -191,12 +194,15 @@ html {
 	font-size: 12px;
 	z-index: 10;
 }
+.log .QGEFcardContainer {
+	width: 200px;
+}
+
 .QGEFcard {
-	width: 144px;
-	height: 193px;
-	/*	aspect-ratio: 431/579;*/
+	width: 100%;
+	height: 100%;
 	background-size: cover;
-	border-radius: 5px;
+	border-radius: 4% / 3%;
 	border: white solid 2px;
 	box-sizing: border-box;
 	backface-visibility: hidden;
@@ -214,6 +220,7 @@ html {
 .QGEFcard.QGEFback {
 	position: absolute;
 	top: 0px;
+	width: 100%;
 	transform: rotateY(180deg);
 }
 .QGEFcardContainer.QGEFselected
@@ -331,49 +338,48 @@ html {
 .QGEFfactionName {
 	position: absolute;
 	top: 0px;
-	padding: 15px 5px 5px 35px;
-	font-size: 15px;
+	padding: 6cqh 5cqw 5cqh 24cqw;
+	font-size: 12cqw;
 	font-family: EldonWF;
 	color: white;
-	word-spacing: -1px;
 }
 .QGEFreactionSVG {
 	position: absolute;
-	top: 150px;
-	padding: 5px;
-	height: 30px;
+	top: 78cqh;
+	padding: 5cqw;
+	height: 12cqh;
 }
 .QGEFreaction {
 	position: absolute;
-	top: 155px;
-	padding: 5px 5px 0px 35px;
+	top: 50cqh;
+	padding: 34cqh 4cqw 5cqh 20cqw;
 	line-height: 100%;
-	font-size: 100%;
+	font-size: 9cqw;
 	font-family: EldonWF;
 	color: white;
 }
 .QGEFreactionText {
-	line-height: 8px;
-	font-size: 8px;
+	line-height: 100%;
+	font-size: 6cqw;
 	font-family: GaramondPremrPro;
 }
 .QGEFtitle {
-	padding: 40px 5px 5px 5px;
+	padding: 20cqh 4cqw 2cqh 4cqw;
 	color: black;
-	font-size: 14px;
 	font-family: CutrightWF;
 	line-height: 100%;
+	font-size: 9cqw;
 	text-align: left;
-	letter-spacing: -1px;
+	letter-spacing: -0.1cqw;
 	/*	word-spacing: -1px;*/
 }
 .QGEFtext {
-	padding: 0px 5px 0px 5px;
+	padding: 0cqh 4cqw 0cqh 4cqw;
 	color: black;
 	font-family: GaramondPremrPro;
 	line-height: 100%;
 	text-align: justify;
-	word-spacing: -1px;
+	word-spacing: -0.1cqw;
 }
 /* </editor-fold> */
 /* <editor-fold defaultstate="collapsed" desc="VP Track"> */

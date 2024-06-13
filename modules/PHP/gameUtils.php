@@ -48,7 +48,7 @@ trait gameUtils
 	function action(bool $pass = false)
 	{
 //PJL
-//		self::setGameStateValue('action', 1);
+		self::setGameStateValue('action', 1);
 //PJL
 		$id = Actions::getNextAction();
 		if ($id)

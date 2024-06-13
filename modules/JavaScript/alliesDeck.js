@@ -373,7 +373,7 @@ define(["dojo", "dojo/_base/declare"], function (dojo, declare)
 				faction: this.FACTIONS[this.bgagame.gamedatas.CARDS.allies[card.type_arg].faction],
 				type: this.cards[card.type_arg].type, type_arg: card.type_arg,
 				title: this.cards[card.type_arg].text[0],
-				text: this.cards[card.type_arg].text[1], FONT: 100 - this.cards[card.type_arg].text[1].length / 6,
+				text: this.cards[card.type_arg].text[1], FONT: 8 - this.cards[card.type_arg].text[1].length / 100,
 				reactionSVG: reactionSVG, reaction: reaction
 			});
 		},
@@ -404,9 +404,16 @@ define(["dojo", "dojo/_base/declare"], function (dojo, declare)
 			{
 				if (!dojo.hasClass(node, 'QGEFselected'))
 				{
-					if (dojo.query('.QGEFhandHolder>.QGEFcardContainer.QGEFselectable.QGEFselected').length >= 2) return;
-					if (this.bgagame.gamedatas.gamestate.name !== 'actionStep') dojo.query('.QGEFcardContainer.QGEFselectable.QGEFselected').removeClass('QGEFselected');
-					dojo.query('.QGEFcontingencyHolder>.QGEFcardContainer.QGEFselectable.QGEFselected').removeClass('QGEFselected');
+					if ('discard' in this.bgagame.gamedatas.gamestate.args)
+					{
+						if (dojo.query('.QGEFcardContainer.QGEFselectable.QGEFselected', 'QGEFhand-allies').length >= this.bgagame.gamedatas.gamestate.args.discard) return;
+					}
+					else
+					{
+						if (dojo.query('.QGEFcardContainer.QGEFselectable.QGEFselected', 'QGEFhand-allies').length >= 2) return;
+						if (this.bgagame.gamedatas.gamestate.name !== 'actionStep') dojo.query('.QGEFcardContainer.QGEFselectable.QGEFselected', 'QGEFhand-allies').removeClass('QGEFselected');
+						dojo.query('.QGEFcontingencyHolder>.QGEFcardContainer.QGEFselectable.QGEFselected').removeClass('QGEFselected');
+					}
 				}
 				dojo.toggleClass(node, 'QGEFselected');
 //

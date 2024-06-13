@@ -107,7 +107,7 @@ class Pieces extends APP_GameClass
 	static function getPossibleMoves(string $FACTION, array $pieces): array
 	{
 		$ennemies = self::getEnnemyControled($FACTION);
-		$control = Board::getControl($FACTION, true);
+		$control = Board::getControl($FACTION, 'startOfStep');
 #
 		$possibles = [];
 		foreach ($pieces as $piece)

@@ -110,6 +110,7 @@ class Decks extends APP_GameClass
 			],
 			22 => ['faction' => Factions::GERMANY, 'reaction' => 'Advance', 'requirement' => 'noSpringTurn',
 				self::MID => [
+					['name' => 'move', 'types' => [Pieces::INFANTRY], 'factions' => [Factions::GERMANY]],
 					['name' => 'move', 'types' => [Pieces::TANK], 'factions' => [Factions::GERMANY]],
 					['name' => 'attack', 'containing' => true]
 				]
@@ -215,6 +216,8 @@ class Decks extends APP_GameClass
 			],
 			54 => ['faction' => Factions::GERMANY, 'reaction' => 'SustainAttack',
 				self::LATE => [
+					['name' => 'deploy', 'types' => [Pieces::INFANTRY], 'factions' => [Factions::GERMANY], 'control' => 'startOfTurn', 'mandatory' => true],
+					['name' => 'attack', 'into' => [YUGOSLAVIA, ROMANIA, SEVASTOPOL, HUNGARY, CAUCASUS, KIEV, STALINGRAD, WARSAW, WARSAW, EASTPRUSSIA, VORONEZH, SMOLENSK, MOSCOW, LENINGRAD, VOLOGDA, FINLAND], 'containing' => true]
 				]
 			],
 			55 => ['faction' => Factions::GERMANY, 'reaction' => 'AntiAir',
@@ -525,7 +528,7 @@ class Decks extends APP_GameClass
 			],
 			73 => ['faction' => Factions::SOVIETUNION, 'reaction' => 'Retreat',
 				self::LATE => [
-					['name' => 'eliminateVS', 'types' => [Pieces::INFANTRY, Pieces::TANK, Pieces::AIRPLANE, Pieces::FLEET], 'factions' => [Factions::SOVIETUNION], 'locations' => [MOGILEV], 'discard' => 3, 'VP' => 2],
+					['name' => 'eliminateVS', 'types' => [Pieces::INFANTRY, Pieces::TANK, Pieces::AIRPLANE, Pieces::FLEET], 'factions' => [Factions::GERMANY, Factions::PACT], 'locations' => [MOGILEV], 'discard' => 3, 'VP' => 2],
 				]
 			],
 			74 => ['faction' => Factions::SOVIETUNION, 'reaction' => 'SustainAttack',
@@ -561,12 +564,14 @@ class Decks extends APP_GameClass
 			],
 			79 => ['faction' => Factions::SOVIETUNION, 'reaction' => 'StandFast',
 				self::LATE => [
-					['name' => 'deploy', 'types' => [Pieces::INFANTRY], 'factions' => [Factions::SOVIETUNION], 'locations' => [MOSCOW, KURSK, VORONEZH, GORKI, VOLOGDA, RYBINSKSEA, NOVGOROD, SMOLENSK]],
+					['name' => 'deploy', 'types' => [Pieces::INFANTRY], 'factions' => [Factions::GERMANY, Factions::PACT], 'locations' => [MOSCOW, KURSK, VORONEZH, GORKI, VOLOGDA, RYBINSKSEA, NOVGOROD, SMOLENSK]],
 					['name' => 'attack', 'containing' => true]
 				]
 			],
-			80 => ['faction' => Factions::SOVIETUNION, 'reaction' => 'SustainAttack',
+			80 => ['faction' => Factions::SOVIETUNION, 'reaction' => 'SustainAttack', 'requirement' => 80,
 				self::LATE => [
+					['name' => 'VP', 'FACTION' => Factions::ALLIES],
+					['name' => 'eliminateVS', 'types' => [Pieces::INFANTRY, Pieces::TANK, Pieces::AIRPLANE, Pieces::FLEET], 'factions' => [Factions::PACT], 'locations' => [FINLAND], 'discard' => 2],
 				]
 			],
 			81 => ['faction' => Factions::SOVIETUNION, 'reaction' => 'StandFast',
@@ -616,6 +621,8 @@ class Decks extends APP_GameClass
 			],
 			88 => ['faction' => Factions::SOVIETUNION, 'reaction' => 'Advance',
 				self::LATE => [
+					['name' => 'VP', 'FACTION' => Factions::ALLIES, 'special' => 88],
+					['name' => 'eliminateVS', 'types' => [Pieces::INFANTRY, Pieces::TANK, Pieces::AIRPLANE, Pieces::FLEET], 'factions' => [Factions::PACT], 'locations' => [ROMANIA], 'discard' => 2],
 				]
 			],
 			89 => ['faction' => Factions::SOVIETUNION, 'reaction' => 'AntiAir',
@@ -633,7 +640,7 @@ class Decks extends APP_GameClass
 			],
 			91 => ['faction' => Factions::SOVIETUNION, 'reaction' => 'Retreat',
 				self::LATE => [
-					['name' => 'eliminateVS', 'types' => [Pieces::INFANTRY, Pieces::TANK, Pieces::AIRPLANE, Pieces::FLEET], 'factions' => [Factions::SOVIETUNION], 'locations' => [YUGOSLAVIA], 'discard' => 3, 'VP' => 2],
+					['name' => 'eliminateVS', 'types' => [Pieces::INFANTRY, Pieces::TANK, Pieces::AIRPLANE, Pieces::FLEET], 'factions' => [Factions::GERMANY, Factions::PACT], 'locations' => [YUGOSLAVIA], 'discard' => 3, 'VP' => 2],
 				]
 			],
 			92 => ['faction' => Factions::SOVIETUNION, 'reaction' => 'SustainAttack',
@@ -873,7 +880,7 @@ class Decks extends APP_GameClass
 //
 // Unoccupied Axis controlled space east of the 1941 line
 //
-				return array_map('intval', array_intersect(Board::getControl(Factions::AXIS), Board::E1941));
+				return array_intersect(Board::getControl(Factions::AXIS), Board::E1941);
 //
 			case 95:
 //

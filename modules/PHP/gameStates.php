@@ -67,9 +67,9 @@ trait gameStates
 // the Axis control all land spaces west of the 1941 line,
 // and the Allies control all land spaces east of that line.
 //
-		foreach (Board::REGIONS as $location => $regions) if ($regions['type'] === WATER) self::DbQuery("INSERT INTO control VALUES ($location, 'both','both', 'water')");
-		foreach (Board::W1941 as $location) if (Board::REGIONS[$location]['type'] === LAND) self::DbQuery("INSERT INTO control VALUES ($location, '" . Factions::AXIS . "', '" . Factions::AXIS . "', 'land')");
-		foreach (Board::E1941 as $location) if (Board::REGIONS[$location]['type'] === LAND) self::DbQuery("INSERT INTO control VALUES ($location, '" . Factions::ALLIES . "', '" . Factions::ALLIES . "', 'land')");
+		foreach (Board::REGIONS as $location => $regions) if ($regions['type'] === WATER) self::DbQuery("INSERT INTO control VALUES ($location, 'both','both','both', 'water')");
+		foreach (Board::W1941 as $location) if (Board::REGIONS[$location]['type'] === LAND) self::DbQuery("INSERT INTO control VALUES ($location, '" . Factions::AXIS . "', '" . Factions::AXIS . "', '" . Factions::AXIS . "', 'land')");
+		foreach (Board::E1941 as $location) if (Board::REGIONS[$location]['type'] === LAND) self::DbQuery("INSERT INTO control VALUES ($location, '" . Factions::ALLIES . "', '" . Factions::ALLIES . "', '" . Factions::ALLIES . "', 'land')");
 //
 // If the score is tied, the Axis player wins
 //
@@ -95,7 +95,7 @@ trait gameStates
 //
 		$this->gamestate->nextState('startOfFactionRound');
 	}
-	function stStartOfFactionRound()
+	function stStartOfTurn()
 	{
 		$FACTION = Factions::getActive();
 		$this->gamestate->changeActivePlayer(Factions::getPlayerID($FACTION));
@@ -109,13 +109,14 @@ trait gameStates
 //* -------------------------------------------------------------------------------------------------------- */
 		}
 		self::setGameStateValue('action', 1);
+		Board::updateControl('startOfTurn');
 //
 		$this->gamestate->nextState('next');
 	}
 	function stFirstMovementStep()
 	{
 		$FACTION = Factions::getActive();
-		Board::updateControl(true);
+		Board::updateControl('startOfStep');
 //* -------------------------------------------------------------------------------------------------------- */
 		self::notifyAllPlayers('updateControl', '', [Factions::ALLIES => Board::getControl(Factions::ALLIES), Factions::AXIS => Board::getControl(Factions::AXIS)]);
 		self::notifyAllPlayers('updateSupply', '', [Factions::ALLIES => Board::getSupplyLines(Factions::ALLIES), Factions::AXIS => Board::getSupplyLines(Factions::AXIS)]);
@@ -135,7 +136,7 @@ trait gameStates
 		$FACTION = Factions::getActive();
 		$this->gamestate->changeActivePlayer(Factions::getPlayerID($FACTION));
 //
-		Board::updateControl(true);
+		Board::updateControl('startOfStep');
 //* -------------------------------------------------------------------------------------------------------- */
 		self::notifyAllPlayers('updateControl', '', [Factions::ALLIES => Board::getControl(Factions::ALLIES), Factions::AXIS => Board::getControl(Factions::AXIS)]);
 		self::notifyAllPlayers('updateSupply', '', [Factions::ALLIES => Board::getSupplyLines(Factions::ALLIES), Factions::AXIS => Board::getSupplyLines(Factions::AXIS)]);
@@ -151,7 +152,7 @@ trait gameStates
 	function stSecondMovementStep()
 	{
 		$FACTION = Factions::getActive();
-		Board::updateControl(true);
+		Board::updateControl('startOfStep');
 //* -------------------------------------------------------------------------------------------------------- */
 		self::notifyAllPlayers('updateControl', '', [Factions::ALLIES => Board::getControl(Factions::ALLIES), Factions::AXIS => Board::getControl(Factions::AXIS)]);
 		self::notifyAllPlayers('updateSupply', '', [Factions::ALLIES => Board::getSupplyLines(Factions::ALLIES), Factions::AXIS => Board::getSupplyLines(Factions::AXIS)]);
@@ -174,7 +175,7 @@ trait gameStates
 	function stSupplyStep()
 	{
 		$FACTION = Factions::getActive();
-		Board::updateControl(true);
+		Board::updateControl('startOfStep');
 //* -------------------------------------------------------------------------------------------------------- */
 		self::notifyAllPlayers('msg', '<span class="QGEF-phase">${FACTION}${LOG}</span>', ['i18n' => ['LOG'], 'LOG' => clienttranslate('Supply step'), 'FACTION' => $FACTION]);
 //* -------------------------------------------------------------------------------------------------------- */
@@ -255,17 +256,11 @@ trait gameStates
 //* -------------------------------------------------------------------------------------------------------- */
 			self::notifyAllPlayers('updateRound', '<span class="QGEF-phase">${LOG}</span>', ['i18n' => ['LOG'], 'LOG' => clienttranslate('Scoring'), 'steps' => $steps]);
 //* -------------------------------------------------------------------------------------------------------- */
-			$scorchedEarth = Markers::get('scorchedEarth');
-			$Gorky = Markers::get('Gorky');
+			$victoryStars = Board::victoryStars();
 			foreach (array_keys(Factions::FACTIONS) as $FACTION)
 			{
 				$VP = 0;
-				foreach (Board::getControl($FACTION) as $location)
-				{
-					if ($scorchedEarth && $scorchedEarth['location'] === $location) continue;
-					if ($Gorky && $Gorky['location'] === $location) $VP++;
-					if (array_key_exists('VP', Board::REGIONS[$location])) $VP += Board::REGIONS[$location]['VP'];
-				}
+				foreach (Board::getControl($FACTION) as $location) if (array_key_exists($location, $victoryStars)) $VP += $victoryStars[$location];
 //
 				for ($i = 0; $i < $VP; $i++)
 				{
@@ -479,6 +474,14 @@ trait gameStates
 										break;
 									}
 								}
+//
+								break;
+//
+							case 88: // If 2 or more Soviet pieces are in or adjacent to Romania: Gain 1 VP
+//
+								$pieces = 0;
+								foreach ([ROMANIA, BULGARIA, YUGOSLAVIA, HUNGARY, LWOW, BESSARABIA, BLACKSEA, BOSPORUS] as $location) $pieces += sizeof(Pieces::getAtLocation($location, Factions::SOVIETUNION));
+								$VP = $pieces >= 2 ? 1 : 0;
 //
 								break;
 //

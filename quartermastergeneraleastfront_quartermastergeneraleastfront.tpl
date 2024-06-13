@@ -93,11 +93,11 @@
 		<div id='QGEFflipButton-${id}' class='QGEFflipButton'>🔄</div>\n\
 		<div class='QGEFfactionName'>${faction}</div>\n\
 		<div class='QGEFtitle'>${title}</div>\n\
-		<div class='QGEFtext' style='font-size:${FONT}%;'>${text}</div>\n\
+		<div class='QGEFtext' style='font-size:${FONT}cqw;'>${text}</div>\n\
 		<div id='QGEFcard-back-${id}' class='QGEFcard QGEFback' data-faction='${FACTION}' data-type='${type}'>\n\
 			<div class='QGEFfactionName'>${faction}</div>\n\
 			<div class='QGEFtitle'>${back_title}</div>\n\
-			<div class='QGEFtext' style='font-size:${back_FONT}%;'>${back_text}</div>\n\
+			<div class='QGEFtext' style='font-size:${back_FONT}cqw;'>${back_text}</div>\n\
 		</div>\n\
 	</div>\n\
 </div>";
@@ -106,7 +106,7 @@
 	<div id='QGEFcard-${id}' class='QGEFcard' data-faction='${FACTION}' data-type='${type}'>\n\
 		<div class='QGEFfactionName'>${faction}</div>\n\
 		<div class='QGEFtitle'>${title}</div>\n\
-		<div class='QGEFtext' style='font-size:${FONT}%;'>${text}</div>\n\
+		<div class='QGEFtext' style='font-size:${FONT}cqw;'>${text}</div>\n\
 	</div>\n\
 	${reactionSVG}<div class='QGEFreaction'>${reaction}</div>\n\
 </div>";
