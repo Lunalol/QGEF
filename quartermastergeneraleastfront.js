@@ -304,8 +304,11 @@ define(["dojo", "dojo/_base/declare", "ebg/core/gamegui", "ebg/counter",
 						{
 							if (node.dataset.type === 'infantry' || node.dataset.type === 'tank')
 							{
-								if (!state.args._private.reactions.includes(0) || state.args._private.free.includes(piece)) dojo.addClass(node, 'QGEFselected');
-								if (this.isCurrentPlayerActive() && state.args._private.pieces.includes(piece)) dojo.addClass(node, 'QGEFselectable');
+								if (this.isCurrentPlayerActive())
+								{
+									if (!state.args._private.reactions.includes(0) || state.args._private.free.includes(piece)) dojo.addClass(node, 'QGEFselected');
+									if (state.args._private.pieces.includes(piece)) dojo.addClass(node, 'QGEFselectable');
+								}
 								this.board.arrow(+node.dataset.location, state.args.location);
 							}
 						}

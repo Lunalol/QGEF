@@ -88,6 +88,7 @@ trait gameStateActions
 			{
 				case 'move':
 //
+					$action['piece']['location'] = $action['piece']['old_location'];
 					Pieces::setLocation($action['piece']['id'], $action['piece']['location']);
 					Pieces::setStatus($action['piece']['id'], 'moved', 'no');
 //* -------------------------------------------------------------------------------------------------------- */
@@ -459,11 +460,11 @@ trait gameStateActions
 //
 			if ($piece['location'] !== $location) Pieces::setStatus($id, 'moved');
 //
-			Actions::add('undo', ['name' => 'move', 'piece' => $piece]);
-//
-			$old_location = $piece['location'];
+			$piece['old_location'] = $piece['location'];
 			$piece['location'] = $location;
 			Pieces::setLocation($id, $piece['location']);
+//
+			Actions::add('undo', ['name' => 'move', 'piece' => $piece]);
 //
 			Board::updateControl();
 //* -------------------------------------------------------------------------------------------------------- */
@@ -475,7 +476,7 @@ trait gameStateActions
 //* -------------------------------------------------------------------------------------------------------- */
 			self::notifyAllPlayers('placePiece', clienttranslate('${faction} <B>${type}</B> moves from <B>${old}</B> to <B>${new}</B>'), [
 				'faction' => $piece['faction'], 'type' => $this->PIECES[$piece['type']],
-				'old' => $this->REGIONS[$old_location], 'new' => $this->REGIONS[$piece['location']],
+				'old' => $this->REGIONS[$piece['old_location']], 'new' => $this->REGIONS[$piece['location']],
 				'i18n' => ['type', 'old', 'new'],
 				'piece' => $piece]);
 //* -------------------------------------------------------------------------------------------------------- */

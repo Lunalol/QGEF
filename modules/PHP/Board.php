@@ -135,14 +135,14 @@ class Board extends APP_GameClass
 	static function victoryStars()
 	{
 		$scorchedEarth = Markers::get('scorchedEarth');
-		$Gorky = Markers::get('Gorky');
+		$Gorky = Markers::get('Gorki');
 //
 		$VPs = [];
 		foreach (Board::ALL as $location)
 		{
-			if ($scorchedEarth && $scorchedEarth['location'] === $location) continue;
-			if ($Gorky && $Gorky['location'] === $location) $VPs[$location] = 1;
-			if (array_key_exists('VP', Board::REGIONS[$location])) $VPs[] = Board::REGIONS[$location]['VP'];
+			if ($Gorky && $Gorky['location'] == $location) $VPs[$location] = 1;
+			if (array_key_exists('VP', Board::REGIONS[$location])) $VPs[$location] = Board::REGIONS[$location]['VP'];
+			if ($scorchedEarth && $scorchedEarth['location'] == $location) $VPs[$location]--;
 		}
 		return $VPs;
 	}

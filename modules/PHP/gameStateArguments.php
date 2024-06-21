@@ -89,6 +89,7 @@ trait gameStateArguments
 							if (in_array($location, $control) && !in_array($location, $ennemies) && Board::REGIONS[$location]['type'] === WATER && $type === Pieces::FLEET) $locations[] = $location;
 							if (in_array($location, $control) && !in_array($location, $ennemies) && Board::REGIONS[$location]['type'] === LAND && $type !== Pieces::FLEET) $locations[] = $location;
 						}
+						if (array_key_exists('victoryStar', $action)) $locations = array_intersect($locations, array_keys(Board::victoryStars()));
 						$this->possible[$faction][$type] = array_values(array_unique($locations));
 					}
 				}
@@ -146,15 +147,22 @@ trait gameStateArguments
 //
 			case 'attack':
 //
-				if (array_key_exists('containing', $action) && array_key_exists('into', $action)) $this->possible['attack'] = Pieces::getPossibleAttacks($FACTION, array_filter(Pieces::getAll($FACTION), fn($piece) => in_array($piece['location'], $playedLocations)), $action['into']);
+				if (array_key_exists('containing', $action) && array_key_exists('into', $action))
+				{
+					if (array_key_exists('victoryStar', $action)) $action['into'] = array_intersect($action['into'], array_keys(Board::victoryStars()));
+					$this->possible['attack'] = Pieces::getPossibleAttacks($FACTION, array_filter(Pieces::getAll($FACTION), fn($piece) => in_array($piece['location'], $playedLocations)), $action['into']);
+				}
 				else if (array_key_exists('into', $action))
 				{
 					if ($action['into'] === true) $this->possible['attack'] = Pieces::getPossibleAttacks($FACTION, array_filter(Pieces::getAll($FACTION), fn($piece) => in_array($piece['faction'], $action['factions'])), $playedLocations);
-					else $this->possible['attack'] = Pieces::getPossibleAttacks($FACTION, array_filter(Pieces::getAll($FACTION), fn($piece) => in_array($piece['faction'], $action['factions'])), $action['into']);
+					else
+					{
+						if (array_key_exists('victoryStar', $action)) $action['into'] = array_intersect($action['into'], array_keys(Board::victoryStars()));
+						$this->possible['attack'] = Pieces::getPossibleAttacks($FACTION, array_filter(Pieces::getAll($FACTION), fn($piece) => in_array($piece['faction'], $action['factions'])), $action['into']);
+					}
 				}
 				else if (array_key_exists('containing', $action)) $this->possible['attack'] = Pieces::getPossibleAttacks($FACTION, array_filter(Pieces::getAll($FACTION), fn($piece) => in_array($piece['location'], $playedLocations)));
 				else if (array_key_exists('locations', $action)) $this->possible['attack'] = Pieces::getPossibleAttacks($FACTION, array_filter(Pieces::getAll($FACTION), fn($piece) => in_array($piece['location'], $action['locations']) && in_array($piece['faction'], $action['factions'])));
-
 				if (array_key_exists('special', $action)) $this->possible['attack'] = Decks::special($action);
 //
 				return ['FACTION' => $FACTION, 'cancel' => Actions::empty() && !array_key_exists('noundo', $action), 'action' => $action, 'attack' => $this->possible['attack']];
@@ -192,7 +200,7 @@ trait gameStateArguments
 //
 			case 'scorched':
 //
-				$this->possible['scorched'] = $action['locations'];
+				$this->possible['scorched'] = array_values(array_intersect($action['locations'], array_keys(Board::victoryStars())));
 //
 				return ['FACTION' => $FACTION, 'cancel' => Actions::empty() && !array_key_exists('noundo', $action), 'action' => $action, 'scorched' => $this->possible['scorched']];
 //

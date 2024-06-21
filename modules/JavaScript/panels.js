@@ -17,7 +17,7 @@ define(["dojo", "dojo/_base/declare"], function (dojo, declare)
 //
 			dojo.connect(dojo.byId('player_boards'), 'mouseenter', () =>
 				dojo.query('.QGEFregion', 'QGEFboard').forEach((node) => {
-					const region = node.dataset.location;
+					const region = +node.dataset.location;
 					const allies = this.bgagame.gamedatas.factions.allies.control.includes(region);
 					const axis = this.bgagame.gamedatas.factions.axis.control.includes(region);
 					if (!axis && allies) node.setAttribute('fill', '#be1e1e80');

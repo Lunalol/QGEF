@@ -217,7 +217,7 @@ class Decks extends APP_GameClass
 			54 => ['faction' => Factions::GERMANY, 'reaction' => 'SustainAttack',
 				self::LATE => [
 					['name' => 'deploy', 'types' => [Pieces::INFANTRY], 'factions' => [Factions::GERMANY], 'control' => 'startOfTurn', 'mandatory' => true],
-					['name' => 'attack', 'into' => [YUGOSLAVIA, ROMANIA, SEVASTOPOL, HUNGARY, CAUCASUS, KIEV, STALINGRAD, WARSAW, WARSAW, EASTPRUSSIA, VORONEZH, SMOLENSK, MOSCOW, LENINGRAD, VOLOGDA, FINLAND], 'containing' => true]
+					['name' => 'attack', 'into' => Board::ALL, 'victoryStar' => true, 'containing' => true]
 				]
 			],
 			55 => ['faction' => Factions::GERMANY, 'reaction' => 'AntiAir',
@@ -335,7 +335,7 @@ class Decks extends APP_GameClass
 					['name' => 'VP', 'FACTION' => Factions::ALLIES]
 				],
 			],
-			102 => ['faction' => Factions::GERMANY,
+			102 => ['faction' => Factions::GERMANY, 'requirement' => 102,
 				self::INITIAL_SIDE => [
 					['name' => 'attack', 'factions' => [Factions::GERMANY], 'into' => Board::E1941],
 				],
@@ -386,7 +386,7 @@ class Decks extends APP_GameClass
 			9 => ['faction' => Factions::SOVIETUNION, 'reaction' => 'AntiAir',
 				self::FIRST_GAME => [
 					['name' => 'deploy', 'types' => [Pieces::AIRPLANE], 'factions' => [Factions::SOVIETUNION], 'locations' => [MOSCOW]],
-					['name' => 'deploy', 'types' => [Pieces::INFANTRY], 'factions' => [Factions::SOVIETUNION], 'locations' => [KIEV, SEVASTOPOL, CAUCASUS, STALINGRAD, SMOLENSK, VORONEZH, MOSCOW, LENINGRAD, VOLOGDA]],
+					['name' => 'deploy', 'types' => [Pieces::INFANTRY], 'factions' => [Factions::SOVIETUNION], 'locations' => Board::E1939, 'victoryStar' => true],
 				]
 			],
 			10 => ['faction' => Factions::SOVIETUNION, 'reaction' => 'SustainAttack',
@@ -443,7 +443,7 @@ class Decks extends APP_GameClass
 			],
 			37 => ['faction' => Factions::SOVIETUNION, 'reaction' => 'Exchange',
 				self::MID => [
-					['name' => 'scorched', 'locations' => [KIEV, SEVASTOPOL, CAUCASUS, STALINGRAD, SMOLENSK, VORONEZH, MOSCOW, LENINGRAD, VOLOGDA]],
+					['name' => 'scorched', 'locations' => Board::E1939],
 					['name' => 'VP', 'FACTION' => Factions::ALLIES]
 				]
 			],
@@ -494,15 +494,15 @@ class Decks extends APP_GameClass
 			],
 			45 => ['faction' => Factions::SOVIETUNION, 'reaction' => 'Advance',
 				self::MID => [
-					['name' => 'deploy', 'types' => [Pieces::TANK], 'factions' => [Factions::SOVIETUNION], 'locations' => [KIEV, SEVASTOPOL, CAUCASUS, STALINGRAD, SMOLENSK, VORONEZH, MOSCOW, LENINGRAD, VOLOGDA]],
-					['name' => 'deploy', 'types' => [Pieces::TANK], 'factions' => [Factions::SOVIETUNION], 'locations' => [KIEV, SEVASTOPOL, CAUCASUS, STALINGRAD, SMOLENSK, VORONEZH, MOSCOW, LENINGRAD, VOLOGDA], 'different' => true],
+					['name' => 'deploy', 'types' => [Pieces::TANK], 'factions' => [Factions::SOVIETUNION], 'locations' => Board::E1939, 'victoryStar' => true],
+					['name' => 'deploy', 'types' => [Pieces::TANK], 'factions' => [Factions::SOVIETUNION], 'locations' => Board::E1939, 'victoryStar' => true, 'different' => true],
 				]
 			],
 			46 => ['faction' => Factions::SOVIETUNION, 'reaction' => 'Exchange',
 				self::MID => [
-					['name' => 'deploy', 'types' => [Pieces::INFANTRY], 'factions' => [Factions::SOVIETUNION], 'locations' => [KIEV, SEVASTOPOL, CAUCASUS, STALINGRAD, SMOLENSK, VORONEZH, MOSCOW, LENINGRAD, VOLOGDA]],
-					['name' => 'deploy', 'types' => [Pieces::INFANTRY], 'factions' => [Factions::SOVIETUNION], 'locations' => [KIEV, SEVASTOPOL, CAUCASUS, STALINGRAD, SMOLENSK, VORONEZH, MOSCOW, LENINGRAD, VOLOGDA], 'different' => true],
-					['name' => 'deploy', 'types' => [Pieces::INFANTRY], 'factions' => [Factions::SOVIETUNION], 'locations' => [KIEV, SEVASTOPOL, CAUCASUS, STALINGRAD, SMOLENSK, VORONEZH, MOSCOW, LENINGRAD, VOLOGDA], 'different' => true],
+					['name' => 'deploy', 'types' => [Pieces::INFANTRY], 'factions' => [Factions::SOVIETUNION], 'locations' => Board::E1939, 'victoryStar' => true,],
+					['name' => 'deploy', 'types' => [Pieces::INFANTRY], 'factions' => [Factions::SOVIETUNION], 'locations' => Board::E1939, 'victoryStar' => true, 'different' => true],
+					['name' => 'deploy', 'types' => [Pieces::INFANTRY], 'factions' => [Factions::SOVIETUNION], 'locations' => Board::E1939, 'victoryStar' => true, 'different' => true],
 				]
 			],
 			47 => ['faction' => Factions::SOVIETUNION, 'reaction' => 'Exchange',
@@ -533,7 +533,7 @@ class Decks extends APP_GameClass
 			],
 			74 => ['faction' => Factions::SOVIETUNION, 'reaction' => 'SustainAttack',
 				self::LATE => [
-					['name' => 'deploy', 'types' => [Pieces::TANK], 'factions' => [Factions::SOVIETUNION], 'locations' => [],
+					['name' => 'deploy', 'types' => [Pieces::TANK], 'factions' => [Factions::SOVIETUNION], 'locations' => [], 'mandatory' => true,
 						'contain' => ['types' => [Pieces::INFANTRY], 'factions' => [Factions::SOVIETUNION]]],
 					['name' => 'attack', 'containing' => true]
 				]
@@ -559,7 +559,7 @@ class Decks extends APP_GameClass
 			],
 			78 => ['faction' => Factions::SOVIETUNION, 'reaction' => 'Retreat',
 				self::LATE => [
-					['name' => 'eliminateVS', 'types' => [Pieces::INFANTRY, Pieces::TANK, Pieces::AIRPLANE, Pieces::FLEET], 'factions' => [Factions::SOVIETUNION], 'locations' => [WARSAW], 'discard' => 3, 'VP' => 2],
+					['name' => 'eliminateVS', 'types' => [Pieces::INFANTRY, Pieces::TANK, Pieces::AIRPLANE, Pieces::FLEET], 'factions' => [Factions::GERMANY, Factions::PACT], 'locations' => [WARSAW], 'discard' => 3, 'VP' => 2],
 				]
 			],
 			79 => ['faction' => Factions::SOVIETUNION, 'reaction' => 'StandFast',
@@ -657,8 +657,8 @@ class Decks extends APP_GameClass
 			],
 			94 => ['faction' => Factions::SOVIETUNION, 'reaction' => 'AntiAir',
 				self::LATE => [
-					['name' => 'deploy', 'types' => [Pieces::AIRPLANE], 'factions' => [Factions::SOVIETUNION], 'locations' => [KIEV, SEVASTOPOL, CAUCASUS, STALINGRAD, SMOLENSK, VORONEZH, MOSCOW, LENINGRAD, VOLOGDA]],
-					['name' => 'deploy', 'types' => [Pieces::AIRPLANE], 'factions' => [Factions::SOVIETUNION], 'locations' => [KIEV, SEVASTOPOL, CAUCASUS, STALINGRAD, SMOLENSK, VORONEZH, MOSCOW, LENINGRAD, VOLOGDA], 'different' => true],
+					['name' => 'deploy', 'types' => [Pieces::AIRPLANE], 'factions' => [Factions::SOVIETUNION], 'locations' => Board::E1939, 'victoryStar' => true],
+					['name' => 'deploy', 'types' => [Pieces::AIRPLANE], 'factions' => [Factions::SOVIETUNION], 'locations' => Board::E1939, 'victoryStar' => true, 'different' => true],
 				]
 			],
 			95 => ['faction' => Factions::SOVIETUNION, 'reaction' => 'SustainAttack',

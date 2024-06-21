@@ -207,7 +207,9 @@ trait gameStates
 		self::notifyAllPlayers('msg', '<span class="QGEF-phase">${FACTION}${LOG}</span>', ['i18n' => ['LOG'], 'LOG' => clienttranslate('Draw step'), 'FACTION' => $FACTION]);
 //* -------------------------------------------------------------------------------------------------------- */
 		$toDraw = min(3, max(0, 5 - $this->decks->countCardInLocation('hand', $FACTION)));
-		for ($i = 0; $i < $toDraw; $i++)
+		for ($i = 0;
+			$i < $toDraw;
+			$i++)
 		{
 			$card = $this->decks->pickCard($FACTION, $FACTION);
 			if (!$card)
@@ -262,7 +264,9 @@ trait gameStates
 				$VP = 0;
 				foreach (Board::getControl($FACTION) as $location) if (array_key_exists($location, $victoryStars)) $VP += $victoryStars[$location];
 //
-				for ($i = 0; $i < $VP; $i++)
+				for ($i = 0;
+					$i < $VP;
+					$i++)
 				{
 					Markers::setLocation($FACTION, Factions::incVP($FACTION, 1));
 //* -------------------------------------------------------------------------------------------------------- */
@@ -512,7 +516,9 @@ trait gameStates
 //
 				case 'draw':
 //
-					for ($i = 0; $i < $action['count']; $i++)
+					for ($i = 0;
+						$i < $action['count'];
+						$i++)
 					{
 						$card = $this->decks->pickCard($FACTION, $FACTION);
 						if (!$card)
@@ -545,7 +551,7 @@ trait gameStates
 		$this->gamestate->changeActivePlayer(Factions::getPlayerID($FACTION));
 //
 		$args = self::argAction();
-		if (!$args['eliminate'] && !array_key_exists('discard', $args))
+		if (!$args['eliminate'] && !$args['discard'])
 		{
 			if (array_key_exists('mandatory', $args['action'])) throw new BgaUserException(self::_('No piece to eliminate'));
 //* -------------------------------------------------------------------------------------------------------- */

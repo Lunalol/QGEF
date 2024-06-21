@@ -16,7 +16,7 @@
 		"displaycondition": [
 			{
 				"type": "maxplayers",
-				"value": 2
+				"value": 0
 			}
 		],
 		"startcondition": {
@@ -26,7 +26,7 @@
 					"message": "NOT IMPLEMENTED"
 				}]
 		},
-		"notdisplayedmessage": "Duel mode option is only available for a two players game"
+		"PJL notdisplayedmessage": "Duel mode option is only available for a two players game"
 	},
 	"101": {
 		"name": "Factions",
