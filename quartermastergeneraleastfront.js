@@ -1,3 +1,5 @@
+/* global g_gamethemeurl, ebg */
+
 define(["dojo", "dojo/_base/declare", "ebg/core/gamegui", "ebg/counter",
 	g_gamethemeurl + "modules/constants.js",
 	g_gamethemeurl + "modules/JavaScript/board.js",
@@ -43,9 +45,8 @@ define(["dojo", "dojo/_base/declare", "ebg/core/gamegui", "ebg/counter",
 //
 // Animations Speed
 //
-			DELAY = DELAYS[this.prefs[100].value];
+			DELAY = DELAYS[this.getGameUserPreference(SPEED)];
 			document.documentElement.style.setProperty('--DELAY', DELAY);
-			dojo.query('.preference_control').connect('onchange', this, 'updatePreference');
 //
 // Setup Player Panels
 //
@@ -59,6 +60,7 @@ define(["dojo", "dojo/_base/declare", "ebg/core/gamegui", "ebg/counter",
 // Setup Turn Track
 //
 			this.tracks = new Tracks(this);
+			this.tracks.round(gamedatas.steps)
 //
 // Place Markers
 //
@@ -142,48 +144,48 @@ define(["dojo", "dojo/_base/declare", "ebg/core/gamegui", "ebg/counter",
 					switch (state.args.action.name)
 					{
 						case 'scorched':
-							this.gamedatas.gamestate.descriptionmyturn = _('Place Scorched Earth marker');
+							this.gamedatas.gamestate.descriptionmyturn = _('${you} have to place Scorched Earth marker');
 							this.gamedatas.gamestate.possibleactions = ['scorched'];
 							break;
 						case 'discard':
-							this.gamedatas.gamestate.descriptionmyturn = _('Discard some cards');
+							this.gamedatas.gamestate.descriptionmyturn = _('${you} have to discard some cards');
 							this.gamedatas.gamestate.possibleactions = ['discard'];
 							break;
 						case 'deploy':
-							this.gamedatas.gamestate.descriptionmyturn = _('Deploy an unit');
+							this.gamedatas.gamestate.descriptionmyturn = _('${you} have to deploy an unit');
 							this.gamedatas.gamestate.possibleactions = ['deploy', 'remove'];
 							break;
 						case 'recruit':
-							this.gamedatas.gamestate.descriptionmyturn = _('Recruit an unit');
+							this.gamedatas.gamestate.descriptionmyturn = _('${you} have to recruit an unit');
 							this.gamedatas.gamestate.possibleactions = ['recruit', 'remove'];
 							break;
 						case 'move/attack':
-							this.gamedatas.gamestate.descriptionmyturn = _('Move deployed unit or attack with a force containing that unit');
+							this.gamedatas.gamestate.descriptionmyturn = _('${you} have to move deployed unit or attack with a force containing that unit');
 							this.gamedatas.gamestate.possibleactions = ['move', 'attack'];
 							break;
 						case 'attack':
-							this.gamedatas.gamestate.descriptionmyturn = _('Attack a land space');
+							this.gamedatas.gamestate.descriptionmyturn = _('${you} have to attack a land space');
 							this.gamedatas.gamestate.possibleactions = ['attack'];
 							break;
 						case 'move':
-							this.gamedatas.gamestate.descriptionmyturn = _('Move an unit');
+							this.gamedatas.gamestate.descriptionmyturn = _('${you} have to move an unit');
 							this.gamedatas.gamestate.possibleactions = ['move'];
 							break;
 						case 'eliminate':
 						case 'eliminateVS':
-							this.gamedatas.gamestate.descriptionmyturn = _('Eliminate an unit');
+							this.gamedatas.gamestate.descriptionmyturn = _('${you} have to eliminate an unit');
 							this.gamedatas.gamestate.possibleactions = ['removePiece', 'discard', 'VP'];
 							break;
 						case 'conscription':
-							this.gamedatas.gamestate.descriptionmyturn = {1: _('Discard 1 card to deploy an infantry'), 2: _('Discard 2 cards to deploy a tank, airplane, or fleet')}[state.args.action.cards.length];
+							this.gamedatas.gamestate.descriptionmyturn = {1: _('${you} have to discard 1 card to deploy an infantry'), 2: _('${you} have to discard 2 cards to deploy a tank, airplane, or fleet')}[state.args.action.cards.length];
 							this.gamedatas.gamestate.possibleactions = ['deploy', 'remove'];
 							break;
 						case 'forcedMarch':
-							this.gamedatas.gamestate.descriptionmyturn = _('Discard 1 card to move 1 piece');
+							this.gamedatas.gamestate.descriptionmyturn = _('${you} have to discard 1 card to move 1 piece');
 							this.gamedatas.gamestate.possibleactions = ['forcedMarch'];
 							break;
 						case 'desperateAttack':
-							this.gamedatas.gamestate.descriptionmyturn = _('Discard 2 cards and then attack a land space');
+							this.gamedatas.gamestate.descriptionmyturn = _('${you} have to discard 2 cards and then attack a land space');
 							this.gamedatas.gamestate.possibleactions = ['desperateAttack'];
 							break;
 					}
@@ -628,6 +630,7 @@ define(["dojo", "dojo/_base/declare", "ebg/core/gamegui", "ebg/counter",
 							const card = cards[0];
 							const reaction = this.gamedatas.CARDS[args.FACTION][card.dataset.type_arg].reaction;
 							if (reaction === 'Exchange') return this.showMessage(_('Click on a piece to remove'), 'info');
+							if (reaction === 'Retreat') return this.showMessage(_('Click on a piece to retreat'), 'info');
 							this.confirm(dojo.string.substitute(_('Play a card for reaction: <B>${reaction}</B>'), {reaction: this.REACTIONS[reaction].toUpperCase()}), 'reaction', {FACTION: this.FACTION, card: card.dataset.id});
 						}
 					});
@@ -721,6 +724,8 @@ define(["dojo", "dojo/_base/declare", "ebg/core/gamegui", "ebg/counter",
 			dojo.subscribe('updateControl', (notif) => {
 				this.gamedatas.factions.allies.control = notif.args.allies;
 				this.gamedatas.factions.axis.control = notif.args.axis;
+				if (+this.getGameUserPreference(CONTROL) === 0) this.panels.control();
+
 			});
 			dojo.subscribe('updateSupply', (notif) => {
 				this.gamedatas.factions.allies.supply = notif.args.allies;
@@ -846,12 +851,14 @@ define(["dojo", "dojo/_base/declare", "ebg/core/gamegui", "ebg/counter",
 							case 'Exchange':
 								return this.confirm(dojo.string.substitute(_('Play a card for reaction: <B>${reaction}</B>'), {reaction: this.REACTIONS[reaction].toUpperCase()}) + '<BR>' + dojo.string.substitute(_('Remove from <B>${REGION}<B>'), {REGION: _(this.gamedatas.REGIONS[node.dataset.location])}) + node.outerHTML, 'reaction', {FACTION: this.FACTION, card: card.dataset.id, piece: piece});
 							case 'Retreat':
-								this.gamedatas.gamestate.args['card'] = card.dataset.id;
-								this.gamedatas.gamestate.args['piece'] = piece;
-								return this.setClientState('retreat', {possibleactions: ['retreat'], descriptionmyturn: _('${you} may move one piece out of the attacked space')});
-							default:
-								return this.showMessage(_('Deselect reaction first'), 'info');
+								if (piece in this.gamedatas.gamestate.args._private.retreat)
+								{
+									this.gamedatas.gamestate.args['card'] = card.dataset.id;
+									this.gamedatas.gamestate.args['piece'] = piece;
+									return this.setClientState('retreat', {possibleactions: ['retreat'], descriptionmyturn: _('${you} may move one piece out of the attacked space')});
+								}
 						}
+						return this.showMessage(_('Deselect reaction first'), 'info');
 					}
 				}
 				else if (this.gamedatas.gamestate.name === 'attackRoundAdvance')
@@ -871,23 +878,17 @@ define(["dojo", "dojo/_base/declare", "ebg/core/gamegui", "ebg/counter",
 				this.confirm(dojo.string.substitute(_('Remove from <B>${REGION}<B>'), {REGION: _(this.gamedatas.REGIONS[node.dataset.location])}) + node.outerHTML, 'removePiece', {FACTION: this.FACTION, piece: piece});
 			}
 		},
-		updatePreference: function (event)
+		onGameUserPreferenceChanged: function (pref, value)
 		{
-			const match = event.target.id.match(/^preference_[cf]ontrol_(\d+)$/);
-//
-			if (match)
+			switch (pref)
 			{
-				let pref = +match[1];
-				let value = +event.target.value;
-				this.prefs[pref].value = value;
-				switch (pref)
-				{
-					case SPEED:
-						DELAY = DELAYS[value];
-						document.documentElement.style.setProperty('--DELAY', DELAY);
-						this.setSynchronous();
-						break;
-				}
+				case SPEED:
+					DELAY = DELAYS[+value];
+					document.documentElement.style.setProperty('--DELAY', DELAY);
+					this.setSynchronous();
+					break;
+				case CONTROL:
+					if (+value === 0) this.panels.control();
 			}
 		},
 		format_string_recursive: function (log, args)
@@ -909,7 +910,7 @@ define(["dojo", "dojo/_base/declare", "ebg/core/gamegui", "ebg/counter",
 		},
 		confirm: function (text, ...args)
 		{
-			if (+this.prefs[101].value) this.confirmationDialog(text, () => this.action(...args));
+			if (+this.getGameUserPreference(CONFIRM)) this.confirmationDialog(text, () => this.action(...args));
 			else this.action(...args);
 		},
 		action: function (action, args =

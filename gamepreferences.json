@@ -27,5 +27,18 @@
 				"name": "Yes"
 			}
 		]
+	},
+	"102": {
+		"name": "Show control",
+		"needReload": false,
+		"default": 0,
+		"values": [
+			{
+				"name": "Always"
+			},
+			{
+				"name": "When hovering players panel"
+			}
+		]
 	}
 }

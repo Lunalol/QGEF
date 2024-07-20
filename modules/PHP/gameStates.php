@@ -52,12 +52,12 @@ trait gameStates
 			$this->decks->moveCards(array_keys($this->decks->getCardsOfTypeInLocation(Decks::FIRST_GAME, null, Factions::ALLIES)), 'hand', Factions::ALLIES);
 			$this->decks->moveCards(array_keys($this->decks->getCardsOfTypeInLocation(Decks::FIRST_GAME, null, Factions::AXIS)), 'hand', Factions::AXIS);
 		}
-		if (self::getGameStateValue('firstGame') == 2)
+		if (false)
 		{
 			$this->decks->moveCards(array_keys($this->decks->getCardsOfTypeInLocation(Decks::MID, null, Factions::ALLIES)), 'hand', Factions::ALLIES);
 			$this->decks->moveCards(array_keys($this->decks->getCardsOfTypeInLocation(Decks::MID, null, Factions::AXIS)), 'hand', Factions::AXIS);
 		}
-		if (self::getGameStateValue('firstGame') >= 3)
+		if (false)
 		{
 			$this->decks->moveCards(array_keys($this->decks->getCardsOfTypeInLocation(Decks::LATE, null, 'aside', Factions::ALLIES)), 'hand', Factions::ALLIES);
 			$this->decks->moveCards(array_keys($this->decks->getCardsOfTypeInLocation(Decks::LATE, null, 'aside', Factions::AXIS)), 'hand', Factions::AXIS);
@@ -116,6 +116,8 @@ trait gameStates
 	function stFirstMovementStep()
 	{
 		$FACTION = Factions::getActive();
+		$this->gamestate->changeActivePlayer(Factions::getPlayerID($FACTION));
+//
 		Board::updateControl('startOfStep');
 //* -------------------------------------------------------------------------------------------------------- */
 		self::notifyAllPlayers('updateControl', '', [Factions::ALLIES => Board::getControl(Factions::ALLIES), Factions::AXIS => Board::getControl(Factions::AXIS)]);
@@ -130,11 +132,11 @@ trait gameStates
 	}
 	function stActionStep()
 	{
-		$action = intval(self::getGameStateValue('action'));
-		if ($action > 2) return $this->gamestate->nextState('next');
-//
 		$FACTION = Factions::getActive();
 		$this->gamestate->changeActivePlayer(Factions::getPlayerID($FACTION));
+//
+		$action = intval(self::getGameStateValue('action'));
+		if ($action > 2) return $this->gamestate->nextState('next');
 //
 		Board::updateControl('startOfStep');
 //* -------------------------------------------------------------------------------------------------------- */
@@ -152,6 +154,8 @@ trait gameStates
 	function stSecondMovementStep()
 	{
 		$FACTION = Factions::getActive();
+		$this->gamestate->changeActivePlayer(Factions::getPlayerID($FACTION));
+//
 		Board::updateControl('startOfStep');
 //* -------------------------------------------------------------------------------------------------------- */
 		self::notifyAllPlayers('updateControl', '', [Factions::ALLIES => Board::getControl(Factions::ALLIES), Factions::AXIS => Board::getControl(Factions::AXIS)]);
@@ -175,6 +179,8 @@ trait gameStates
 	function stSupplyStep()
 	{
 		$FACTION = Factions::getActive();
+		$this->gamestate->changeActivePlayer(Factions::getPlayerID($FACTION));
+//
 		Board::updateControl('startOfStep');
 //* -------------------------------------------------------------------------------------------------------- */
 		self::notifyAllPlayers('msg', '<span class="QGEF-phase">${FACTION}${LOG}</span>', ['i18n' => ['LOG'], 'LOG' => clienttranslate('Supply step'), 'FACTION' => $FACTION]);
@@ -203,6 +209,7 @@ trait gameStates
 	function stDrawStep()
 	{
 		$FACTION = Factions::getActive();
+		$this->gamestate->changeActivePlayer(Factions::getPlayerID($FACTION));
 //* -------------------------------------------------------------------------------------------------------- */
 		self::notifyAllPlayers('msg', '<span class="QGEF-phase">${FACTION}${LOG}</span>', ['i18n' => ['LOG'], 'LOG' => clienttranslate('Draw step'), 'FACTION' => $FACTION]);
 //* -------------------------------------------------------------------------------------------------------- */
@@ -229,6 +236,8 @@ trait gameStates
 	function stEndOfFactionRound()
 	{
 		$FACTION = Factions::getActive();
+		$this->gamestate->changeActivePlayer(Factions::getPlayerID($FACTION));
+//
 		Factions::setActivation($FACTION, 'done');
 //* -------------------------------------------------------------------------------------------------------- */
 		self::notifyAllPlayers('msg', '<span class="QGEF-phase">${FACTION}${LOG}</span>', ['i18n' => ['LOG'], 'LOG' => clienttranslate('End of turn'), 'FACTION' => $FACTION]);
@@ -302,7 +311,6 @@ trait gameStates
 	}
 	function stAttackRound()
 	{
-//
 		$this->gamestate->nextState('attackRoundDefender');
 	}
 	function stAttackRoundDefender()
@@ -556,6 +564,13 @@ trait gameStates
 			if (array_key_exists('mandatory', $args['action'])) throw new BgaUserException(self::_('No piece to eliminate'));
 //* -------------------------------------------------------------------------------------------------------- */
 			self::notifyAllPlayers('msg', clienttranslate('No piece to eliminate'), ['FACTION' => $FACTION]);
+//* -------------------------------------------------------------------------------------------------------- */
+			self::action();
+		}
+		else if (!$args['eliminate'] && $args['discard'] > $this->decks->countCardsInLocation('hand', $FACTION))
+		{
+//* -------------------------------------------------------------------------------------------------------- */
+			self::notifyAllPlayers('msg', clienttranslate('No piece to eliminate and not enought cards to discard'), ['FACTION' => $FACTION]);
 //* -------------------------------------------------------------------------------------------------------- */
 			self::action();
 		}

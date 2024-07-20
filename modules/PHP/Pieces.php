@@ -47,11 +47,10 @@ class Pieces extends APP_GameClass
 		],
 	];
 	static $table = null;
-	static function create(string $player, string $FACTION, string $TYPE, int $location, $status = [])
+	static function create(string $player, string $FACTION, string $TYPE, int $location, $status = '{}', int $id = 0)
 	{
-//		$json = self::$table->escapeStringForDB(json_encode($status, JSON_FORCE_OBJECT));
-		$json = json_encode($status, JSON_FORCE_OBJECT);
-		self::$table->DbQuery("INSERT INTO pieces (player,faction,type,location,status) VALUES ('$player','$FACTION','$TYPE',$location,'$json')");
+		if ($id) self::$table->DbQuery("INSERT INTO pieces (id,player,faction,type,location,status) VALUES ($id,'$player','$FACTION','$TYPE',$location,'$status')");
+		else self::$table->DbQuery("INSERT INTO pieces (player,faction,type,location,status) VALUES ('$player','$FACTION','$TYPE',$location,'$status')");
 		return self::$table->DbGetLastId();
 	}
 	static function destroy(int $id): void

@@ -59,14 +59,6 @@
 			{
 				"name": "On",
 				"description": "Players with cards labeled \"First Game\" in hand"
-			},
-			{
-				"name": "TEST - MID",
-				"description": "Players with cards \"Mid\" in hand"
-			},
-			{
-				"name": "TEST - LATE",
-				"description": "Players with cards \"Late\" in hand"
 			}
 		]
 	}

@@ -1,1 +1,35 @@
-{}
+{
+	"player":
+			{
+				"contingency": {
+					"id": 100,
+					"name": "Contingency",
+					"type": "int"
+				},
+				"play": {
+					"id": 101,
+					"name": "Played cards",
+					"type": "int"
+				},
+				"conscription": {
+					"id": 102,
+					"name": "Conscrition",
+					"type": "int"
+				},
+				"forcedMarch": {
+					"id": 103,
+					"name": "Forced March",
+					"type": "int"
+				},
+				"desperateAttack": {
+					"id": 104,
+					"name": "Desperate attack",
+					"type": "int"
+				},
+				"productionInitiative": {
+					"id": 105,
+					"name": "Desperate attack",
+					"type": "int"
+				}
+			}
+}

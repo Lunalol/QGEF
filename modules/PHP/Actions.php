@@ -18,8 +18,7 @@ class Actions extends APP_GameClass
 	}
 	static function add(string $status, array $data)
 	{
-//		$json = self::$table->escapeStringForDB(json_encode($data, JSON_FORCE_OBJECT));
-		$json = json_encode($data, JSON_FORCE_OBJECT);
+		$json = self::$table->escapeStringForDB(json_encode($data));
 		self::$table->DbQuery("INSERT INTO actions (status,data) VALUES ('$status', '$json')");
 		return self::$table->DbGetLastId();
 	}

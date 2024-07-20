@@ -143,6 +143,12 @@ trait gameStateArguments
 				if (array_key_exists('different', $action)) $this->possible['move'] = Pieces::getPossibleMoves($FACTION, array_filter(Pieces::getAll($FACTION), fn($piece) => !array_key_exists($piece['id'], $playedPieces) && in_array($piece['type'], $action['types']) && in_array($piece['faction'], $action['factions'])));
 				else if (array_key_exists('same', $action) && $playedPieces) $this->possible['move'] = Pieces::getPossibleMoves($FACTION, array_filter(Pieces::getAll($FACTION), fn($piece) => array_key_exists($piece['id'], $playedPieces)));
 				else $this->possible['move'] = Pieces::getPossibleMoves($FACTION, array_filter(Pieces::getAll($FACTION), fn($piece) => in_array($piece['type'], $action['types']) && in_array($piece['faction'], $action['factions'])));
+				if (array_key_exists('special', $action))
+				{
+					$this->possible['move'] = Decks::special($action);
+					$this->possible['Sonderkraftfahrzeug'] = true;
+				}
+
 				return ['FACTION' => $FACTION, 'cancel' => Actions::empty() && !array_key_exists('noundo', $action), 'action' => $action, 'move' => $this->possible['move']];
 //
 			case 'attack':

@@ -110,8 +110,7 @@ class Decks extends APP_GameClass
 			],
 			22 => ['faction' => Factions::GERMANY, 'reaction' => 'Advance', 'requirement' => 'noSpringTurn',
 				self::MID => [
-					['name' => 'move', 'types' => [Pieces::INFANTRY], 'factions' => [Factions::GERMANY]],
-					['name' => 'move', 'types' => [Pieces::TANK], 'factions' => [Factions::GERMANY]],
+					['name' => 'move', 'types' => [Pieces::INFANTRY, Pieces::TANK], 'factions' => [Factions::GERMANY], 'special' => 22],
 					['name' => 'attack', 'containing' => true]
 				]
 			],
@@ -564,7 +563,7 @@ class Decks extends APP_GameClass
 			],
 			79 => ['faction' => Factions::SOVIETUNION, 'reaction' => 'StandFast',
 				self::LATE => [
-					['name' => 'deploy', 'types' => [Pieces::INFANTRY], 'factions' => [Factions::GERMANY, Factions::PACT], 'locations' => [MOSCOW, KURSK, VORONEZH, GORKI, VOLOGDA, RYBINSKSEA, NOVGOROD, SMOLENSK]],
+					['name' => 'deploy', 'types' => [Pieces::INFANTRY], 'factions' => [Factions::SOVIETUNION], 'locations' => [MOSCOW, KURSK, VORONEZH, GORKI, VOLOGDA, RYBINSKSEA, NOVGOROD, SMOLENSK]],
 					['name' => 'attack', 'containing' => true]
 				]
 			],
@@ -863,6 +862,15 @@ class Decks extends APP_GameClass
 // Attack with a German force containing an infantry
 //
 				return Pieces::getPossibleAttacks(Factions::AXIS, self::$table->getObjectListFromDB("SELECT * FROM pieces WHERE faction = 'germany' AND type IN ('INFANTRY','TANK') AND location in (SELECT location FROM pieces WHERE faction = 'germany' AND type = 'INFANTRY')"));
+//
+			case 22:
+//
+// Move both a German infantry and a German tank together
+//
+				return Pieces::getPossibleMoves(Factions::AXIS, self::$table->getObjectListFromDB(""
+							. "(SELECT * FROM pieces WHERE faction = 'germany' AND type = 'INFANTRY' AND location in (SELECT location FROM pieces WHERE faction = 'germany' AND type = 'TANK'))"
+							. "UNION "
+							. "(SELECT * FROM pieces WHERE faction = 'germany' AND type = 'TANK' AND location in (SELECT location FROM pieces WHERE faction = 'germany' AND type = 'INFANTRY'))"));
 //
 			case 58:
 //

@@ -67,7 +67,7 @@ $machinestates = [
 		'type' => 'activeplayer',
 		'args' => 'argMovementStep',
 		'possibleactions' => ['cancel', 'remove', 'move', 'pass'],
-		'transitions' => ['cancel' => 115, 'continue' => 115, 'next' => 120]
+		'transitions' => ['cancel' => 115, 'continue' => 115, 'next' => 120, 'zombiePass' => 120]
 	],
 	120 => [
 		'name' => '_actionStep',
@@ -83,7 +83,7 @@ $machinestates = [
 		'type' => 'activeplayer',
 		'args' => 'argActionStep',
 		'possibleactions' => ['play', 'conscription', 'forcedMarch', 'desperateAttack', 'productionInitiative', 'pass'],
-		'transitions' => ['action' => 130, 'next' => 120]
+		'transitions' => ['action' => 130, 'next' => 120, 'zombiePass' => 120]
 	],
 	130 => [
 		'name' => '_action',
@@ -99,7 +99,7 @@ $machinestates = [
 		'type' => 'activeplayer',
 		'args' => 'argAction',
 		'possibleactions' => ['remove', 'scorched', 'deploy', 'recruit', 'move', 'attack', 'removePiece', 'discard', 'pass', 'cancel'],
-		'transitions' => ['continue' => 135, 'action' => 130, 'cancel' => 130, 'attack' => 200, 'next' => 120]
+		'transitions' => ['continue' => 135, 'action' => 130, 'cancel' => 130, 'attack' => 200, 'next' => 120, 'zombiePass' => 120]
 	],
 	140 => [
 		'name' => '_secondMovementStep',
@@ -115,7 +115,7 @@ $machinestates = [
 		'type' => 'activeplayer',
 		'args' => 'argMovementStep',
 		'possibleactions' => ['cancel', 'remove', 'move', 'pass'],
-		'transitions' => ['cancel' => 145, 'continue' => 145, 'next' => 150]
+		'transitions' => ['cancel' => 145, 'continue' => 145, 'next' => 150, 'zombiePass' => 150]
 	],
 	150 => [
 		'name' => 'supplyStep',
@@ -159,7 +159,7 @@ $machinestates = [
 		'type' => 'activeplayer',
 		'args' => 'argAttackRoundDefender',
 		'possibleactions' => ['reaction', 'removePiece'],
-		'transitions' => ['reaction' => 215, 'retreat' => 210, 'exchange' => 230, 'continue' => 220]
+		'transitions' => ['reaction' => 215, 'retreat' => 210, 'exchange' => 230, 'continue' => 220, 'zombiePass' => 220]
 	],
 	220 => [
 		'name' => '_attackRoundAttacker',
@@ -174,7 +174,7 @@ $machinestates = [
 		'type' => 'activeplayer',
 		'args' => 'argAttackRoundAttacker',
 		'possibleactions' => ['reaction', 'removePiece', 'pass'],
-		'transitions' => ['reaction' => 225, 'continue' => 210, 'endCombat' => 260]
+		'transitions' => ['reaction' => 225, 'continue' => 210, 'endCombat' => 260, 'zombiePass' => 260]
 	],
 	230 => [
 		'name' => '_attackRoundExchange',
@@ -189,7 +189,7 @@ $machinestates = [
 		'type' => 'activeplayer',
 		'args' => 'argAttackRoundExchange',
 		'possibleactions' => ['removePiece'],
-		'transitions' => ['special' => 240, 'continue' => 220]
+		'transitions' => ['special' => 240, 'continue' => 220, 'zombiePass' => 220]
 	],
 	240 => [
 		'name' => '_attackRoundSpecial',
@@ -204,7 +204,7 @@ $machinestates = [
 		'type' => 'activeplayer',
 		'args' => 'argAttackRoundSpecial',
 		'possibleactions' => ['reaction', 'pass'],
-		'transitions' => ['continue' => 230, 'pass' => 220]
+		'transitions' => ['continue' => 230, 'pass' => 220, 'zombiePass' => 220]
 	],
 	250 => [
 		'name' => 'attackRoundAdvance',
@@ -213,7 +213,7 @@ $machinestates = [
 		'type' => 'activeplayer',
 		'args' => 'argAttackRoundAdvance',
 		'possibleactions' => ['reaction', 'pass'],
-		'transitions' => ['endCombat' => 260]
+		'transitions' => ['endCombat' => 260, 'zombiePass' => 260]
 	],
 	260 => [
 		'name' => 'endCosmbat',
@@ -237,6 +237,6 @@ $machinestates = [
 		'type' => 'activeplayer',
 		'args' => 'argAction',
 		'possibleactions' => ['removePiece', 'discard', 'VP'],
-		'transitions' => ['action' => 130, 'next' => 120]
+		'transitions' => ['action' => 130, 'next' => 120, 'zombiePass' => 120]
 	],
 ];

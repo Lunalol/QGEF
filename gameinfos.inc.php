@@ -23,7 +23,7 @@ $gameinfos = [
 //	'diplomacy' => 0,
 	'player_colors' => ["allies" => 'be1e1e', "axis" => '4d514d', '6e6864'],
 	'favorite_colors_support' => false,
-	'game_interface_width' => array('min' => 900, 'max' => null),
+	'game_interface_width' => array('min' => 740, 'max' => null),
 //	'presentation' => [
 //		totranslate('In June of 1941, Germany, along with Finland, Romania, and other Axis nations, invaded the Soviet Union. Germany sought another lightning victory, like those attained in Poland, France, and elsewhere. Four years and millions of lives later, Soviet troops captured Berlin and forced the German surrender.'),
 //		totranslate('<B>Quartermaster General: East Front</B> portrays this struggle between the Soviet Union and Germany, with its associated forces — known herein as the “Pact”, after the Tripartite Pact. This two-player game is played over 16 seasonal game rounds, from Summer 1941 through Spring 1945.'),

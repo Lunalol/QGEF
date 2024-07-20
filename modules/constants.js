@@ -2,6 +2,8 @@
 // Game preferences
 //
 const SPEED = 100;
+const CONFIRM = 101;
+const CONTROL = 102;
 //
 const SLOW = 0;
 const NORMAL = 1;

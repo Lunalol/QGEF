@@ -88,6 +88,19 @@ trait gameStateActions
 			{
 				case 'move':
 //
+					if (array_key_exists('Sonderkraftfahrzeug', $action))
+					{
+						$action['piece']['location'] = $action['piece']['old_location'];
+						Pieces::setLocation($action['piece']['id'], $action['piece']['location']);
+						Pieces::setStatus($action['piece']['id'], 'moved', 'no');
+//* -------------------------------------------------------------------------------------------------------- */
+						self::notifyAllPlayers('placePiece', '', ['piece' => $action['piece']]);
+//* -------------------------------------------------------------------------------------------------------- */
+						Actions::remove($undo);
+						$undo = Actions::getLastUndo();
+						$action = Actions::get($undo);
+					}
+//
 					$action['piece']['location'] = $action['piece']['old_location'];
 					Pieces::setLocation($action['piece']['id'], $action['piece']['location']);
 					Pieces::setStatus($action['piece']['id'], 'moved', 'no');
@@ -108,7 +121,7 @@ trait gameStateActions
 				case 'remove':
 				case 'removeFree':
 //* -------------------------------------------------------------------------------------------------------- */
-					self::notifyAllPlayers('placePiece', '', ['piece' => Pieces::get(Pieces::create($action['piece']['player'], $action['piece']['faction'], $action['piece']['type'], $action['piece']['location']))]);
+					self::notifyAllPlayers('placePiece', '', ['piece' => Pieces::get(Pieces::create($action['piece']['player'], $action['piece']['faction'], $action['piece']['type'], $action['piece']['location'], $action['piece']['status'], $action['piece']['id']))]);
 //* -------------------------------------------------------------------------------------------------------- */
 					break;
 //
@@ -284,6 +297,7 @@ trait gameStateActions
 		self::notifyAllPlayers('msg', clienttranslate('${FACTION} Draw 1 card'), ['FACTION' => $FACTION]);
 		self::notifyPlayer(Factions::getPlayerID($FACTION), $FACTION . 'Deck', '', ['card' => $card]);
 //* -------------------------------------------------------------------------------------------------------- */
+		self::incStat(1, 'productionInitiative', Factions::getPlayerID(Factions::getActive()));
 		self::incGameStateValue('action', 1);
 //
 		$this->gamestate->nextState('next');
@@ -319,13 +333,14 @@ trait gameStateActions
 		$action = Actions::get(Actions::getNextAction());
 		$VP = $action['VP'];
 //
-		Markers::setLocation($FACTION, Factions::incVP($FACTION, $VP));
+		$otherFACTION = Factions::getActive();
+		Markers::setLocation($otherFACTION, Factions::incVP($otherFACTION, $VP));
 //* -------------------------------------------------------------------------------------------------------- */
-		self::notifyAllPlayers('placeMarker', '', ['marker' => Markers::get($FACTION)]);
+		self::notifyAllPlayers('placeMarker', '', ['marker' => Markers::get($otherFACTION)]);
 //* -------------------------------------------------------------------------------------------------------- */
-		if (self::getPlayersNumber() === 2) self::notifyAllPlayers('updateScore', '', ['player_id' => Factions::getPlayerID($FACTION), 'VP' => Factions::getVP($FACTION)]);
+		if (self::getPlayersNumber() === 2) self::notifyAllPlayers('updateScore', '', ['player_id' => Factions::getPlayerID($otherFACTION), 'VP' => Factions::getVP($otherFACTION)]);
 //* -------------------------------------------------------------------------------------------------------- */
-		self::notifyAllPlayers('msg', clienttranslate('${FACTION} Gains ${VP} VP(s)'), ['VP' => $VP, 'FACTION' => $FACTION]);
+		self::notifyAllPlayers('msg', clienttranslate('${FACTION} Gains ${VP} VP(s)'), ['VP' => $VP, 'FACTION' => $otherFACTION]);
 //* -------------------------------------------------------------------------------------------------------- */
 		self::action();
 	}
@@ -355,7 +370,7 @@ trait gameStateActions
 		$this->checkAction('remove');
 		if ($FACTION !== Factions::getActive()) throw new BgaVisibleSystemException("Invalid FACTION: $FACTION");
 //
-		$piece = Pieces::get($id);
+		$piece = Pieces::get($id, true);
 		if (!$piece) throw new BgaVisibleSystemException("Invalid piece: $id");
 		if ($piece['player'] !== $FACTION) throw new BgaVisibleSystemException("Invalid FACTION: $piece[player]");
 //
@@ -388,7 +403,7 @@ trait gameStateActions
 		if (array_key_exists($type, $count) && $count[$type] >= Pieces::PIECES[$faction][$type]) throw new BgaUserException(self::_('Not enough pieces'));
 //
 		$pieceID = Pieces::create($FACTION, $faction, $type, $location);
-		$piece = Pieces::get($pieceID);
+		$piece = Pieces::get($pieceID, true);
 //
 		$supplyLines = Board::getSupplyLines($FACTION);
 		if (!in_array($piece['location'], $supplyLines[$piece['faction']])) throw new BgaUserException(self::_('You may only deploy a piece in a space where it is supplied at the moment you deploy it'));
@@ -422,7 +437,7 @@ trait gameStateActions
 		if (array_key_exists($type, $count) && $count[$type] >= Pieces::PIECES[$faction][$type]) throw new BgaUserException(self::_('Not enough pieces'));
 //
 		$pieceID = Pieces::create($FACTION, $faction, $type, $location);
-		$piece = Pieces::get($pieceID);
+		$piece = Pieces::get($pieceID, true);
 //
 //* -------------------------------------------------------------------------------------------------------- */
 		self::notifyAllPlayers('placePiece', clienttranslate('${faction} <B>${type}</B> recruits at <B>${location}</B>'), [
@@ -445,6 +460,7 @@ trait gameStateActions
 // Check Move
 //
 		$this->checkAction('move');
+//
 		if ($FACTION !== Factions::getActive()) throw new BgaVisibleSystemException("Invalid FACTION: $FACTION");
 		if (!$pieces) throw new BgaVisibleSystemException("No pieces selected");
 		if (!array_key_exists('move', $this->possible)) throw new BgaVisibleSystemException("Invalid possible: " . json_encode($this->possible));
@@ -454,9 +470,16 @@ trait gameStateActions
 			if (!in_array($location, $this->possible['move'][$id])) throw new BgaVisibleSystemException("Invalid location: $location");
 		}
 //
+		if (array_key_exists('Sonderkraftfahrzeug', $this->possible))
+		{
+			$piece = Pieces::get($pieces[0], true);
+			$pieces[] = self::getUniqueValueFromDB("SELECT id FROM pieces WHERE location='$piece[location]' "
+					. "AND faction = '$piece[faction]' AND type IN ('infantry', 'tank') AND type <> '$piece[type]' LIMIT 1");
+		}
+//
 		foreach ($pieces as $id)
 		{
-			$piece = Pieces::get($id);
+			$piece = Pieces::get($id, true);
 //
 			if ($piece['location'] !== $location) Pieces::setStatus($id, 'moved');
 //
@@ -464,7 +487,8 @@ trait gameStateActions
 			$piece['location'] = $location;
 			Pieces::setLocation($id, $piece['location']);
 //
-			Actions::add('undo', ['name' => 'move', 'piece' => $piece]);
+			if (array_key_exists('Sonderkraftfahrzeug', $this->possible)) Actions::add('undo', ['name' => 'move', 'piece' => $piece, 'Sonderkraftfahrzeug' => true]);
+			else Actions::add('undo', ['name' => 'move', 'piece' => $piece]);
 //
 			Board::updateControl();
 //* -------------------------------------------------------------------------------------------------------- */
@@ -539,7 +563,7 @@ trait gameStateActions
 		if (!array_key_exists('pieces', $this->possible)) throw new BgaVisibleSystemException("Invalid possible: " . json_encode($this->possible));
 		if (!in_array($id, $this->possible['pieces'])) throw new BgaVisibleSystemException("Invalid piece: $id");
 //
-		$piece = Pieces::get($id);
+		$piece = Pieces::get($id, true);
 		if (!$piece) throw new BgaVisibleSystemException("Invalid piece: $id");
 //
 		if ($this->gamestate->state()['name'] === 'attackRoundAttacker')

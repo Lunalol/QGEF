@@ -67,8 +67,7 @@ class Factions extends APP_GameClass
 		if (is_null($value)) self::$table->dbQuery("UPDATE factions SET status = JSON_REMOVE(status, '$.$status') WHERE faction = '$FACTION'");
 		else
 		{
-//			$json = self::$table->escapeStringForDB(json_encode($value));
-			$json = json_encode($value);
+			$json = self::$table->escapeStringForDB(json_encode($value));
 			self::$table->dbQuery("UPDATE factions SET status = JSON_SET(status, '$.$status', '$json') WHERE faction = '$FACTION'");
 		}
 	}

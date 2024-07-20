@@ -47,9 +47,6 @@ trait gameUtils
 	}
 	function action(bool $pass = false)
 	{
-//PJL
-//		self::setGameStateValue('action', 1);
-//PJL
 		$id = Actions::getNextAction();
 		if ($id)
 		{
@@ -66,8 +63,25 @@ trait gameUtils
 //
 			if (!Actions::getNextAction())
 			{
+				switch ($action['name'])
+				{
+					case 'conscription':
+						self::incStat(1, 'conscription', Factions::getPlayerID(Factions::getActive()));
+						break;
+					case 'forcedMarch':
+						self::incStat(1, 'forcedMarch', Factions::getPlayerID(Factions::getActive()));
+						break;
+					case 'desperateAttack':
+						self::incStat(1, 'desperateAttack', Factions::getPlayerID(Factions::getActive()));
+						break;
+					default:
+						self::incStat(1, 'play', Factions::getPlayerID(Factions::getActive()));
+						break;
+				}
+//
 				self::discard($action['cards']);
 				self::incGameStateValue('action', 1);
+//
 				$this->gamestate->nextState('next');
 			}
 			else $this->gamestate->nextState('action');

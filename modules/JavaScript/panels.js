@@ -15,17 +15,23 @@ define(["dojo", "dojo/_base/declare"], function (dojo, declare)
 //
 			for (let player_id in players) dojo.place(`<div id='QGEFplayer-${player_id}' class='QGEFcontainer'></div>`, `player_board_${player_id}`);
 //
-			dojo.connect(dojo.byId('player_boards'), 'mouseenter', () =>
-				dojo.query('.QGEFregion', 'QGEFboard').forEach((node) => {
-					const region = +node.dataset.location;
-					const allies = this.bgagame.gamedatas.factions.allies.control.includes(region);
-					const axis = this.bgagame.gamedatas.factions.axis.control.includes(region);
-					if (!axis && allies) node.setAttribute('fill', '#be1e1e80');
-					if (axis && !allies) node.setAttribute('fill', '#4d514d80');
-				})
-			);
-			dojo.connect(dojo.byId('player_boards'), 'mouseleave', () => dojo.query('.QGEFregion', 'QGEFboard').forEach((node) => node.setAttribute('fill', 'transparent')));
+			dojo.connect(dojo.byId('player_boards'), 'mouseenter', () => {
+				if (+this.bgagame.getGameUserPreference(CONTROL)) this.control();
+			});
+			dojo.connect(dojo.byId('player_boards'), 'mouseleave', () => {
+				if (+this.bgagame.getGameUserPreference(CONTROL)) dojo.query('.QGEFregion', 'QGEFboard').forEach((node) => node.setAttribute('fill', 'transparent'));
+			});
 //
+		},
+		control: function ()
+		{
+			dojo.query('.QGEFregion', 'QGEFboard').forEach((node) => {
+				const region = +node.dataset.location;
+				const allies = this.bgagame.gamedatas.factions.allies.control.includes(region);
+				const axis = this.bgagame.gamedatas.factions.axis.control.includes(region);
+				if (!axis && allies) node.setAttribute('fill', '#be1e1e80');
+				if (axis && !allies) node.setAttribute('fill', '#4d514d80');
+			});
 		},
 		place: function (FACTION, factions, player_id)
 		{

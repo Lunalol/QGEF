@@ -141,6 +141,13 @@ class QuartermasterGeneralEastFront extends Table
 			self::reloadPlayersBasicInfos();
 		}
 //
+		self::initStat('player', 'contingency', 0);
+		self::initStat('player', 'play', 0);
+		self::initStat('player', 'conscription', 0);
+		self::initStat('player', 'forcedMarch', 0);
+		self::initStat('player', 'desperateAttack', 0);
+		self::initStat('player', 'productionInitiative', 0);
+//
 		$this->activeNextPlayer();
 	}
 	protected function getAllDatas()
@@ -157,6 +164,7 @@ class QuartermasterGeneralEastFront extends Table
 //
 			'players' => self::getCollectionFromDb("SELECT player_id id, player_score score FROM player"),
 			'factions' => Factions::getAllDatas(),
+			'steps' => [0 => 0, 1 => 0, 2 => 1, 3 => 2, 4 => 5, 5 => 6, 6 => 7, 7 => 8, 8 => 10, 9 => 11, 10 => 12, 11 => 13, 12 => 15, 13 => 16, 14 => 17, 15 => 18, 16 => 19][intval(self::getGameStateValue('round'))],
 //
 			'contingency' => [
 				Factions::ALLIES => $this->decks->getCardsInLocation('contingency', Factions::ALLIES),
@@ -217,7 +225,11 @@ class QuartermasterGeneralEastFront extends Table
 		{
 			switch ($statename)
 			{
-				default: return $this->gamestate->nextState("zombiePass");
+				case 'actionStep':
+					self::incGameStateValue('action', 1);
+					return $this->gamestate->nextState("zombiePass");
+				default:
+					return $this->gamestate->nextState("zombiePass");
 			}
 			return;
 		}
@@ -228,16 +240,30 @@ class QuartermasterGeneralEastFront extends Table
 //
 // Debug functions
 //
-	function ckeckADJACENCY()
+	public function loadBugReportSQL(int $reportId, array $studioPlayersIds): void
 	{
-		foreach ($this->ADJACENCY as $from => $regions)
+		$players = $this->getObjectListFromDb('SELECT player_id FROM player', true);
+
+		// Change for your game
+		// We are setting the current state to match the start of a player's turn if it's already game over
+		$sql = ['UPDATE global SET global_value = 100 WHERE global_id = 1 AND global_value = 99'];
+		foreach ($players as $index => $pId)
 		{
-			foreach ($regions as $to)
-			{
-				if (!in_array($from, $this->ADJACENCY[$to])) var_dump($from, $to);
-				if (!in_array($to, $this->ADJACENCY[$from])) var_dump($to, $from);
-			}
+			$studioPlayer = $studioPlayersIds[$index];
+
+			// All games can keep this SQL
+			$sql[] = "UPDATE player SET player_id=$studioPlayer WHERE player_id=$pId";
+			$sql[] = "UPDATE global SET global_value=$studioPlayer WHERE global_value=$pId";
+			$sql[] = "UPDATE stats SET stats_player_id=$studioPlayer WHERE stats_player_id=$pId";
+			// Add game-specific SQL update the tables for your game
+			$sql[] = "UPDATE factions SET player_id=$studioPlayer WHERE player_id=$pId";
 		}
+		foreach ($sql as $q)
+		{
+			$this->DbQuery($q);
+		}
+
+		$this->reloadPlayersBasicInfos();
 	}
 //
 // Debug functions
