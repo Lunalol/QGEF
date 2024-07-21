@@ -216,7 +216,7 @@ class QuartermasterGeneralEastFront extends Table
 	}
 	function getGameProgression()
 	{
-		return self::getGameStateValue('round') * 10;
+		return round(self::getGameStateValue('round') * 100 / 16);
 	}
 	function zombieTurn($state, $active_player)
 	{
