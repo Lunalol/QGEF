@@ -227,8 +227,9 @@ trait gameStates
 				break;
 			}
 //* -------------------------------------------------------------------------------------------------------- */
-			self::notifyAllPlayers('msg', '${FACTION} Draw 1 card', ['FACTION' => $FACTION]);
+			self::notifyAllPlayers('msg', '${FACTION} Draws 1 card', ['FACTION' => $FACTION]);
 			self::notifyPlayer(Factions::getPlayerID($FACTION), $FACTION . 'Deck', '', ['card' => $card]);
+			self::notifyAllPlayers('updateDeck', '', ['FACTION' => $FACTION, 'hand' => $this->decks->countCardInLocation('hand', $FACTION), 'deck' => $this->decks->countCardInLocation($FACTION)]);
 //* -------------------------------------------------------------------------------------------------------- */
 		}
 		$this->gamestate->nextState('next');
@@ -273,9 +274,7 @@ trait gameStates
 				$VP = 0;
 				foreach (Board::getControl($FACTION) as $location) if (array_key_exists($location, $victoryStars)) $VP += $victoryStars[$location];
 //
-				for ($i = 0;
-					$i < $VP;
-					$i++)
+				for ($i = 0; $i < $VP; $i++)
 				{
 					Markers::setLocation($FACTION, Factions::incVP($FACTION, 1));
 //* -------------------------------------------------------------------------------------------------------- */
@@ -287,7 +286,7 @@ trait gameStates
 				self::notifyAllPlayers('msg', clienttranslate('${FACTION} Gains ${VP} VP(s)'), ['VP' => $VP, 'FACTION' => $FACTION]);
 //* -------------------------------------------------------------------------------------------------------- */
 			}
-			if (abs(Factions::getVP('allies') - Factions::getVP('axis')) >= 10) return $this->gamestate->nextState('endOfGame');
+			if (abs(Factions::getVP('allies') - Factions::getVP('axis')) >= 10 || $round === 16) return $this->gamestate->nextState('endOfGame');
 		}
 //
 // + Late Cards
@@ -537,8 +536,9 @@ trait gameStates
 							break;
 						}
 //* -------------------------------------------------------------------------------------------------------- */
-						self::notifyAllPlayers('msg', '${FACTION} Draw 1 card', ['FACTION' => $FACTION]);
+						self::notifyAllPlayers('msg', '${FACTION} Draws 1 card', ['FACTION' => $FACTION]);
 						self::notifyPlayer(Factions::getPlayerID($FACTION), $FACTION . 'Deck', '', ['card' => $card]);
+						self::notifyAllPlayers('updateDeck', '', ['FACTION' => $FACTION, 'hand' => $this->decks->countCardInLocation('hand', $FACTION), 'deck' => $this->decks->countCardInLocation($FACTION)]);
 //* -------------------------------------------------------------------------------------------------------- */
 					}
 //

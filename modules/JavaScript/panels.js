@@ -35,12 +35,28 @@ define(["dojo", "dojo/_base/declare"], function (dojo, declare)
 		},
 		place: function (FACTION, factions, player_id)
 		{
+			dojo.place(`
+<div style="display:inline-flex;align-items:center;">
+	<div id="QGEFplayerDeck-${FACTION}" style="margin:0px 5px;">
+		<img draggable="false" style="height:25px;vertical-align:middle;" src="${g_gamethemeurl}img/svg/deck.svg">
+		<span id="QGEFplayerDeck-${FACTION}-value" style="margin:0px 5px;">?</span>
+	</div>
+	<div id="QGEFplayerHand-${FACTION}" style="margin:0px 5px;">
+		<img draggable="false" style="height:25px;vertical-align:middle;" src="${g_gamethemeurl}img/svg/hand.svg">
+		<span id="QGEFplayerHand-${FACTION}-value" style="margin:0px 0px;">?</span>
+	</div>
+</div>`, $(`player_board_${player_id}`).children[0]);
+//
+			this.bgagame.addTooltipHtml(`QGEFplayerDeck-${FACTION}`, _('Cards in deck'), 1000);
+			this.bgagame.addTooltipHtml(`QGEFplayerHand-${FACTION}`, _('Cards in hand'), 1000);
+//
 			const player = `QGEFplayer-${player_id}`;
 //
 			for (let faction of factions)
 			{
 				const container = dojo.place(`<div id='QGEFplayer-${FACTION}-${faction}' class='QGEFplayer' style='display:grid;grid-template-columns: 30px repeat(4, 40px);'></div>`, player);
 				const flag = dojo.place(`<image class='QGEFflag' id='QGEF-flsag-${faction}' src='${g_gamethemeurl}img/flag_${faction}.jpg' >`, container);
+//
 				this.bgagame.addTooltipHtml(flag.id, dojo.string.substitute(_('Click to display ${FLAG} supply lines'), {FLAG: flag.outerHTML}), 1000);
 //
 				dojo.connect(flag, 'click', () => this.bgagame.board.supplyLines(this.bgagame.gamedatas.factions[FACTION].supply[faction], '#ffffff40'));

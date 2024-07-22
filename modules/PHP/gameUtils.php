@@ -39,7 +39,8 @@ trait gameUtils
 					$this->decks->moveCard($cardID, 'discard', $FACTION);
 //* -------------------------------------------------------------------------------------------------------- */
 					self::notifyAllPlayers($FACTION . 'Discard', clienttranslate('${FACTION} Discards 1 card'), ['card' => ['id' => $cardID], 'FACTION' => $FACTION]);
-//* -------------------------------------------------------------------------------------------------------- */
+					self::notifyAllPlayers('updateDeck', '', ['FACTION' => $FACTION, 'hand' => $this->decks->countCardInLocation('hand', $FACTION), 'deck' => $this->decks->countCardInLocation($FACTION)]);
+					/* -------------------------------------------------------------------------------------------------------- */
 					break;
 //
 			}

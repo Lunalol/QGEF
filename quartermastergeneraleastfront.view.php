@@ -10,5 +10,6 @@ class view_quartermastergeneraleastfront_quartermastergeneraleastfront extends g
 	function build_page($viewArgs)
 	{
 		$this->game->loadPlayersBasicInfos();
+//
 	}
 }

@@ -65,3 +65,7 @@ const REGIONS = {
 	43: {x: 564, y: 178, W: 106, H: 107},
 	44: {x: 338, y: 440, W: 71, H: 214}
 };
+//
+const FIRST_GAME = 0;
+const MID = 1;
+const LATE = 2;

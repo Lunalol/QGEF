@@ -294,8 +294,9 @@ trait gameStateActions
 //* -------------------------------------------------------------------------------------------------------- */
 //* -------------------------------------------------------------------------------------------------------- */
 		self::notifyAllPlayers('msg', clienttranslate('${FACTION} <B>Production Initiative</B>'), ['FACTION' => $FACTION]);
-		self::notifyAllPlayers('msg', clienttranslate('${FACTION} Draw 1 card'), ['FACTION' => $FACTION]);
+		self::notifyAllPlayers('msg', clienttranslate('${FACTION} Draws 1 card'), ['FACTION' => $FACTION]);
 		self::notifyPlayer(Factions::getPlayerID($FACTION), $FACTION . 'Deck', '', ['card' => $card]);
+		self::notifyAllPlayers('updateDeck', '', ['FACTION' => $FACTION, 'hand' => $this->decks->countCardInLocation('hand', $FACTION), 'deck' => $this->decks->countCardInLocation($FACTION)]);
 //* -------------------------------------------------------------------------------------------------------- */
 		self::incStat(1, 'productionInitiative', Factions::getPlayerID(Factions::getActive()));
 		self::incGameStateValue('action', 1);
@@ -357,6 +358,7 @@ trait gameStateActions
 			$this->decks->moveCard($cardID, 'discard', $FACTION);
 //* -------------------------------------------------------------------------------------------------------- */
 			self::notifyAllPlayers($FACTION . 'Discard', clienttranslate('${FACTION} Discards 1 card'), ['card' => ['id' => $cardID], 'FACTION' => $FACTION]);
+			self::notifyAllPlayers('updateDeck', '', ['FACTION' => $FACTION, 'hand' => $this->decks->countCardInLocation('hand', $FACTION), 'deck' => $this->decks->countCardInLocation($FACTION)]);
 //* -------------------------------------------------------------------------------------------------------- */
 		}
 //
@@ -539,7 +541,7 @@ trait gameStateActions
 		Factions::setStatus(Factions::getActive(), 'removedPiece');
 		Factions::setStatus(Factions::getInactive(), 'removedPiece');
 //* -------------------------------------------------------------------------------------------------------- */
-		self::notifyAllPlayers('msg', clienttranslate('${faction} Attack on <B>${location}</B>'), [
+		self::notifyAllPlayers('msg', clienttranslate('${faction} Attacks on <B>${location}</B>'), [
 			'faction' => $faction, 'location' => $this->REGIONS[$location], 'i18n' => ['location']]);
 //* -------------------------------------------------------------------------------------------------------- */
 		$this->gamestate->nextState('attack');

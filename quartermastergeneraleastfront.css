@@ -337,9 +337,9 @@ html {
 
 .QGEFfactionName {
 	position: absolute;
-	top: 0px;
-	padding: 6cqh 5cqw 5cqh 24cqw;
-	font-size: 12cqw;
+	top: 0cqh;
+	margin: 7cqh 10cqw 0cqh 24cqw;
+	font-size: 10cqw;
 	font-family: EldonWF;
 	color: white;
 }
@@ -673,4 +673,21 @@ html {
 }
 .gamestate_mulligan .QGEFhandHolder .QGEFcardContainer {
 	transform-origin: top;
+}
+
+.QGEFplayerAid-01 {
+	flex: 1 1 100%;
+	background-image: url('img/playerAid-01.jpg');
+	background-size: contain;
+	aspect-ratio: 1661/2251;
+	max-width: 740px;
+	margin: auto;
+}
+.QGEFplayerAid-04 {
+	flex: 1 1 100%;
+	background-image: url('img/playerAid-04.jpg');
+	background-size: contain;
+	aspect-ratio: 1661/2251;
+	max-width: 740px;
+	margin: auto;
 }

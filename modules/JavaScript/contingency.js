@@ -101,7 +101,8 @@ define(["dojo", "dojo/_base/declare"], function (dojo, declare)
 				back_title: this.cards[card.type_arg][SECOND_SIDE][0],
 				back_text: this.cards[card.type_arg][SECOND_SIDE][1], back_FONT: 8 - this.cards[card.type_arg][SECOND_SIDE][1].length / 100,
 				side: +card.type,
-				flip: +card.type === SECOND_SIDE ? 'QGEFflip' : ''
+				flip: +card.type === SECOND_SIDE ? 'QGEFflip' : '',
+				CONTIGENCY: _('CONTIGENCY')
 			});
 		},
 		place: function (faction, card)

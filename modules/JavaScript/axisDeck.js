@@ -9,13 +9,10 @@ define(["dojo", "dojo/_base/declare"], function (dojo, declare)
 		{
 			console.log('AxisDeck constructor');
 //
-			const FIRST_GAME = 0;
-			const MID = 1;
-			const LATE = 2;
-//
 // Reference to BGA game
 //
 			this.bgagame = bgagame;
+			this.type = {[FIRST_GAME]: _('First game'), [MID]: _('MID'), [LATE]: _('LATE')};
 //
 // Translate
 //
@@ -361,7 +358,8 @@ define(["dojo", "dojo/_base/declare"], function (dojo, declare)
 				type: this.cards[card.type_arg].type, type_arg: card.type_arg,
 				title: this.cards[card.type_arg].text[0],
 				text: this.cards[card.type_arg].text[1], FONT: 8 - this.cards[card.type_arg].text[1].length / 100,
-				reactionSVG: reactionSVG, reaction: reaction
+				reactionSVG: reactionSVG, reaction: reaction,
+				TYPE: this.type[card.type], COLOR: {[FIRST_GAME]: '#b88e2e', [MID]: '#b88e2e', [LATE]: '#c92442'}[card.type]
 			});
 		},
 		play: function (card)

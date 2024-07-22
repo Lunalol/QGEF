@@ -75,7 +75,10 @@
 		</div>
 	</div>
 </div>
-<div id='QGEFinvisible' style='display:none;'></div>
+<div id='QGEFplayerAids' style='display:flex;flex-direction:row;flex-wrap:wrap;'>
+	<div class='QGEFplayerAid-01'></div>
+	<div class='QGEFplayerAid-04'></div>
+</div>
 <script type="text/javascript">
 	var QGEvpTrackGRAY =
 			"<div class='QGEvpTrackElement' VP='${VP}'></div>";
@@ -98,7 +101,15 @@
 			<div class='QGEFfactionName'>${faction}</div>\n\
 			<div class='QGEFtitle'>${back_title}</div>\n\
 			<div class='QGEFtext' style='font-size:${back_FONT}cqw;'>${back_text}</div>\n\
+			<svg viewbox='0 0 431 579' style='position:absolute;top:0px;'>\n\
+				<path d='M 355 0 v 135 l 25 -15 l 25 15 v -135 z' fill='#414974' stroke='black'/>\n\
+				<text x='-115' y='385' font-size='1.5em' font-family='CutrightWF' fill='white' transform='rotate(-90)'>${CONTIGENCY}</text>\n\
+			</svg>\n\
 		</div>\n\
+		<svg viewbox='0 0 431 579' style='position:absolute;top:0px;'>\n\
+			<path d='M 355 0 v 135 l 25 -15 l 25 15 v -135 z' fill='#414974' stroke='black'/>\n\
+			<text x='-115' y='385' font-size='20px' font-family='CutrightWF' fill='white' transform='rotate(-90)'>${CONTIGENCY}</text>\n\
+		</svg>\n\
 	</div>\n\
 </div>";
 	var QGEFcard = "\
@@ -107,6 +118,10 @@
 		<div class='QGEFfactionName'>${faction}</div>\n\
 		<div class='QGEFtitle'>${title}</div>\n\
 		<div class='QGEFtext' style='font-size:${FONT}cqw;'>${text}</div>\n\
+		<svg viewbox='0 0 431 579' style='position:absolute;top:0px;'>\n\
+			<path d='M 355 0 v 135 l 25 -15 l 25 15 v -135 z' fill='${COLOR}' stroke='black'/>\n\
+			<text x='-115' y='385' font-size='1.5em' font-family='CutrightWF' fill='white' transform='rotate(-90)'>${TYPE}</text>\n\
+		</svg>\n\
 	</div>\n\
 	${reactionSVG}<div class='QGEFreaction'>${reaction}</div>\n\
 </div>";

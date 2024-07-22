@@ -51,7 +51,12 @@ define(["dojo", "dojo/_base/declare", "ebg/core/gamegui", "ebg/counter",
 // Setup Player Panels
 //
 			this.panels = new Panels(this, gamedatas.players);
-			for (let FACTION in gamedatas.factions) this.panels.place(FACTION, gamedatas.FACTIONS[FACTION], gamedatas.factions[FACTION].player_id);
+			for (let FACTION in gamedatas.factions) {
+				this.panels.place(FACTION, gamedatas.FACTIONS[FACTION], gamedatas.factions[FACTION].player_id);
+				$(`QGEFplayerHand-${FACTION}-value`).innerHTML = gamedatas.hands[FACTION];
+				$(`QGEFplayerDeck-${FACTION}-value`).innerHTML = gamedatas.decks[FACTION];
+			}
+
 //
 // Setup Game Board
 //
@@ -732,6 +737,11 @@ define(["dojo", "dojo/_base/declare", "ebg/core/gamegui", "ebg/counter",
 				this.gamedatas.factions.axis.supply = notif.args.axis;
 			});
 //
+			dojo.subscribe('updateDeck', (notif) => {
+				$(`QGEFplayerDeck-${notif.args.FACTION}-value`).innerHTML = notif.args.deck;
+				$(`QGEFplayerHand-${notif.args.FACTION}-value`).innerHTML = notif.args.hand;
+			});
+//
 			dojo.subscribe('placeMarker', (notif) => this.markers.place(notif.args.marker));
 			dojo.subscribe('placePiece', (notif) => this.pieces.place(notif.args.piece));
 			dojo.subscribe('removePiece', (notif) => this.pieces.remove(notif.args.piece));
@@ -899,7 +909,7 @@ define(["dojo", "dojo/_base/declare", "ebg/core/gamegui", "ebg/counter",
 //
 				if ('round' in args) args.round = $(`QGEFround-${args.round}`).outerHTML;
 //
-				if ('you' in args) args.you = `<div class='QGEFfaction' faction='${args.FACTION}'></div><span>&nbsp</span>` + args.you;
+				if ('you' in args && 'FACTION' in args) args.you = `<div class='QGEFfaction' faction='${args.FACTION}'></div><span>&nbsp</span>` + args.you;
 				if ('FACTION' in args) args.FACTION = `<div class='QGEFfaction' faction='${args.FACTION}'></div>`;
 				if ('faction' in args) args.faction = `<img style='width:20px;vertical-align:middle;' src='${g_gamethemeurl}img/flag_${args.faction}.jpg'>`;
 //
