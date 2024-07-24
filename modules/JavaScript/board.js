@@ -25,7 +25,9 @@ define(["dojo", "dojo/_base/declare"], function (dojo, declare)
 			dojo.style('QGEFbackground', 'width', this.boardWidth + 'px');
 			dojo.style('QGEFbackground', 'height', this.boardHeight + 'px');
 //
-			dojo.query('.QGEFregion', this.board).connect('click', this, 'click');
+			dojo.query('.QGEFregion', this.board).connect('click', this, 'click').forEach((node) => {
+//				node.insertAdjacentHTML('afterend', `<text x="${REGIONS[node.dataset.location].x - REGIONS[node.dataset.location].W / 2}" y="${REGIONS[node.dataset.location].y + 150 / 2}" stroke="black" fill="white" font-size="150" textLength="${REGIONS[node.dataset.location].W}" lengthAdjust="spacingAndGlyphs">${this.bgagame.gamedatas.REGIONS[node.dataset.location]}</text>`);
+			});
 //
 			this.zoomLevel = dojo.byId('QGEFzoomLevel');
 			this.bgagame.onScreenWidthChange = this.resize.bind(this);
