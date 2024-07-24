@@ -398,7 +398,7 @@ define(["dojo", "dojo/_base/declare", "ebg/core/gamegui", "ebg/counter",
 			{
 				this.addActionButton('QGEFcancel', _('Cancel'), (event) => {
 					dojo.stopEvent(event);
-					this.action('cancel', {FACTION: this.FACTION});
+					this.bgaPerformAction('cancel', {FACTION: this.FACTION});
 				});
 			}
 //
@@ -806,17 +806,17 @@ define(["dojo", "dojo/_base/declare", "ebg/core/gamegui", "ebg/counter",
 		},
 		QGEFscorched: function (location)
 		{
-			if (this.isCurrentPlayerActive()) this.action('scorched', {FACTION: this.FACTION, location: location});
+			if (this.isCurrentPlayerActive()) this.bgaPerformAction('scorched', {FACTION: this.FACTION, location: location});
 		},
 		QGEFdeploy: function (location)
 		{
 			const node = $('generalactions').querySelector('.QGEFpieceContainer.QGEFselected>.QGEFpiece');
-			if (node && this.isCurrentPlayerActive()) this.action('deploy', {FACTION: this.FACTION, location: location, faction: node.dataset.faction, type: node.dataset.type});
+			if (node && this.isCurrentPlayerActive()) this.bgaPerformAction('deploy', {FACTION: this.FACTION, location: location, faction: node.dataset.faction, type: node.dataset.type});
 		},
 		QGEFrecruit: function (location)
 		{
 			const node = $('generalactions').querySelector('.QGEFpieceContainer.QGEFselected>.QGEFpiece');
-			if (node && this.isCurrentPlayerActive()) this.action('recruit', {FACTION: this.FACTION, location: location, faction: node.dataset.faction, type: node.dataset.type});
+			if (node && this.isCurrentPlayerActive()) this.bgaPerformAction('recruit', {FACTION: this.FACTION, location: location, faction: node.dataset.faction, type: node.dataset.type});
 		},
 		QGEFmoveAttack: function (location)
 		{
@@ -827,13 +827,13 @@ define(["dojo", "dojo/_base/declare", "ebg/core/gamegui", "ebg/counter",
 				{
 					this.board.clearCanvas();
 					for (let piece of pieces) this.board.arrow(+piece.dataset.location, location, '#00FF0080');
-					this.action('move', {FACTION: this.FACTION, location: location, pieces: JSON.stringify(pieces.reduce((L, node) => [...L, +node.dataset.id], []))});
+					this.bgaPerformAction('move', {FACTION: this.FACTION, location: location, pieces: JSON.stringify(pieces.reduce((L, node) => [...L, +node.dataset.id], []))});
 				}
 				if ('attack' in this.gamedatas.gamestate.args && pieces[0].dataset.id in this.gamedatas.gamestate.args.attack && this.gamedatas.gamestate.args.attack[pieces[0].dataset.id].includes(location))
 				{
 					this.board.clearCanvas();
 					for (let piece of pieces) this.board.arrow(+piece.dataset.location, location, '#FF000080');
-					this.action('attack', {FACTION: this.FACTION, location: location, pieces: JSON.stringify(pieces.reduce((L, node) => [...L, +node.dataset.id], []))});
+					this.bgaPerformAction('attack', {FACTION: this.FACTION, location: location, pieces: JSON.stringify(pieces.reduce((L, node) => [...L, +node.dataset.id], []))});
 				}
 			}
 		},
@@ -909,7 +909,7 @@ define(["dojo", "dojo/_base/declare", "ebg/core/gamegui", "ebg/counter",
 //
 				if ('round' in args) args.round = $(`QGEFround-${args.round}`).outerHTML;
 //
-				if ('you' in args && 'FACTION' in args) args.you = `<div class='QGEFfaction' faction='${args.FACTION}'></div><span>&nbsp</span>` + args.you;
+				if ('you' in args && 'FACTION' in args) args.you = `<div class='QGEFfaction' faction='${args.FACTION}'></div><span> </span>` + args.you;
 				if ('FACTION' in args) args.FACTION = `<div class='QGEFfaction' faction='${args.FACTION}'></div>`;
 				if ('faction' in args) args.faction = `<img style='width:20px;vertical-align:middle;' src='${g_gamethemeurl}img/flag_${args.faction}.jpg'>`;
 //
@@ -920,14 +920,8 @@ define(["dojo", "dojo/_base/declare", "ebg/core/gamegui", "ebg/counter",
 		},
 		confirm: function (text, ...args)
 		{
-			if (+this.getGameUserPreference(CONFIRM)) this.confirmationDialog(text, () => this.action(...args));
-			else this.action(...args);
-		},
-		action: function (action, args =
-		{}, success = () => {}, fail = undefined)
-		{
-			if (this.gamedatas.gamestate.name !== 'mulligan') args.lock = true;
-			this.ajaxcall(`/quartermastergeneraleastfront/quartermastergeneraleastfront/${action}.html`, args, this, success, fail);
+			if (+this.getGameUserPreference(CONFIRM)) this.confirmationDialog(text, () => this.bgaPerformAction(...args));
+			else this.bgaPerformAction(...args);
 		}
 	}
 	);

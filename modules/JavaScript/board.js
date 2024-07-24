@@ -38,6 +38,7 @@ define(["dojo", "dojo/_base/declare"], function (dojo, declare)
 //
 // Event listeners for drag gestures
 //
+			dojo.connect(this.playarea, 'click', () => this.resize());
 			dojo.connect(this.playarea, 'mousedown', this, 'begin_drag');
 			dojo.connect(this.playarea, 'mousemove', this, 'drag');
 			dojo.connect(this.playarea, 'mouseup', this, 'end_drag');
@@ -49,15 +50,15 @@ define(["dojo", "dojo/_base/declare"], function (dojo, declare)
 			dojo.connect(this.playarea, 'wheel', this, 'wheel');
 			dojo.connect(this.zoomLevel, 'oninput', this, () => {
 				dojo.stopEvent(event);
-				this.setZoom(Math.pow(10., event.target.value / 100), this.playarea.clientWidth / 2, this.playarea.clientHeight / 2);
+				this.setZoom(Math.pow(10., event.target.value / 10000), this.playarea.clientWidth / 2, this.playarea.clientHeight / 2);
 			});
 			dojo.connect(dojo.byId('QGEFzoomMinus'), 'click', () => {
 				dojo.stopEvent(event);
-				this.setZoom(Math.pow(10., (parseInt(this.zoomLevel.value) - 10) / 100), this.playarea.clientWidth / 2, this.playarea.clientHeight / 2);
+				this.setZoom(Math.pow(10., (parseInt(this.zoomLevel.value) - 1000) / 10000), this.playarea.clientWidth / 2, this.playarea.clientHeight / 2);
 			});
 			dojo.connect(dojo.byId('QGEFzoomPlus'), 'click', () => {
 				dojo.stopEvent(event);
-				this.setZoom(Math.pow(10., (parseInt(this.zoomLevel.value) + 10) / 100), this.playarea.clientWidth / 2, this.playarea.clientHeight / 2);
+				this.setZoom(Math.pow(10., (parseInt(this.zoomLevel.value) + 1000) / 10000), this.playarea.clientWidth / 2, this.playarea.clientHeight / 2);
 			});
 //
 			this.ratio = parseFloat(localStorage.getItem(`${this.bgagame.game_id}.ratio`));
@@ -119,23 +120,22 @@ define(["dojo", "dojo/_base/declare"], function (dojo, declare)
 		},
 		resize: function ()
 		{
-			const zoomLevelMin = Math.floor(Math.log10(Math.max(this.playarea.clientWidth / this.boardWidth, this.playarea.clientHeight / this.boardHeight)) * 100.);
-			this.zoomLevel.min = zoomLevelMin;
-			this.zoomLevel.max = 100 + zoomLevelMin;
-			this.zoomLevel.value = this.zoomLevel.min;
-			this.setZoom(Math.pow(10., this.zoomLevel.value / 100), this.playarea.clientWidth / 2, this.playarea.clientHeight / 2);
+			this.zoomLevel.min = Math.floor(Math.log10(Math.min(this.playarea.clientWidth / this.boardWidth, this.playarea.clientHeight / this.boardHeight)) * 10000.);
+			this.zoomLevel.max = +this.zoomLevel.min + 10000;
+			this.zoomLevel.value = Math.log10(Math.max(this.playarea.clientWidth / this.boardWidth, this.playarea.clientHeight / this.boardHeight)) * 10000.;
+			this.setZoom(Math.pow(10., this.zoomLevel.value / 10000), this.playarea.clientWidth / 2, this.playarea.clientHeight / 2);
 		},
 		setZoom: function (scale, x, y)
 		{
 //
 // Calc scale and store in session
 //
-			scale = Math.max(this.playarea.clientWidth / this.boardWidth, this.playarea.clientHeight / this.boardHeight, scale);
+			scale = Math.max(Math.min(this.playarea.clientWidth / this.boardWidth, this.playarea.clientHeight / this.boardHeight), scale);
 			localStorage.setItem(`${this.bgagame.game_id}.${this.bgagame.table_id}.zoomLevel`, scale);
 //
 // Update range value
 //
-			this.zoomLevel.value = Math.round(Math.log10(scale) * 100.);
+			this.zoomLevel.value = Math.log10(scale) * 10000;
 //
 // Get scroll positions and scale before scaling
 //
@@ -166,11 +166,11 @@ define(["dojo", "dojo/_base/declare"], function (dojo, declare)
 // Update scale only when zoom factor is updated
 //
 				const oldZoom = parseInt(this.zoomLevel.value);
-				const newZoom = Math.min(Math.max(this.zoomLevel.min, oldZoom - 10 * Math.sign(event.deltaY)), this.zoomLevel.max);
+				const newZoom = Math.min(Math.max(this.zoomLevel.min, oldZoom - 1000 * Math.sign(event.deltaY)), this.zoomLevel.max);
 				if (oldZoom !== newZoom)
 				{
 					const rect = this.playarea.getBoundingClientRect();
-					this.setZoom(Math.pow(10., newZoom / 100.), event.clientX - rect.left, event.clientY - rect.top);
+					this.setZoom(Math.pow(10., newZoom / 10000.), event.clientX - rect.left, event.clientY - rect.top);
 				}
 			}
 		},
