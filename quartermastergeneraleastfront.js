@@ -51,12 +51,12 @@ define(["dojo", "dojo/_base/declare", "ebg/core/gamegui", "ebg/counter",
 // Setup Player Panels
 //
 			this.panels = new Panels(this, gamedatas.players);
-			for (let FACTION in gamedatas.factions) {
+			for (let FACTION in gamedatas.factions)
+			{
 				this.panels.place(FACTION, gamedatas.FACTIONS[FACTION], gamedatas.factions[FACTION].player_id);
 				$(`QGEFplayerHand-${FACTION}-value`).innerHTML = gamedatas.hands[FACTION];
 				$(`QGEFplayerDeck-${FACTION}-value`).innerHTML = gamedatas.decks[FACTION];
 			}
-
 //
 // Setup Game Board
 //

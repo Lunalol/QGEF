@@ -339,7 +339,11 @@ trait gameStateActions
 //* -------------------------------------------------------------------------------------------------------- */
 		self::notifyAllPlayers('placeMarker', '', ['marker' => Markers::get($otherFACTION)]);
 //* -------------------------------------------------------------------------------------------------------- */
-		if (self::getPlayersNumber() === 2) self::notifyAllPlayers('updateScore', '', ['player_id' => Factions::getPlayerID($otherFACTION), 'VP' => Factions::getVP($otherFACTION)]);
+		if (self::getPlayersNumber() === 2)
+		{
+			self::dbSetScore(Factions::getPlayerID($otherFACTION), Factions::getVP($otherFACTION), $otherFACTION === Factions::AXIS ? 1 : 0);
+			self::notifyAllPlayers('updateScore', '', ['player_id' => Factions::getPlayerID($otherFACTION), 'VP' => Factions::getVP($otherFACTION)]);
+		}
 //* -------------------------------------------------------------------------------------------------------- */
 		self::notifyAllPlayers('msg', clienttranslate('${FACTION} Gains ${VP} VP(s)'), ['VP' => $VP, 'FACTION' => $otherFACTION]);
 //* -------------------------------------------------------------------------------------------------------- */
