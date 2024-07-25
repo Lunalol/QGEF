@@ -638,13 +638,14 @@ trait gameStateActions
 //
 			case 'attackRoundAttacker':
 //
+				var_dump($reaction);
 				switch ($reaction)
 				{
 					case 'SustainAttack':
 						if (intval(self::getGameStateValue('round')) % 4 === 3) throw new BgaUserException(self::_('You may not use a Sustain Attack reaction during a Winter turn'));
 						break;
 					case 'AntiAir':
-					case 'Naval':
+					case 'NavalCombat':
 						break;
 					default:
 						throw new BgaVisibleSystemException("Invalid reaction for attacker: $reaction");
@@ -657,7 +658,7 @@ trait gameStateActions
 				{
 					case 'StandFast':
 					case 'AntiAir':
-					case 'Naval':
+					case 'NavalCombat':
 					case 'Exchange':
 						break;
 					case 'Retreat':
@@ -687,7 +688,7 @@ trait gameStateActions
 				switch ($reaction)
 				{
 					case 'AntiAir':
-					case 'Naval':
+					case 'NavalCombat':
 						break;
 					default:
 						throw new BgaVisibleSystemException("Invalid reaction for attacker: $reaction");

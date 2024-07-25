@@ -512,7 +512,6 @@ class Decks extends APP_GameClass
 			48 => ['faction' => Factions::SOVIETUNION, 'reaction' => 'Advance', 'requirement' => 48,
 				self::MID => [
 					['name' => 'draw', 'count' => 3],
-					['name' => 'VP', 'FACTION' => Factions::AXIS],
 					['name' => 'action']
 				]
 			],

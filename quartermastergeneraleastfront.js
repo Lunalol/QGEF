@@ -158,28 +158,28 @@ define(["dojo", "dojo/_base/declare", "ebg/core/gamegui", "ebg/counter",
 							break;
 						case 'deploy':
 							this.gamedatas.gamestate.descriptionmyturn = _('${you} have to deploy an unit');
-							this.gamedatas.gamestate.possibleactions = ['cancel', 'deploy', 'remove'];
+							this.gamedatas.gamestate.possibleactions = ['cancel', 'pass', 'deploy', 'remove'];
 							break;
 						case 'recruit':
 							this.gamedatas.gamestate.descriptionmyturn = _('${you} have to recruit an unit');
-							this.gamedatas.gamestate.possibleactions = ['cancel', 'recruit', 'remove'];
+							this.gamedatas.gamestate.possibleactions = ['cancel', 'pass', 'recruit', 'remove'];
 							break;
 						case 'move/attack':
 							this.gamedatas.gamestate.descriptionmyturn = _('${you} have to move deployed unit or attack with a force containing that unit');
-							this.gamedatas.gamestate.possibleactions = ['cancel', 'move', 'attack'];
+							this.gamedatas.gamestate.possibleactions = ['cancel', 'pass', 'move', 'attack'];
 							break;
 						case 'attack':
 							this.gamedatas.gamestate.descriptionmyturn = _('${you} have to attack a land space');
-							this.gamedatas.gamestate.possibleactions = ['cancel', 'attack'];
+							this.gamedatas.gamestate.possibleactions = ['cancel', 'pass', 'attack'];
 							break;
 						case 'move':
 							this.gamedatas.gamestate.descriptionmyturn = _('${you} have to move an unit');
-							this.gamedatas.gamestate.possibleactions = ['cancel', 'move'];
+							this.gamedatas.gamestate.possibleactions = ['cancel', 'pass', 'move'];
 							break;
 						case 'eliminate':
 						case 'eliminateVS':
 							this.gamedatas.gamestate.descriptionmyturn = _('${you} have to eliminate an unit');
-							this.gamedatas.gamestate.possibleactions = ['cancel', 'removePiece', 'discard', 'VP'];
+							this.gamedatas.gamestate.possibleactions = ['cancel', 'pass', 'removePiece', 'discard', 'VP'];
 							break;
 						case 'conscription':
 							this.gamedatas.gamestate.descriptionmyturn = {1: _('${you} have to discard 1 card to deploy an infantry'), 2: _('${you} have to discard 2 cards to deploy a tank, airplane, or fleet')}[state.args.action.cards.length];
