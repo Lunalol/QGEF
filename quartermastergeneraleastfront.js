@@ -841,7 +841,9 @@ define(["dojo", "dojo/_base/declare", "ebg/core/gamegui", "ebg/counter",
 		{
 			const node = $(`QGEFpiece-${this.gamedatas.gamestate.args.piece}`);
 			if (node && this.isCurrentPlayerActive())
-				this.confirm(dojo.string.substitute(_('Retreat to <B>${REGION}<B>'), {REGION: _(this.gamedatas.REGIONS[location])}) + node.outerHTML, 'reaction', {FACTION: this.FACTION, card: this.gamedatas.gamestate.args.card, piece: this.gamedatas.gamestate.args.piece, location: location});
+			{
+				this.confirm(dojo.string.substitute(_('Retreat to <B>${REGION}<B>'), {REGION: _(this.gamedatas.REGIONS[location])}) + node.outerHTML, 'retreat', {FACTION: this.FACTION, card: this.gamedatas.gamestate.args.card, piece: this.gamedatas.gamestate.args.piece, location: location});
+			}
 		},
 		QGEFreaction: function (piece)
 		{

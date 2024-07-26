@@ -122,6 +122,12 @@ class action_quartermastergeneraleastfront extends APP_GameAction
 		$this->game->acRemovePiece(self::getArg("FACTION", AT_alphanum, true), self::getArg("piece", AT_int, true));
 		self::ajaxResponse("");
 	}
+	public function retreat()
+	{
+		self::setAjaxMode();
+		$this->game->acReaction(self::getArg("FACTION", AT_alphanum, true), self::getArg("card", AT_int, true), self::getArg("piece", AT_int, false), self::getArg("location", AT_int, false));
+		self::ajaxResponse("");
+	}
 	public function reaction()
 	{
 		self::setAjaxMode();
