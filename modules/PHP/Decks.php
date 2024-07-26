@@ -271,9 +271,7 @@ class Decks extends APP_GameClass
 			],
 			63 => ['faction' => Factions::GERMANY, 'reaction' => 'Retreat',
 				self::LATE => [
-					['name' => 'deploy', 'types' => [Pieces::INFANTRY], 'factions' => [Factions::GERMANY], 'locations' => [BERLIN]],
-					['name' => 'deploy', 'types' => [Pieces::INFANTRY], 'factions' => [Factions::GERMANY], 'locations' => [VIENNA]],
-					['name' => 'deploy', 'types' => [Pieces::INFANTRY], 'factions' => [Factions::GERMANY], 'locations' => [EASTPRUSSIA]],
+					['name' => 'deploy', 'types' => [Pieces::INFANTRY], 'factions' => [Factions::GERMANY], 'locations' => [BERLIN, VIENNA, EASTPRUSSIA]],
 					['name' => 'action']
 				]
 			],
